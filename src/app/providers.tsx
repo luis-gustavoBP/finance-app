@@ -1,12 +1,12 @@
 'use client';
 
-import { ExpenseProvider } from '@/contexts/ExpenseContext';
+import { AuthProvider } from '@/contexts/AuthContext';
 import { ThemeProvider } from '@/contexts/ThemeContext';
 
 export function Providers({ children }: { children: React.ReactNode }) {
     return (
-        <ThemeProvider>
-            <ExpenseProvider>{children}</ExpenseProvider>
-        </ThemeProvider>
+        <AuthProvider>
+            <ThemeProvider>{children}</ThemeProvider>
+        </AuthProvider>
     );
 }

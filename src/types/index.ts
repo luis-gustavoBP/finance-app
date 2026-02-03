@@ -1,78 +1,72 @@
-// Types for ContApp - Personal Finance Control Application
-
-export type Category =
-    | 'essencial'
-    | 'lazer'
-    | 'transporte'
-    | 'alimentacao'
-    | 'saude'
-    | 'educacao'
-    | 'moradia'
-    | 'outros';
-
-export interface Expense {
+// Central type definitions for the application
+export interface Category {
     id: string;
-    item: string;
-    category: Category;
-    totalValue: number;
-    installments: number;
-    installmentValue: number;
-    purchaseDate: string; // ISO date string
-    createdAt: string;
-}
-
-export interface Settings {
-    monthlyBudget: number;
-    weeklyBudget: number;    // Orçamento semanal
-    currency: string;
-    darkMode: boolean;
-    daysBeforeClose: number;  // Dias antes do vencimento que a fatura fecha (ex: 10)
-    dueDay: number;           // Dia de vencimento da fatura (sempre no mês seguinte)
-}
-
-export interface MonthlyData {
-    month: string; // Format: YYYY-MM
-    totalSpent: number;
-    totalInstallments: number;
-    budgetRemaining: number;
-    budgetPercentage: number;
-    expensesByCategory: Record<Category, number>;
-}
-
-export interface InstallmentInfo {
-    expenseId: string;
-    expenseItem: string;
-    category: Category;
-    installmentNumber: number;
-    totalInstallments: number;
-    value: number;
-    dueMonth: string; // Format: YYYY-MM
-}
-
-export interface BudgetStatus {
-    budget: number;
-    totalSpent: number;
-    futureCommitments: number;
-    available: number;
-    percentage: number;
-    status: 'safe' | 'warning' | 'danger';
-}
-
-export interface CategoryInfo {
-    id: Category;
-    label: string;
-    color: string;
-    bgColor: string;
+    user_id: string;
+    name: string;
     icon: string;
+    color: string;
+    created_at: string;
 }
 
-export interface WeeklyStatus {
-    weekNumber: number;      // Número da semana no mês (1-5)
-    weekStart: string;       // Data início da semana
-    weekEnd: string;         // Data fim da semana
-    budget: number;          // Orçamento semanal
-    spent: number;           // Gasto na semana
-    available: number;       // Disponível na semana
-    percentage: number;      // % usado
-    status: 'safe' | 'warning' | 'danger';
+export interface Card {
+    id: string;
+    user_id: string;
+    name: string;
+    last_four: string | null;
+    color: string;
+    limit_cents: number;
+    due_day: number;
+    closing_days_before: number;
+    is_active: boolean;
+    created_at: string;
+}
+
+export interface Transaction {
+    id: string;
+    user_id: string;
+    description: string;
+    amount_cents: number;
+    posted_at: string;
+    category_id: string;
+    card_id: string | null;
+    currency: string;
+    installment_group_id: string | null;
+    installment_number: number | null;
+    total_installments: number | null;
+    created_at: string;
+}
+
+export interface IncomeEntry {
+    id: string;
+    user_id: string;
+    description: string;
+    amount_cents: number;
+    received_at: string;
+    income_type: string;
+    notes: string | null;
+    created_at: string;
+}
+
+export interface UserSettings {
+    user_id: string;
+    global_monthly_limit_cents: number;
+    weekly_goal_cents: number;
+}
+
+// Additional types for UI
+export interface TransactionWithDetails extends Transaction {
+    category?: Category;
+    card?: Card;
+}
+
+export interface ChartDataPoint {
+    date: string;
+    value: number;
+    cumulative?: number;
+}
+
+export interface CategorySpending {
+    category: Category;
+    total: number;
+    percentage: number;
 }
