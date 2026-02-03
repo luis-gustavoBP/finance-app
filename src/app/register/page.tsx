@@ -82,6 +82,8 @@ export default function RegisterPage() {
                             onChange={(e) => setPassword(e.target.value)}
                             minLength={6}
                             required
+                            autoComplete="new-password"
+                            spellCheck={false}
                         />
 
                         <Button

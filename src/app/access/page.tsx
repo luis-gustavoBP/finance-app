@@ -59,15 +59,13 @@ export default function AccessPage() {
                             placeholder="Digite a senha"
                             autoFocus
                             required
+                            autoComplete="current-password"
+                            spellCheck={false}
                         />
 
                         <Button type="submit" className="w-full">
                             Entrar
                         </Button>
-
-                        <p className="text-xs text-center text-slate-500 dark:text-slate-400 mt-4">
-                            Senha padrão: <code className="bg-slate-200 dark:bg-slate-700 px-2 py-1 rounded">contapp123</code>
-                        </p>
                     </form>
                 </CardContent>
             </Card>

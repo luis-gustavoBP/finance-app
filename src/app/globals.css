@@ -12,17 +12,7 @@
   --font-mono: var(--font-geist-mono);
 }
 
-.dark {
-  --background: #0f172a;
-  --foreground: #f1f5f9;
-}
 
-@media (prefers-color-scheme: dark) {
-  :root:not(.light) {
-    --background: #0f172a;
-    --foreground: #f1f5f9;
-  }
-}
 
 body {
   background: var(--background);
@@ -31,7 +21,13 @@ body {
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-/* Custom scrollbar */
+/* Custom scrollbar - Cross browser */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e1 transparent;
+}
+
+/* Webkit scrollbar */
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
@@ -46,16 +42,8 @@ body {
   border-radius: 4px;
 }
 
-.dark ::-webkit-scrollbar-thumb {
-  background: #475569;
-}
-
 ::-webkit-scrollbar-thumb:hover {
   background: #94a3b8;
-}
-
-.dark ::-webkit-scrollbar-thumb:hover {
-  background: #64748b;
 }
 
 /* Animation utilities */
@@ -64,6 +52,7 @@ body {
     opacity: 0;
     transform: translateY(10px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
