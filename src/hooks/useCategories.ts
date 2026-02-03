@@ -39,7 +39,7 @@ export function useCategories() {
                     user_id: user.id,
                 }));
 
-                await supabase.from('categories').insert(categoriesToInsert as any);
+                await supabase.from('categories').insert(categoriesToInsert);
                 mutate();
             } catch (error) {
                 console.error('Failed to create default categories:', error);
@@ -57,7 +57,7 @@ export function useCategories() {
             .insert({
                 ...category,
                 user_id: user.id,
-            } as any)
+            })
             .select()
             .single();
 
@@ -69,8 +69,8 @@ export function useCategories() {
     const updateCategory = async (id: string, updates: Omit<CategoryUpdate, 'id' | 'user_id' | 'created_at'>) => {
         if (!user) throw new Error('Not authenticated');
 
-        const { error } = await (supabase
-            .from('categories') as any)
+        const { error } = await supabase
+            .from('categories')
             .update(updates)
             .eq('id', id)
             .eq('user_id', user.id);

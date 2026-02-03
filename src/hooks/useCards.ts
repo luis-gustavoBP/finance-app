@@ -7,6 +7,7 @@ import { useAuth } from '@/contexts/AuthContext';
 
 type Card = Database['public']['Tables']['cards']['Row'];
 type CardInsert = Database['public']['Tables']['cards']['Insert'];
+type CardUpdate = Database['public']['Tables']['cards']['Update'];
 
 export function useCards() {
     const { user } = useAuth();
@@ -26,7 +27,7 @@ export function useCards() {
         }
     );
 
-    const addCard = async (card: Partial<CardInsert>) => {
+    const addCard = async (card: Omit<CardInsert, 'id' | 'user_id' | 'created_at'>) => {
         if (!user) throw new Error('Not authenticated');
 
         const { data, error } = await supabase
@@ -34,7 +35,7 @@ export function useCards() {
             .insert({
                 ...card,
                 user_id: user.id,
-            } as any)
+            })
             .select()
             .single();
 
@@ -45,12 +46,12 @@ export function useCards() {
 
     const updateCardConfig = async (
         cardId: string,
-        config: { due_day?: number; closing_days_before?: number; limit_cents?: number }
+        config: CardUpdate
     ) => {
         if (!user) throw new Error('Not authenticated');
 
-        const { error } = await (supabase
-            .from('cards') as any)
+        const { error } = await supabase
+            .from('cards')
             .update(config)
             .eq('id', cardId)
             .eq('user_id', user.id);
@@ -62,8 +63,8 @@ export function useCards() {
     const deleteCard = async (cardId: string) => {
         if (!user) throw new Error('Not authenticated');
 
-        const { error } = await (supabase
-            .from('cards') as any)
+        const { error } = await supabase
+            .from('cards')
             .update({ is_active: false })
             .eq('id', cardId)
             .eq('user_id', user.id);

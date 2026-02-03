@@ -59,7 +59,7 @@ export function useTransactions() {
         };
     }, [user, mutate]);
 
-    const addTransaction = async (transaction: any) => {
+    const addTransaction = async (transaction: Omit<TransactionInsert, 'id' | 'user_id' | 'created_at'>) => {
         if (!user) throw new Error('Not authenticated');
 
         console.log('Inserting transaction:', transaction);
@@ -76,7 +76,7 @@ export function useTransactions() {
                 installment_number: 1,
                 user_id: user.id,
                 include_in_weekly_plan: transaction.include_in_weekly_plan ?? true,
-            } as any)
+            })
             .select();
 
         if (error) {
@@ -88,12 +88,12 @@ export function useTransactions() {
     };
 
     const addTransactionWithInstallments = async (
-        transaction: any
+        transaction: Omit<TransactionInsert, 'id' | 'user_id' | 'created_at'>
     ) => {
         if (!user) throw new Error('Not authenticated');
 
         // If only 1 installment, use normal insert
-        if (transaction.installments <= 1) {
+        if ((transaction.installments || 1) <= 1) {
             return addTransaction(transaction);
         }
 
@@ -103,12 +103,12 @@ export function useTransactions() {
             p_user_id: user.id,
             p_description: transaction.description,
             p_total_amount_cents: transaction.amount_cents,
-            p_category_id: transaction.category_id,
+            p_category_id: transaction.category_id!,
             p_card_id: transaction.card_id || null,
-            p_installments: transaction.installments,
+            p_installments: transaction.installments!,
             p_first_date: transaction.posted_at || new Date().toISOString().split('T')[0],
             p_include_in_weekly_plan: transaction.include_in_weekly_plan ?? true,
-        } as any);
+        });
 
         if (error) {
             console.error('RPC error details:', error);

@@ -70,3 +70,49 @@ export interface CategorySpending {
     total: number;
     percentage: number;
 }
+
+export interface Expense {
+    id: string;
+    item: string;
+    category: any;
+    purchaseDate: string;
+    totalValue: number;
+    installments: number;
+    installmentValue: number;
+}
+
+export interface BudgetStatus {
+    budget: number;
+    totalSpent: number;
+    futureCommitments: number;
+    available: number;
+    percentage: number;
+    status: 'safe' | 'warning' | 'danger';
+}
+
+export interface InstallmentInfo {
+    expenseId: string;
+    expenseItem: string;
+    category: any;
+    installmentNumber: number;
+    totalInstallments: number;
+    value: number;
+    dueMonth: string;
+}
+
+export interface CategoryInfo {
+    id: string;
+    label: string;
+    color: string;
+    bgColor: string;
+    icon: string;
+}
+
+export interface Settings {
+    monthlyBudget: number;
+    weeklyBudget: number;
+    currency: string;
+    darkMode: boolean;
+    daysBeforeClose: number;
+    dueDay: number;
+}

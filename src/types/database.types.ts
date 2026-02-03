@@ -34,6 +34,7 @@ export interface Database {
                     color?: string
                     created_at?: string
                 }
+                Relationships: []
             }
             cards: {
                 Row: {
@@ -75,6 +76,7 @@ export interface Database {
                     limit_cents?: number
                     created_at?: string
                 }
+                Relationships: []
             }
             transactions: {
                 Row: {
@@ -88,6 +90,7 @@ export interface Database {
                     installments: number
                     installment_number: number
                     parent_transaction_id: string | null
+                    include_in_weekly_plan: boolean
                     created_at: string
                 }
                 Insert: {
@@ -101,6 +104,7 @@ export interface Database {
                     installments?: number
                     installment_number?: number
                     parent_transaction_id?: string | null
+                    include_in_weekly_plan?: boolean
                     created_at?: string
                 }
                 Update: {
@@ -114,8 +118,25 @@ export interface Database {
                     installments?: number
                     installment_number?: number
                     parent_transaction_id?: string | null
+                    include_in_weekly_plan?: boolean
                     created_at?: string
                 }
+                Relationships: [
+                    {
+                        foreignKeyName: "transactions_card_id_fkey"
+                        columns: ["card_id"]
+                        isOneToOne: false
+                        referencedRelation: "cards"
+                        referencedColumns: ["id"]
+                    },
+                    {
+                        foreignKeyName: "transactions_category_id_fkey"
+                        columns: ["category_id"]
+                        isOneToOne: false
+                        referencedRelation: "categories"
+                        referencedColumns: ["id"]
+                    }
+                ]
             }
             income_entries: {
                 Row: {
@@ -148,6 +169,7 @@ export interface Database {
                     notes?: string | null
                     created_at?: string
                 }
+                Relationships: []
             }
             user_settings: {
                 Row: {
@@ -168,6 +190,7 @@ export interface Database {
                     weekly_goal_cents?: number
                     updated_at?: string
                 }
+                Relationships: []
             }
         }
         Views: {
@@ -182,7 +205,9 @@ export interface Database {
                     p_description: string
                     p_total_amount_cents: number
                     p_installments: number
+
                     p_first_date: string
+                    p_include_in_weekly_plan?: boolean
                 }
                 Returns: Json
             }

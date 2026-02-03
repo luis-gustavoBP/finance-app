@@ -1,4 +1,4 @@
-import { Category, CategoryInfo, Settings } from '@/types';
+import { CategoryInfo, Settings } from '@/types';
 
 export const CATEGORIES: CategoryInfo[] = [
     {
@@ -73,7 +73,7 @@ export const CURRENCY_FORMATTER = new Intl.NumberFormat('pt-BR', {
     currency: 'BRL',
 });
 
-export const getCategoryInfo = (categoryId: Category): CategoryInfo => {
+export const getCategoryInfo = (categoryId: string): CategoryInfo => {
     return CATEGORIES.find((c) => c.id === categoryId) || CATEGORIES[CATEGORIES.length - 1];
 };
 

@@ -1,4 +1,4 @@
-import { Expense, Category, BudgetStatus, InstallmentInfo, Settings } from '@/types';
+import { Expense, Category, BudgetStatus, InstallmentInfo } from '@/types';
 import { CATEGORIES } from './constants';
 
 /**
@@ -256,8 +256,8 @@ export const groupExpensesByCategory = (
     targetMonth: string,
     closingDay: number = 10,
     dueDay: number = 10
-): Record<Category, number> => {
-    const result: Record<Category, number> = {
+): Record<string, number> => {
+    const result: Record<string, number> = {
         essencial: 0,
         lazer: 0,
         transporte: 0,

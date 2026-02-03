@@ -56,7 +56,7 @@ export function useIncome() {
             .insert({
                 ...income,
                 user_id: user.id,
-            } as any)
+            })
             .select()
             .single();
 
@@ -68,8 +68,8 @@ export function useIncome() {
     const updateIncome = async (id: string, updates: Omit<IncomeUpdate, 'id' | 'user_id' | 'created_at'>) => {
         if (!user) throw new Error('Not authenticated');
 
-        const { error } = await (supabase
-            .from('income_entries') as any)
+        const { error } = await supabase
+            .from('income_entries')
             .update(updates)
             .eq('id', id)
             .eq('user_id', user.id);
