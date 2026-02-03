@@ -69,9 +69,9 @@ export function useCategories() {
     const updateCategory = async (id: string, updates: Omit<CategoryUpdate, 'id' | 'user_id' | 'created_at'>) => {
         if (!user) throw new Error('Not authenticated');
 
-        const { error } = await supabase
-            .from('categories')
-            .update(updates as any)
+        const { error } = await (supabase
+            .from('categories') as any)
+            .update(updates)
             .eq('id', id)
             .eq('user_id', user.id);
 
