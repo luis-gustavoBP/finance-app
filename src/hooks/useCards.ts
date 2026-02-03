@@ -49,9 +49,9 @@ export function useCards() {
     ) => {
         if (!user) throw new Error('Not authenticated');
 
-        const { error } = await supabase
-            .from('cards' as any)
-            .update(config as any)
+        const { error } = await (supabase
+            .from('cards') as any)
+            .update(config)
             .eq('id', cardId)
             .eq('user_id', user.id);
 
@@ -62,9 +62,9 @@ export function useCards() {
     const deleteCard = async (cardId: string) => {
         if (!user) throw new Error('Not authenticated');
 
-        const { error } = await supabase
-            .from('cards' as any)
-            .update({ is_active: false } as any)
+        const { error } = await (supabase
+            .from('cards') as any)
+            .update({ is_active: false })
             .eq('id', cardId)
             .eq('user_id', user.id);
 
