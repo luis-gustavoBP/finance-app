@@ -29,8 +29,8 @@ export function useSettings() {
                 // If not found, create default
                 if (error.code === 'PGRST116') {
                     try {
-                        const { data: newData, error: createError } = await supabase
-                            .from('user_settings')
+                        const { data: newData, error: createError } = await (supabase
+                            .from('user_settings') as any)
                             .insert({ user_id: user!.id, global_monthly_limit_cents: 0 })
                             .select()
                             .single();
