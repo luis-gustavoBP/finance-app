@@ -45,7 +45,7 @@ export function useCards() {
 
     const updateCardConfig = async (
         cardId: string,
-        config: { due_day?: number; closing_days_before?: number }
+        config: { due_day?: number; closing_days_before?: number; limit_cents?: number }
     ) => {
         if (!user) throw new Error('Not authenticated');
 
