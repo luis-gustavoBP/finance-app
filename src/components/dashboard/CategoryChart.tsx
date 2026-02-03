@@ -66,7 +66,7 @@ export function CategoryChart({ transactions }: CategoryChartProps) {
                                 ))}
                             </Pie>
                             <Tooltip
-                                formatter={(value: number) => [formatCents(value), 'Valor']}
+                                formatter={(value: number | undefined) => [formatCents(value || 0), 'Valor']}
                             />
                         </PieChart>
                     </ResponsiveContainer>
