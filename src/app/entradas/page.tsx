@@ -71,7 +71,7 @@ export default function EntradasPage() {
             <div className="max-w-7xl mx-auto space-y-6">
                 <div className="flex items-center justify-between flex-wrap gap-3">
                     <div>
-                        <h1 className="text-2xl font-bold text-slate-800 dark:text-white">
+                        <h1 className="text-2xl font-bold text-slate-800 ">
                             💵 Entradas de Dinheiro
                         </h1>
                         <p className="text-sm text-slate-500 mt-1">
@@ -141,18 +141,18 @@ export default function EntradasPage() {
                                 </p>
                             </div>
                         ) : (
-                            <div className="divide-y divide-slate-100 dark:divide-slate-800">
+                            <div className="divide-y divide-slate-100 ">
                                 {incomeEntries.map(entry => (
                                     <div
                                         key={entry.id}
-                                        className="flex items-center justify-between p-4 hover:bg-green-50/50 dark:hover:bg-slate-800/50 transition-colors border-l-4 border-transparent hover:border-green-500"
+                                        className="flex items-center justify-between p-4 hover:bg-green-50/50 transition-colors border-l-4 border-transparent hover:border-green-500"
                                     >
                                         <div className="flex items-center gap-3 flex-1">
                                             <div className="w-12 h-12 rounded-full bg-gradient-to-br from-green-400 to-emerald-500 flex items-center justify-center text-2xl shadow-sm">
                                                 {INCOME_TYPE_LABELS[entry.type]?.split(' ')[0] || '💵'}
                                             </div>
                                             <div className="flex-1">
-                                                <div className="font-semibold text-slate-800 dark:text-white">
+                                                <div className="font-semibold text-slate-800 ">
                                                     {entry.description}
                                                 </div>
                                                 <div className="text-xs text-slate-500 flex items-center gap-2 mt-1">
@@ -172,13 +172,13 @@ export default function EntradasPage() {
                                             </div>
                                         </div>
                                         <div className="text-right flex items-center gap-3">
-                                            <div className="font-bold text-xl text-green-600 dark:text-green-400">
+                                            <div className="font-bold text-xl text-green-600 ">
                                                 +{formatCents(entry.amount_cents)}
                                             </div>
                                             <Button
                                                 variant="ghost"
                                                 size="sm"
-                                                className="text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20"
+                                                className="text-red-600 hover:bg-red-50 "
                                                 onClick={(e) => handleDeleteClick(e, entry.id, entry.description)}
                                             >
                                                 🗑️

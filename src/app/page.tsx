@@ -49,12 +49,12 @@ export default function DashboardPage() {
 
   if (isTxError || isCardsError || isSettingsError) {
     return (
-      <div className="p-8 text-center bg-red-50 dark:bg-red-900/10 rounded-xl border border-red-200 dark:border-red-900/30">
-        <h2 className="text-xl font-bold text-red-700 dark:text-red-400 mb-2">Ops! Algo deu errado.</h2>
-        <p className="text-red-600 dark:text-red-500 mb-4">
+      <div className="p-8 text-center bg-red-50 rounded-xl border border-red-200 ">
+        <h2 className="text-xl font-bold text-red-700 mb-2">Ops! Algo deu errado.</h2>
+        <p className="text-red-600 mb-4">
           É provável que você precise aplicar a migração SQL V4 no Supabase.
         </p>
-        <code className="block p-4 bg-slate-900 text-slate-100 rounded text-xs overflow-auto mb-4">
+        <code className="block p-4 bg-slate-100 text-slate-800 rounded text-xs overflow-auto mb-4">
           Execute o arquivo: supabase_schema_v4_limits.sql
         </code>
         <Button onClick={() => window.location.reload()}>Tentar Novamente</Button>
@@ -113,10 +113,10 @@ export default function DashboardPage() {
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-slate-800 dark:text-white">
+            <h1 className="text-2xl font-bold text-slate-800 ">
               Dashboard
             </h1>
-            <p className="text-slate-500 dark:text-slate-400 mt-1">
+            <p className="text-slate-500 mt-1">
               Visão geral dos seus gastos e limites
             </p>
           </div>

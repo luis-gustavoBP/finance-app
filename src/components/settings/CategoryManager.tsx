@@ -114,7 +114,7 @@ export function CategoryManager() {
                             {categories.map(category => (
                                 <div
                                     key={category.id}
-                                    className="p-3 border border-slate-200 dark:border-slate-800 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors"
+                                    className="p-3 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors"
                                 >
                                     <div className="flex items-center gap-2 mb-2">
                                         <span className="text-2xl">{category.icon}</span>
@@ -123,7 +123,7 @@ export function CategoryManager() {
                                             style={{ backgroundColor: category.color }}
                                         />
                                     </div>
-                                    <div className="text-sm font-medium text-slate-800 dark:text-white mb-2">
+                                    <div className="text-sm font-medium text-slate-800 mb-2">
                                         {category.name}
                                     </div>
                                     <div className="flex gap-1">
@@ -138,7 +138,7 @@ export function CategoryManager() {
                                         <Button
                                             variant="ghost"
                                             size="sm"
-                                            className="text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20"
+                                            className="text-red-600 hover:bg-red-50 "
                                             onClick={(e) => handleDeleteClick(e, category.id, category.name)}
                                         >
                                             Excluir
@@ -165,7 +165,7 @@ export function CategoryManager() {
                     />
 
                     <div className="space-y-2">
-                        <label className="text-sm font-medium text-slate-700 dark:text-slate-300">
+                        <label className="text-sm font-medium text-slate-700 ">
                             Ícone
                         </label>
                         <div className="grid grid-cols-7 gap-2">
@@ -175,8 +175,8 @@ export function CategoryManager() {
                                     type="button"
                                     onClick={() => setIcon(emoji)}
                                     className={`text-2xl p-2 rounded-md transition-colors ${icon === emoji
-                                        ? 'bg-indigo-100 dark:bg-indigo-900/30 ring-2 ring-indigo-500'
-                                        : 'hover:bg-slate-100 dark:hover:bg-slate-800'
+                                        ? 'bg-indigo-100 ring-2 ring-indigo-500'
+                                        : 'hover:bg-slate-100'
                                         }`}
                                 >
                                     {emoji}
@@ -186,7 +186,7 @@ export function CategoryManager() {
                     </div>
 
                     <div className="space-y-2">
-                        <label className="text-sm font-medium text-slate-700 dark:text-slate-300">
+                        <label className="text-sm font-medium text-slate-700 ">
                             Cor
                         </label>
                         <div className="grid grid-cols-5 gap-2">
@@ -196,7 +196,7 @@ export function CategoryManager() {
                                     type="button"
                                     onClick={() => setColor(c)}
                                     className={`w-full h-10 rounded-md transition-all ${color === c
-                                        ? 'ring-2 ring-offset-2 ring-slate-400 dark:ring-slate-600'
+                                        ? 'ring-2 ring-offset-2 ring-slate-400'
                                         : ''
                                         }`}
                                     style={{ backgroundColor: c }}

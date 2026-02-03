@@ -90,19 +90,19 @@ export function AddIncomeModal({ isOpen, onClose }: AddIncomeModalProps) {
                 />
 
                 <div className="flex flex-col gap-1.5">
-                    <label className="text-sm font-medium text-slate-700 dark:text-slate-300">
+                    <label className="text-sm font-medium text-slate-700 ">
                         Data de Recebimento
                     </label>
                     <input
                         type="date"
                         value={date}
                         onChange={(e) => setDate(e.target.value)}
-                        className="flex h-10 w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-sm ring-offset-white file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-slate-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-950 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 dark:border-slate-800 dark:bg-slate-950 dark:ring-offset-slate-950 dark:placeholder:text-slate-400 dark:focus-visible:ring-slate-300"
+                        className="flex h-10 w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-sm ring-offset-white file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-slate-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-950 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 "
                     />
                 </div>
 
                 <div className="space-y-2">
-                    <label className="text-sm font-medium text-slate-700 dark:text-slate-300">
+                    <label className="text-sm font-medium text-slate-700 ">
                         Tipo de Entrada
                     </label>
                     <div className="grid grid-cols-2 gap-2">
@@ -112,12 +112,12 @@ export function AddIncomeModal({ isOpen, onClose }: AddIncomeModalProps) {
                                 type="button"
                                 onClick={() => setType(incomeType.value)}
                                 className={`p-3 rounded-lg border-2 transition-all text-left ${type === incomeType.value
-                                        ? 'border-green-500 bg-green-50 dark:bg-green-900/20'
-                                        : 'border-slate-200 dark:border-slate-800 hover:border-slate-300'
-                                    }`}
+                                    ? 'border-green-500 bg-green-50'
+                                    : 'border-slate-200 hover:border-slate-300'
+                                    } `}
                             >
                                 <div className="font-medium text-sm">{incomeType.label}</div>
-                                <div className="text-xs text-slate-500 dark:text-slate-400">
+                                <div className="text-xs text-slate-500 ">
                                     {incomeType.description}
                                 </div>
                             </button>
@@ -126,7 +126,7 @@ export function AddIncomeModal({ isOpen, onClose }: AddIncomeModalProps) {
                 </div>
 
                 <div className="flex flex-col gap-1.5">
-                    <label className="text-sm font-medium text-slate-700 dark:text-slate-300">
+                    <label className="text-sm font-medium text-slate-700 ">
                         Observações (opcional)
                     </label>
                     <textarea
@@ -134,11 +134,11 @@ export function AddIncomeModal({ isOpen, onClose }: AddIncomeModalProps) {
                         onChange={(e) => setNotes(e.target.value)}
                         placeholder="Informações adicionais..."
                         rows={2}
-                        className="flex w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-sm ring-offset-white placeholder:text-slate-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-950 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 dark:border-slate-800 dark:bg-slate-950 dark:ring-offset-slate-950 dark:placeholder:text-slate-400 dark:focus-visible:ring-slate-300"
+                        className="flex w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-sm ring-offset-white placeholder:text-slate-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-950 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 "
                     />
                 </div>
 
-                <div className="bg-green-50 dark:bg-green-900/20 p-3 rounded-md text-sm text-green-700 dark:text-green-400">
+                <div className="bg-green-50 p-3 rounded-md text-sm text-green-700 ">
                     💡 Esta entrada será somada ao seu saldo disponível do mês, aumentando o quanto você pode gastar.
                 </div>
 

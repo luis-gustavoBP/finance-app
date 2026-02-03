@@ -57,7 +57,7 @@ export function Header() {
     const pathname = usePathname();
 
     return (
-        <header className="sticky top-0 z-40 bg-white/80 dark:bg-slate-900/80 backdrop-blur-lg border-b border-slate-200 dark:border-slate-800">
+        <header className="sticky top-0 z-40 bg-white/80 backdrop-blur-lg border-b border-slate-200 ">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex items-center justify-between h-16">
                     {/* Logo */}
@@ -65,7 +65,7 @@ export function Header() {
                         <div className="w-9 h-9 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center">
                             <span className="text-white text-lg">💰</span>
                         </div>
-                        <span className="font-bold text-xl text-slate-800 dark:text-white">
+                        <span className="font-bold text-xl text-slate-800 ">
                             ContApp
                         </span>
                     </Link>
@@ -79,8 +79,8 @@ export function Header() {
                                 className={cn(
                                     'flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all',
                                     pathname === item.href
-                                        ? 'bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400'
-                                        : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800'
+                                        ? 'bg-indigo-50 text-indigo-600'
+                                        : 'text-slate-600 hover:bg-slate-100'
                                 )}
                             >
                                 {item.icon}
@@ -99,7 +99,7 @@ export function Header() {
             </div>
 
             {/* Mobile Navigation */}
-            <div className="md:hidden border-t border-slate-200 dark:border-slate-800">
+            <div className="md:hidden border-t border-slate-200 ">
                 <nav className="flex justify-around py-2">
                     {navItems.map((item) => (
                         <Link
@@ -108,8 +108,8 @@ export function Header() {
                             className={cn(
                                 'flex flex-col items-center gap-1 px-3 py-2 rounded-xl text-xs font-medium transition-all',
                                 pathname === item.href
-                                    ? 'text-indigo-600 dark:text-indigo-400'
-                                    : 'text-slate-500 dark:text-slate-400'
+                                    ? 'text-indigo-600'
+                                    : 'text-slate-500'
                             )}
                         >
                             {item.icon}

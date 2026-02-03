@@ -45,7 +45,7 @@ export default function RegisterPage() {
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-slate-900 p-4">
+        <div className="min-h-screen flex items-center justify-center bg-slate-50 p-4">
             <Card className="w-full max-w-md">
                 <CardHeader>
                     <CardTitle className="text-center text-2xl">
@@ -55,7 +55,7 @@ export default function RegisterPage() {
                 <CardContent>
                     <form onSubmit={handleRegister} className="space-y-4">
                         {error && (
-                            <div className="p-3 bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 rounded-lg text-sm">
+                            <div className="p-3 bg-red-100 text-red-600 rounded-lg text-sm">
                                 {error}
                             </div>
                         )}
@@ -94,7 +94,7 @@ export default function RegisterPage() {
                             {loading ? 'Criando conta...' : 'Criar Conta'}
                         </Button>
 
-                        <p className="text-center text-sm text-slate-500 dark:text-slate-400 mt-4">
+                        <p className="text-center text-sm text-slate-500 mt-4">
                             Já tem uma conta?{' '}
                             <Link href="/login" className="text-indigo-600 hover:underline">
                                 Faça login

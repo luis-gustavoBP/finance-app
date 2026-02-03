@@ -62,16 +62,30 @@ export function MonthlyPace({ transactions, monthlyLimit }: MonthlyPaceProps) {
                 <div className="h-64">
                     <ResponsiveContainer width="100%" height="100%">
                         <LineChart data={data}>
-                            <XAxis dataKey="day" fontSize={12} tickLine={false} axisLine={false} />
+                            <XAxis
+                                dataKey="day"
+                                fontSize={12}
+                                tickLine={false}
+                                axisLine={false}
+                                stroke="#64748b"
+                            />
                             <YAxis
                                 fontSize={12}
                                 tickLine={false}
                                 axisLine={false}
+                                stroke="#64748b"
                                 tickFormatter={(value) => `R$${value}`}
                             />
                             <Tooltip
                                 formatter={(value: number | undefined) => [value ? `R$ ${value.toFixed(2)}` : 'R$ 0.00', '']}
                                 labelFormatter={(label) => `Dia ${label}`}
+                                contentStyle={{
+                                    backgroundColor: '#ffffff',
+                                    border: '1px solid #e2e8f0',
+                                    borderRadius: '8px',
+                                    color: '#1e293b'
+                                }}
+                                itemStyle={{ color: '#1e293b' }}
                             />
                             {/* Linha Ideal (Pontilhada Cinza) */}
                             <Line

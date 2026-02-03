@@ -50,7 +50,7 @@ export default function GastosPage() {
     return (
         <div className="space-y-6">
             <div className="flex items-center justify-between flex-wrap gap-3">
-                <h1 className="text-2xl font-bold text-slate-800 dark:text-white">Minhas Transações</h1>
+                <h1 className="text-2xl font-bold text-slate-800 ">Minhas Transações</h1>
                 <div className="flex items-center gap-2">
                     <ExportButton />
                     <Button variant="primary" size="sm" onClick={() => setIsModalOpen(true)}>+ Nova Transação</Button>
@@ -62,15 +62,15 @@ export default function GastosPage() {
                     {transactions.length === 0 ? (
                         <div className="p-12 text-center text-slate-500">Nenhum gasto registrado ainda.</div>
                     ) : (
-                        <div className="divide-y divide-slate-100 dark:divide-slate-800">
+                        <div className="divide-y divide-slate-100 ">
                             {transactions.map(tx => (
-                                <div key={tx.id} className="flex items-center justify-between p-4 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+                                <div key={tx.id} className="flex items-center justify-between p-4 hover:bg-slate-50 transition-colors">
                                     <div className="flex items-center gap-3">
-                                        <div className="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-xl">
+                                        <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-xl">
                                             {tx.category?.icon || '📦'}
                                         </div>
                                         <div>
-                                            <div className="font-medium text-slate-800 dark:text-white">{tx.description}</div>
+                                            <div className="font-medium text-slate-800 ">{tx.description}</div>
                                             <div className="text-xs text-slate-500">
                                                 {formatDate(tx.posted_at)} • {tx.card?.name || 'Dinheiro'}
                                             </div>
@@ -78,7 +78,7 @@ export default function GastosPage() {
                                     </div>
                                     <div className="flex items-center gap-4">
                                         <div className="text-right">
-                                            <div className="font-bold text-slate-800 dark:text-white">{formatCents(tx.amount_cents)}</div>
+                                            <div className="font-bold text-slate-800 ">{formatCents(tx.amount_cents)}</div>
                                             {tx.installments > 1 && (
                                                 <div className="text-[10px] text-indigo-500 font-semibold">
                                                     {tx.installment_number}/{tx.installments}x
@@ -88,7 +88,7 @@ export default function GastosPage() {
                                         <Button
                                             variant="ghost"
                                             size="sm"
-                                            className="text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 px-2"
+                                            className="text-red-600 hover:bg-red-50 px-2"
                                             onClick={(e) => handleDeleteClick(e, tx.id, tx.description)}
                                         >
                                             🗑️

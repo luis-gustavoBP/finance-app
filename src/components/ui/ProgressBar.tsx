@@ -26,9 +26,9 @@ export function ProgressBar({
     };
 
     const getTextColor = () => {
-        if (actualPercentage >= 100) return 'text-red-600 dark:text-red-400';
-        if (actualPercentage >= 80) return 'text-amber-600 dark:text-amber-400';
-        return 'text-green-600 dark:text-green-400';
+        if (actualPercentage >= 100) return 'text-red-600';
+        if (actualPercentage >= 80) return 'text-amber-600';
+        return 'text-green-600';
     };
 
     const sizes = {
@@ -41,7 +41,7 @@ export function ProgressBar({
         <div className={cn('w-full', className)}>
             <div
                 className={cn(
-                    'w-full bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden',
+                    'w-full bg-slate-200 rounded-full overflow-hidden',
                     sizes[size]
                 )}
             >

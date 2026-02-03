@@ -164,7 +164,7 @@ export function AddCardModal({ isOpen, onClose }: AddCardModalProps) {
 
                 {/* Cor do Cartão */}
                 <div className="space-y-2">
-                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">
+                    <label className="block text-sm font-medium text-slate-700 ">
                         Cor do Cartão
                     </label>
                     <div className="grid grid-cols-7 gap-2">

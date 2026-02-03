@@ -38,7 +38,7 @@ export default function SettingsPage() {
         <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 -m-8 p-8">
             <div className="max-w-7xl mx-auto space-y-6">
                 <div>
-                    <h1 className="text-2xl font-bold text-slate-800 dark:text-white">
+                    <h1 className="text-2xl font-bold text-slate-800 ">
                         ⚙️ Configurações e Metas
                     </h1>
                     <p className="text-slate-500 mt-1">Defina suas metas financeiras mensais e semanais</p>
@@ -122,20 +122,20 @@ export default function SettingsPage() {
                 <CardConfig />
 
                 {/* Account Settings */}
-                <Card className="bg-white border-red-100 dark:border-red-900/30">
+                <Card className="bg-white border-red-100 ">
                     <CardHeader>
                         <CardTitle className="text-red-600">👤 Conta</CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-4">
                         <p className="text-sm text-slate-500">Logado como: {user?.email}</p>
-                        <Button variant="ghost" className="text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20" onClick={signOut}>
+                        <Button variant="ghost" className="text-red-600 hover:bg-red-50 " onClick={signOut}>
                             Sair da Conta
                         </Button>
                     </CardContent>
                 </Card>
 
                 {!settings && (
-                    <div className="p-4 bg-amber-50 dark:bg-amber-900/20 text-amber-700 dark:text-amber-400 rounded-lg text-sm">
+                    <div className="p-4 bg-amber-50 text-amber-700 rounded-lg text-sm">
                         ⚠️ Nota: Se as configurações não forem salvas, verifique se executou as migrações SQL (V4, V5, V6) no Supabase.
                     </div>
                 )}

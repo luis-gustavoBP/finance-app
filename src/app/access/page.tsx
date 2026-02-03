@@ -33,20 +33,20 @@ export default function AccessPage() {
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-slate-900 p-4">
+        <div className="min-h-screen flex items-center justify-center bg-slate-50 p-4">
             <Card className="w-full max-w-md">
                 <CardHeader>
                     <CardTitle className="text-center text-2xl">
                         🔐 Acesso ao ContApp
                     </CardTitle>
-                    <p className="text-center text-sm text-slate-600 dark:text-slate-400 mt-2">
+                    <p className="text-center text-sm text-slate-600 mt-2">
                         Digite a senha de acesso
                     </p>
                 </CardHeader>
                 <CardContent>
                     <form onSubmit={handleSubmit} className="space-y-4">
                         {error && (
-                            <div className="p-3 bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 rounded-lg text-sm">
+                            <div className="p-3 bg-red-100 text-red-600 rounded-lg text-sm">
                                 {error}
                             </div>
                         )}

@@ -67,6 +67,13 @@ export function CategoryChart({ transactions }: CategoryChartProps) {
                             </Pie>
                             <Tooltip
                                 formatter={(value: any) => [formatCents(value || 0), 'Valor']}
+                                contentStyle={{
+                                    backgroundColor: '#ffffff',
+                                    border: '1px solid #e2e8f0',
+                                    borderRadius: '8px',
+                                    color: '#1e293b'
+                                }}
+                                itemStyle={{ color: '#1e293b' }}
                             />
                         </PieChart>
                     </ResponsiveContainer>

@@ -52,7 +52,7 @@ export function Modal({ isOpen, onClose, title, children, size = 'md' }: ModalPr
             {/* Modal */}
             <div
                 className={cn(
-                    'relative w-full mx-4 bg-white dark:bg-slate-800 rounded-2xl shadow-2xl',
+                    'relative w-full mx-4 bg-white rounded-2xl shadow-2xl',
                     'transform transition-all duration-300 ease-out',
                     'animate-in fade-in zoom-in-95',
                     sizes[size]
@@ -60,13 +60,13 @@ export function Modal({ isOpen, onClose, title, children, size = 'md' }: ModalPr
             >
                 {/* Header */}
                 {title && (
-                    <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200 dark:border-slate-700">
-                        <h2 className="text-xl font-semibold text-slate-800 dark:text-slate-100">
+                    <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200 ">
+                        <h2 className="text-xl font-semibold text-slate-800 ">
                             {title}
                         </h2>
                         <button
                             onClick={onClose}
-                            className="p-1 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
+                            className="p-1 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors"
                         >
                             <svg
                                 className="w-5 h-5"

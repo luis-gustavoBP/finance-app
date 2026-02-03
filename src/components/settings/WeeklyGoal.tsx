@@ -46,7 +46,7 @@ export function WeeklyGoal() {
                 <p className="text-sm text-slate-500">
                     Defina um limite de gasto por semana. O sistema vai alertar quando você ultrapassar 80% e 100% da meta.
                 </p>
-                <p className="text-xs text-amber-600 dark:text-amber-500">
+                <p className="text-xs text-amber-600 ">
                     💡 Esta meta é independente do orçamento mensal e serve como controle adicional.
                 </p>
 
@@ -65,7 +65,7 @@ export function WeeklyGoal() {
                 </Button>
 
                 {settings && settings.weekly_goal_cents > 0 && (
-                    <div className="bg-green-50 dark:bg-green-900/20 p-3 rounded-md text-sm text-green-700 dark:text-green-400">
+                    <div className="bg-green-50 p-3 rounded-md text-sm text-green-700 ">
                         ✅ Meta semanal ativa: {formatCurrencyInputValue(settings.weekly_goal_cents)}
                     </div>
                 )}

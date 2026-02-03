@@ -31,18 +31,18 @@ export function MonthlyIncome() {
     }
 
     return (
-        <Card className={hasIncome ? 'border-green-200 dark:border-green-900/30' : ''}>
+        <Card className={hasIncome ? 'border-green-200' : ''}>
             <CardHeader>
-                <CardTitle className="text-green-600 dark:text-green-400">💵 Entradas no Mês</CardTitle>
+                <CardTitle className="text-green-600 ">💵 Entradas no Mês</CardTitle>
             </CardHeader>
             <CardContent>
                 <div className="space-y-3">
-                    <div className="text-3xl font-bold text-green-600 dark:text-green-400">
+                    <div className="text-3xl font-bold text-green-600 ">
                         {formatCents(monthlyIncome)}
                     </div>
 
                     {hasIncome ? (
-                        <div className="text-sm text-green-700 dark:text-green-500">
+                        <div className="text-sm text-green-700 ">
                             ✨ Você recebeu <strong>{formatCents(monthlyIncome)}</strong> extras este mês
                         </div>
                     ) : (
@@ -52,17 +52,17 @@ export function MonthlyIncome() {
                     )}
 
                     {incomeEntries.length > 0 && (
-                        <div className="pt-3 border-t border-slate-100 dark:border-slate-800">
+                        <div className="pt-3 border-t border-slate-100 ">
                             <div className="text-xs text-slate-500 uppercase font-semibold mb-2">
                                 Últimas entradas
                             </div>
                             <div className="space-y-2">
                                 {incomeEntries.slice(0, 3).map(entry => (
                                     <div key={entry.id} className="flex items-center justify-between text-sm">
-                                        <div className="text-slate-700 dark:text-slate-300">
+                                        <div className="text-slate-700 ">
                                             {entry.description}
                                         </div>
-                                        <div className="font-semibold text-green-600 dark:text-green-400">
+                                        <div className="font-semibold text-green-600 ">
                                             +{formatCents(entry.amount_cents)}
                                         </div>
                                     </div>

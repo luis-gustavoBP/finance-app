@@ -113,11 +113,11 @@ export function CardConfig() {
                             return (
                                 <div
                                     key={card.id}
-                                    className="p-4 border border-slate-200 dark:border-slate-800 rounded-lg space-y-3"
+                                    className="p-4 border border-slate-200 rounded-lg space-y-3"
                                 >
                                     <div className="flex items-center justify-between">
                                         <div>
-                                            <h3 className="font-semibold text-slate-800 dark:text-white">
+                                            <h3 className="font-semibold text-slate-800 ">
                                                 {card.name}
                                             </h3>
                                             <p className="text-xs text-slate-500">
@@ -136,7 +136,7 @@ export function CardConfig() {
                                                 <Button
                                                     variant="ghost"
                                                     size="sm"
-                                                    className="text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20"
+                                                    className="text-red-600 hover:bg-red-50 "
                                                     onClick={(e) => handleDeleteClick(e, card.id, card.name)}
                                                 >
                                                     🗑️
@@ -175,11 +175,11 @@ export function CardConfig() {
                                                 />
                                             </div>
 
-                                            <div className="bg-indigo-50 dark:bg-indigo-900/20 p-3 rounded-md text-sm">
-                                                <p className="text-indigo-700 dark:text-indigo-400">
+                                            <div className="bg-indigo-50 p-3 rounded-md text-sm">
+                                                <p className="text-indigo-700 ">
                                                     📅 <strong>Resumo:</strong> Fecha dia <strong>{closingDay}</strong>, vence dia <strong>{dueDay}</strong>
                                                 </p>
-                                                <p className="text-xs text-indigo-600 dark:text-indigo-500 mt-1">
+                                                <p className="text-xs text-indigo-600 mt-1">
                                                     Compras a partir do dia {closingDay} vão para a próxima fatura.
                                                 </p>
                                             </div>
@@ -202,7 +202,7 @@ export function CardConfig() {
                                             </div>
                                         </div>
                                     ) : (
-                                        <div className="text-sm text-slate-600 dark:text-slate-400 grid grid-cols-1 md:grid-cols-2 gap-2">
+                                        <div className="text-sm text-slate-600 grid grid-cols-1 md:grid-cols-2 gap-2">
                                             <p>Vencimento: Dia <strong>{currentDueDay}</strong></p>
                                             <p>Fechamento: Dia <strong>{closingDay}</strong> (com {currentClosingDays} dias de antecedência)</p>
                                         </div>

@@ -80,10 +80,12 @@ export function EvolutionChart({ transactions }: EvolutionChartProps) {
                         formatter={(value: number | undefined) => [`R$ ${value?.toFixed(2) || '0.00'}`, 'Gasto acumulado']}
                         labelFormatter={(label) => `Dia ${label}`}
                         contentStyle={{
-                            backgroundColor: '#fff',
+                            backgroundColor: '#ffffff',
                             border: '1px solid #e2e8f0',
                             borderRadius: '8px',
+                            color: '#1e293b'
                         }}
+                        itemStyle={{ color: '#1e293b' }}
                     />
                     <Line
                         type="monotone"

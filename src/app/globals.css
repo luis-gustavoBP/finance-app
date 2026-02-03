@@ -3,6 +3,32 @@
 :root {
   --background: #f8fafc;
   --foreground: #1e293b;
+  color-scheme: light !important;
+}
+
+html,
+body {
+  background-color: #f8fafc !important;
+  color: #1e293b !important;
+  color-scheme: light !important;
+}
+
+/* Force light mode on all svgs and charts */
+svg {
+  filter: none !important;
+}
+
+/* Ensure common containers stay light */
+div,
+section,
+article,
+nav,
+header,
+main,
+footer,
+aside,
+.card {
+  border-color: #e2e8f0;
 }
 
 @theme inline {

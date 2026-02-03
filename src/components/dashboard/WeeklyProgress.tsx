@@ -39,7 +39,7 @@ export function WeeklyProgress({ transactions, monthlyLimit, weeklyGoal }: Weekl
             </CardHeader>
             <CardContent>
                 <div className="flex justify-between items-end mb-2">
-                    <span className="text-2xl font-bold text-slate-800 dark:text-white">
+                    <span className="text-2xl font-bold text-slate-800 ">
                         {formatCents(spentThisWeek)}
                     </span>
                     <span className="text-xs text-slate-500 mb-1">
@@ -47,7 +47,7 @@ export function WeeklyProgress({ transactions, monthlyLimit, weeklyGoal }: Weekl
                     </span>
                 </div>
 
-                <div className="h-2 w-full bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+                <div className="h-2 w-full bg-slate-100 rounded-full overflow-hidden">
                     <div
                         className={`h-full transition-all duration-500 ${progressColor}`}
                         style={{ width: `${progress}%` }}
