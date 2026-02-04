@@ -21,10 +21,10 @@ export function AuthGuard({ children }: { children: React.ReactNode }) {
     // Show loading while checking auth, EXCEPT for public routes
     if (loading && !isPublicRoute) {
         return (
-            <div className="h-screen flex items-center justify-center bg-slate-50">
+            <div className="h-screen flex items-center justify-center bg-[#001861]">
                 <div className="flex flex-col items-center gap-4">
-                    <div className="w-12 h-12 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin"></div>
-                    <p className="text-slate-500 font-medium">Verificando autenticação...</p>
+                    <div className="w-12 h-12 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
+                    <p className="text-slate-300 font-medium animate-pulse">Verificando autenticação...</p>
                 </div>
             </div>
         );

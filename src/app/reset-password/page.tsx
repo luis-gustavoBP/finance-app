@@ -61,24 +61,24 @@ export default function ResetPasswordPage() {
 
     if (checkingSession) {
         return (
-            <div className="min-h-screen flex items-center justify-center bg-slate-50">
-                <div className="animate-pulse text-slate-500">Verificando link...</div>
+            <div className="min-h-screen flex items-center justify-center bg-[#001861]">
+                <div className="animate-pulse text-slate-300">Verificando link...</div>
             </div>
         );
     }
 
     if (!hasSession) {
         return (
-            <div className="min-h-screen flex items-center justify-center bg-slate-50 p-4">
-                <Card className="w-full max-w-md text-center">
+            <div className="min-h-screen flex items-center justify-center bg-[#001861] p-4">
+                <Card className="w-full max-w-md text-center glass-panel bg-[#001242] border-white/20">
                     <CardHeader>
-                        <div className="mx-auto bg-amber-100 w-16 h-16 rounded-full flex items-center justify-center mb-4">
+                        <div className="mx-auto bg-amber-500/20 border border-amber-500/30 w-16 h-16 rounded-full flex items-center justify-center mb-4">
                             <span className="text-3xl">⚠️</span>
                         </div>
-                        <CardTitle className="text-2xl text-slate-800">Link Inválido</CardTitle>
+                        <CardTitle className="text-2xl text-white">Link Inválido</CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-6">
-                        <p className="text-slate-600">
+                        <p className="text-slate-200">
                             Este link expirou ou já foi usado. Por favor, solicite um novo link de recuperação.
                         </p>
                         <Link href="/forgot-password">
@@ -92,16 +92,16 @@ export default function ResetPasswordPage() {
 
     if (success) {
         return (
-            <div className="min-h-screen flex items-center justify-center bg-slate-50 p-4">
-                <Card className="w-full max-w-md text-center">
+            <div className="min-h-screen flex items-center justify-center bg-[#001861] p-4">
+                <Card className="w-full max-w-md text-center glass-panel bg-[#001242] border-white/20">
                     <CardHeader>
-                        <div className="mx-auto bg-green-100 w-16 h-16 rounded-full flex items-center justify-center mb-4">
+                        <div className="mx-auto bg-emerald-500/20 border border-emerald-500/30 w-16 h-16 rounded-full flex items-center justify-center mb-4">
                             <span className="text-3xl">✅</span>
                         </div>
-                        <CardTitle className="text-2xl text-slate-800">Senha Alterada!</CardTitle>
+                        <CardTitle className="text-2xl text-white">Senha Alterada!</CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <p className="text-slate-600 mb-6">
+                        <p className="text-slate-200 mb-6">
                             Sua senha foi redefinida com sucesso.
                             <br />
                             Redirecionando para o login...
@@ -113,19 +113,19 @@ export default function ResetPasswordPage() {
     }
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-slate-50 p-4">
-            <Card className="w-full max-w-md">
+        <div className="min-h-screen flex items-center justify-center bg-[#001861] p-4">
+            <Card className="w-full max-w-md glass-panel bg-[#001242] border-white/20">
                 <CardHeader>
-                    <CardTitle className="text-center text-2xl text-slate-800">
+                    <CardTitle className="text-center text-2xl text-white">
                         Redefinir Senha
                     </CardTitle>
-                    <p className="text-center text-sm text-slate-500 mt-2">
+                    <p className="text-center text-sm text-slate-300 mt-2">
                         Digite sua nova senha abaixo
                     </p>
                 </CardHeader>
                 <CardContent>
                     {error && (
-                        <div className="mb-4 p-3 bg-red-100 border border-red-200 text-red-700 rounded-lg text-sm">
+                        <div className="mb-4 p-3 bg-red-500/10 border border-red-500/30 text-red-300 rounded-lg text-sm">
                             {error}
                         </div>
                     )}

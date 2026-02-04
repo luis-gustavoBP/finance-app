@@ -105,26 +105,26 @@ export default function LoginPage() {
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-slate-50 p-4">
-            <Card className="w-full max-w-md">
+        <div className="min-h-screen flex items-center justify-center bg-[#001861] p-4">
+            <Card className="w-full max-w-md glass-panel bg-[#001242] border-white/20">
                 <CardHeader className="flex flex-col items-center pb-2">
                     <img
                         src="/logo.png"
                         alt="ContApp Logo"
                         className="h-12 w-auto mb-4 rounded-xl shadow-md"
                     />
-                    <CardTitle className="text-center text-2xl text-slate-800">
+                    <CardTitle className="text-center text-2xl text-white">
                         {isLogin ? 'Entrar no ContApp' : 'Criar Conta'}
                     </CardTitle>
                 </CardHeader>
                 <CardContent>
                     {error && (
-                        <div className="mb-4 p-3 bg-red-100 border border-red-200 text-red-700 rounded-lg text-sm">
+                        <div className="mb-4 p-3 bg-red-500/10 border border-red-500/30 text-red-300 rounded-lg text-sm">
                             {error}
                         </div>
                     )}
                     {success && (
-                        <div className="mb-4 p-3 bg-green-100 border border-green-200 text-green-700 rounded-lg text-sm">
+                        <div className="mb-4 p-3 bg-green-500/10 border border-green-500/30 text-green-300 rounded-lg text-sm">
                             {success}
                         </div>
                     )}
@@ -158,7 +158,7 @@ export default function LoginPage() {
                             <div className="flex flex-col items-center gap-2 mt-4 text-sm">
                                 <Link
                                     href="/forgot-password"
-                                    className="text-indigo-600 hover:text-indigo-700 hover:underline"
+                                    className="text-indigo-400 hover:text-indigo-300 hover:underline"
                                 >
                                     Esqueci minha senha
                                 </Link>
@@ -169,7 +169,7 @@ export default function LoginPage() {
                                         setError('');
                                         setSuccess('');
                                     }}
-                                    className="text-slate-500 hover:text-slate-700 hover:underline"
+                                    className="text-slate-300 hover:text-white hover:underline"
                                 >
                                     Não tem conta? Cadastre-se
                                 </button>
@@ -217,7 +217,7 @@ export default function LoginPage() {
                                 placeholder="Repita a senha"
                             />
 
-                            <Button type="submit" className="w-full bg-green-600 hover:bg-green-700" disabled={isLoading}>
+                            <Button type="submit" className="w-full bg-emerald-600 hover:bg-emerald-700" disabled={isLoading}>
                                 {isLoading ? 'Criando conta...' : 'Criar Conta'}
                             </Button>
 
@@ -229,7 +229,7 @@ export default function LoginPage() {
                                         setError('');
                                         setSuccess('');
                                     }}
-                                    className="text-slate-500 hover:text-slate-700 hover:underline"
+                                    className="text-slate-300 hover:text-white hover:underline"
                                 >
                                     Já tem conta? Faça login
                                 </button>
