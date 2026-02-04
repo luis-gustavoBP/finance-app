@@ -11,7 +11,7 @@ import { Button } from '@/components/ui/Button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Input } from '@/components/ui/Input';
 import { Modal } from '@/components/ui/Modal';
-import { formatCents, parseLocalDate, cn, formatFirstName, parseCurrencyInput, formatCurrencyInputValue, getWeekStart } from '@/lib/utils';
+import { formatCents, parseLocalDate, cn, formatFirstName, parseCurrencyInput, formatCurrencyInputValue, getWeekStart, getWeekEnd } from '@/lib/utils';
 import { WidgetCard } from '@/components/dashboard/WidgetCard';
 import { CategoryPieChart } from '@/components/dashboard/CategoryPieChart';
 
@@ -97,8 +97,12 @@ export default function DashboardPage() {
 
   // Calculate weekly spending
   const weekStart = getWeekStart();
+  const weekEnd = getWeekEnd();
   const weeklySpent = transactions
-    .filter(t => parseLocalDate(t.posted_at) >= weekStart && (t as any).include_in_weekly_plan !== false)
+    .filter(t => {
+      const txDate = parseLocalDate(t.posted_at);
+      return txDate >= weekStart && txDate <= weekEnd && (t as any).include_in_weekly_plan !== false;
+    })
     .reduce((sum, t) => sum + t.amount_cents, 0);
 
   const weeklyGoal = settings?.weekly_goal_cents || 0;
@@ -151,7 +155,7 @@ export default function DashboardPage() {
               <WidgetCard
                 title="Progresso Semanal"
                 value={weeklySpent}
-                subtitle={`de ${formatCents(weeklyGoal)}`}
+                subtitle={`${weekStart.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' })} a ${weekEnd.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' })} • Meta: ${formatCents(weeklyGoal)}`}
                 icon="trending"
                 variant="blue"
               >

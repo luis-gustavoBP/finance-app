@@ -86,13 +86,26 @@ export const incomeTypes = [
 ];
 
 /**
- * Retorna o início da semana atual (domingo)
+ * Retorna o início da semana atual (domingo às 00:00:00)
  */
 export function getWeekStart(): Date {
     const now = new Date();
     const day = now.getDay();
     const diff = now.getDate() - day;
-    return new Date(now.setDate(diff));
+    const date = new Date(now.getFullYear(), now.getMonth(), diff);
+    date.setHours(0, 0, 0, 0);
+    return date;
+}
+
+/**
+ * Retorna o fim da semana atual (sábado às 23:59:59)
+ */
+export function getWeekEnd(): Date {
+    const start = getWeekStart();
+    const end = new Date(start);
+    end.setDate(start.getDate() + 6);
+    end.setHours(23, 59, 59, 999);
+    return end;
 }
 
 /**

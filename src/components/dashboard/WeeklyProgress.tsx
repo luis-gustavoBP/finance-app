@@ -1,7 +1,7 @@
 'use client';
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
-import { formatCents, parseLocalDate } from '@/lib/utils';
+import { formatCents, parseLocalDate, getWeekStart, getWeekEnd } from '@/lib/utils';
 import { Database } from '@/types/database.types';
 
 type Transaction = Database['public']['Tables']['transactions']['Row'];
@@ -15,16 +15,14 @@ interface WeeklyProgressProps {
 export function WeeklyProgress({ transactions, monthlyLimit, weeklyGoal }: WeeklyProgressProps) {
     const weeklyLimit = (weeklyGoal && weeklyGoal > 0) ? weeklyGoal : monthlyLimit / 4;
 
-    // Calcular gasto da semana atual
-    // Simplificação: últimos 7 dias ou filtro por semana do mês
-    // Vamos usar "esta semana" (domingo a sábado)
-    const now = new Date();
-    const startOfWeek = new Date(now);
-    startOfWeek.setDate(now.getDate() - now.getDay());
-    startOfWeek.setHours(0, 0, 0, 0);
+    const weekStart = getWeekStart();
+    const weekEnd = getWeekEnd();
 
     const spentThisWeek = transactions
-        .filter(tx => parseLocalDate(tx.posted_at) >= startOfWeek && (tx as any).include_in_weekly_plan !== false)
+        .filter(tx => {
+            const date = parseLocalDate(tx.posted_at);
+            return date >= weekStart && date <= weekEnd && (tx as any).include_in_weekly_plan !== false;
+        })
         .reduce((sum, tx) => sum + tx.amount_cents, 0);
 
     const progress = weeklyLimit > 0 ? Math.min((spentThisWeek / weeklyLimit) * 100, 100) : 0;
@@ -35,7 +33,12 @@ export function WeeklyProgress({ transactions, monthlyLimit, weeklyGoal }: Weekl
     return (
         <Card>
             <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium text-slate-500">Gasto da Semana</CardTitle>
+                <CardTitle className="text-sm font-medium text-slate-500 flex justify-between items-center">
+                    <span>Gasto da Semana</span>
+                    <span className="text-[10px] opacity-70">
+                        {weekStart.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' })} - {weekEnd.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' })}
+                    </span>
+                </CardTitle>
             </CardHeader>
             <CardContent>
                 <div className="flex justify-between items-end mb-2">
