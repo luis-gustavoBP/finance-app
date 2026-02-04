@@ -7,6 +7,7 @@ import { useSettings } from '@/hooks/useSettings';
 import { useCategories } from '@/hooks/useCategories';
 import { useIncome } from '@/hooks/useIncome';
 import { useInvoices } from '@/hooks/useInvoices';
+import { useSubscriptions } from '@/hooks/useSubscriptions';
 import { Button } from '@/components/ui/Button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Input } from '@/components/ui/Input';
@@ -30,6 +31,7 @@ export default function DashboardPage() {
   const { settings, updateSettings, isLoading: isSettingsLoading, error: isSettingsError } = useSettings();
   const { incomeEntries, isLoading: isIncomeLoading } = useIncome();
   const { invoices, isLoading: isInvoicesLoading } = useInvoices();
+  const { subscriptions, isLoading: isSubsLoading } = useSubscriptions();
   const { selectedDate } = useMonthFilter();
   const { user } = useAuth();
 
@@ -47,7 +49,7 @@ export default function DashboardPage() {
     setIsConfiguringBudget(false);
   };
 
-  if (isTxLoading || isCardsLoading || isSettingsLoading || isCategoriesLoading || isInvoicesLoading) {
+  if (isTxLoading || isCardsLoading || isSettingsLoading || isCategoriesLoading || isInvoicesLoading || isSubsLoading) {
     return <div className="p-8 text-center animate-pulse">Carregando...</div>;
   }
 
@@ -92,8 +94,12 @@ export default function DashboardPage() {
     })
     .reduce((sum, entry) => sum + entry.amount_cents, 0);
 
-  // Available balance = Budget + Income - Expenses
-  const availableBalance = globalLimit + monthlyIncome - totalSpentMonthly;
+  // Available balance = Budget + Income - Expenses - Active Subscriptions
+  const totalSubscriptions = subscriptions
+    .filter(s => s.active)
+    .reduce((sum, s) => sum + s.amount_cents, 0);
+
+  const availableBalance = globalLimit + monthlyIncome - totalSpentMonthly - totalSubscriptions;
 
   // Calculate weekly spending
   const weekStart = getWeekStart();

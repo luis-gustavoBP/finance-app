@@ -87,6 +87,8 @@ export interface Database {
                     amount_cents: number
                     due_day: number
                     active: boolean
+                    payment_method: 'credit' | 'debit' | 'pix' | 'cash'
+                    card_id: string | null
                     created_at: string
                     updated_at: string
                 }
@@ -98,6 +100,8 @@ export interface Database {
                     amount_cents: number
                     due_day: number
                     active?: boolean
+                    payment_method?: 'credit' | 'debit' | 'pix' | 'cash'
+                    card_id?: string | null
                     created_at?: string
                     updated_at?: string
                 }
@@ -109,6 +113,8 @@ export interface Database {
                     amount_cents?: number
                     due_day?: number
                     active?: boolean
+                    payment_method?: 'credit' | 'debit' | 'pix' | 'cash'
+                    card_id?: string | null
                     created_at?: string
                     updated_at?: string
                 }

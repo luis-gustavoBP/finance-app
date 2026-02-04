@@ -3,6 +3,7 @@
 import { useTransactions } from '@/hooks/useTransactions';
 import { useIncome } from '@/hooks/useIncome';
 import { useInvoices } from '@/hooks/useInvoices';
+import { useSubscriptions } from '@/hooks/useSubscriptions';
 import { useMonthFilter } from '@/contexts/MonthFilterContext';
 import { formatCents, parseLocalDate, cn } from '@/lib/utils';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
@@ -11,6 +12,7 @@ export function FinancialStabilityWidget() {
     const { transactions } = useTransactions();
     const { incomeEntries } = useIncome();
     const { invoices } = useInvoices();
+    const { subscriptions } = useSubscriptions();
     const { selectedDate } = useMonthFilter();
 
     const currentMonth = selectedDate.getMonth() + 1;
@@ -51,7 +53,12 @@ export function FinancialStabilityWidget() {
         })
         .reduce((sum, tx) => sum + tx.amount_cents, 0);
 
-    const netBalance = currentBalance - openInvoicesSum;
+    // 3. Assinaturas e Contas Fixas (Subscriptions) - Committed monthly expenses
+    const activeSubscriptionsSum = subscriptions
+        .filter(sub => sub.active)
+        .reduce((sum, sub) => sum + sub.amount_cents, 0);
+
+    const netBalance = currentBalance - openInvoicesSum - activeSubscriptionsSum;
 
     return (
         <Card className="glass-panel bg-gradient-to-br from-indigo-600/30 via-navy-900/20 to-teal-500/30 text-white shadow-2xl relative overflow-hidden border-white/20">
@@ -86,11 +93,18 @@ export function FinancialStabilityWidget() {
 
                     {/* Pending Invoices for current month */}
                     <div className="space-y-1 border-white/10 md:border-l md:pl-8">
-                        <span className="text-[10px] font-bold text-white/60 uppercase tracking-widest">Faturas de {selectedDate.toLocaleDateString('pt-BR', { month: 'short' })}</span>
-                        <div className="flex items-baseline gap-2">
-                            <span className="text-3xl font-bold text-white/90 tracking-tight">
-                                - {formatCents(openInvoicesSum)}
-                            </span>
+                        <span className="text-[10px] font-bold text-white/60 uppercase tracking-widest">Comprometido: Faturas e Assinaturas</span>
+                        <div className="flex flex-col gap-1">
+                            <div className="flex items-baseline gap-2">
+                                <span className="text-xl font-bold text-white/90 tracking-tight">
+                                    Faturas: {formatCents(openInvoicesSum)}
+                                </span>
+                            </div>
+                            <div className="flex items-baseline gap-2">
+                                <span className="text-xl font-bold text-white/90 tracking-tight">
+                                    Assinaturas: {formatCents(activeSubscriptionsSum)}
+                                </span>
+                            </div>
                         </div>
                     </div>
 
