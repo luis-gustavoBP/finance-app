@@ -33,12 +33,7 @@ export function WeeklyProgress({ transactions, monthlyLimit, weeklyGoal }: Weekl
     return (
         <Card>
             <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium text-slate-500 flex justify-between items-center">
-                    <span>Gasto da Semana</span>
-                    <span className="text-[10px] opacity-70">
-                        {weekStart.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' })} - {weekEnd.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' })}
-                    </span>
-                </CardTitle>
+                <CardTitle className="text-sm font-medium text-slate-500">Gasto da Semana</CardTitle>
             </CardHeader>
             <CardContent>
                 <div className="flex justify-between items-end mb-2">
