@@ -11,20 +11,16 @@ import { Button } from '@/components/ui/Button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Input } from '@/components/ui/Input';
 import { Modal } from '@/components/ui/Modal';
-import { formatCents, cn, parseCurrencyInput, formatCurrencyInputValue, getWeekStart, parseLocalDate } from '@/lib/utils';
-import { WeeklyProgress } from '@/components/dashboard/WeeklyProgress';
-import { MonthlyPace } from '@/components/dashboard/MonthlyPace';
-import { CategoryChart } from '@/components/dashboard/CategoryChart';
-import { FutureCommitments } from '@/components/dashboard/FutureCommitments';
-import { MonthlyIncome } from '@/components/dashboard/MonthlyIncome';
-import { BalanceCard } from '@/components/dashboard/BalanceCard';
+import { formatCents, parseLocalDate, cn, formatFirstName, parseCurrencyInput, formatCurrencyInputValue, getWeekStart } from '@/lib/utils';
 import { WidgetCard } from '@/components/dashboard/WidgetCard';
-import { EvolutionChart } from '@/components/dashboard/EvolutionChart';
 import { CategoryPieChart } from '@/components/dashboard/CategoryPieChart';
 
 import { useMonthFilter } from '@/contexts/MonthFilterContext';
+import { useAuth } from '@/contexts/AuthContext';
 import { MonthSelector } from '@/components/dashboard/MonthSelector';
 import { ProgressBar } from '@/components/ui/ProgressBar';
+import { FinancialStabilityWidget } from '@/components/dashboard/FinancialStabilityWidget';
+import { SpendingAnalysisWidget } from '@/components/dashboard/SpendingAnalysisWidget';
 import { UpcomingInvoicesWidget } from '@/components/dashboard/UpcomingInvoicesWidget';
 
 export default function DashboardPage() {
@@ -35,6 +31,7 @@ export default function DashboardPage() {
   const { incomeEntries, isLoading: isIncomeLoading } = useIncome();
   const { invoices, isLoading: isInvoicesLoading } = useInvoices();
   const { selectedDate } = useMonthFilter();
+  const { user } = useAuth();
 
   const [isConfiguringBudget, setIsConfiguringBudget] = useState(false);
   const [newGlobalLimit, setNewGlobalLimit] = useState('');
@@ -76,14 +73,12 @@ export default function DashboardPage() {
   });
 
   const totalSpentMonthly = monthlyTransactions.reduce((sum, tx) => sum + tx.amount_cents, 0);
-
   const globalLimit = settings?.global_monthly_limit_cents || 0;
 
   // Calculate specific card limits logic implies total cards limit if manual budget is not preferred, 
   // but we use user setting global_monthly_limit_cents as "Planned Budget".
   // For "Real Card Limit Available", we sum actual card limits.
   const totalCardLimits = cards.reduce((sum, card) => sum + (card.limit_cents || 0), 0);
-  const availableCreditLimit = Math.max(0, totalCardLimits - totalSpentMonthly);
 
   // Filter income for selected month
   const monthlyIncome = incomeEntries
@@ -108,33 +103,16 @@ export default function DashboardPage() {
 
   const weeklyGoal = settings?.weekly_goal_cents || 0;
 
-  // Calculate spending per card for the current month
-  const getSpentByCard = (cardId: string) => {
-    return monthlyTransactions
-      .filter(tx => tx.card_id === cardId)
-      .reduce((sum, tx) => sum + tx.amount_cents, 0);
-  };
-
-  const recentTransactions = transactions.slice(0, 5);
-
-  const calculateProgress = (spent: number, limit: number) => {
-    if (!limit || limit === 0) return 0;
-    return Math.min((spent / limit) * 100, 100);
-  };
-
-  const globalProgress = calculateProgress(totalSpentMonthly, globalLimit);
-  const creditLimitProgress = calculateProgress(totalSpentMonthly, totalCardLimits);
-
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-blue-50 to-pink-50 -m-8 p-8">
-      <div className="max-w-7xl mx-auto space-y-6 animate-in fade-in duration-500">
+    <div className="min-h-full">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6 animate-in fade-in duration-500">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-slate-800 ">
-              Dashboard
+            <h1 className="text-2xl font-bold text-white">
+              Olá, {formatFirstName(user?.user_metadata?.full_name || user?.email?.split('@')[0])}
             </h1>
-            <p className="text-slate-500 mt-1">
+            <p className="text-slate-200 mt-1">
               Visão geral dos seus gastos e limites
             </p>
           </div>
@@ -145,12 +123,12 @@ export default function DashboardPage() {
 
         {/* Global Credit Limit Progress (New Requirement) */}
         {totalCardLimits > 0 && (
-          <Card className="bg-white border-blue-100 shadow-sm">
+          <Card className="glass-panel text-white/90">
             <CardContent className="p-4 flex items-center justify-between gap-4">
               <div className="flex-1">
                 <div className="flex justify-between text-sm mb-1.5">
-                  <span className="font-semibold text-slate-700">Limite do Cartão Disponível</span>
-                  <span className="text-slate-500">{formatCents(totalCardLimits - totalSpentMonthly)} de {formatCents(totalCardLimits)}</span>
+                  <span className="font-semibold text-white/90">Limite do Cartão Disponível</span>
+                  <span className="text-slate-200">{formatCents(totalCardLimits - totalSpentMonthly)} de {formatCents(totalCardLimits)}</span>
                 </div>
                 <ProgressBar value={totalSpentMonthly} max={totalCardLimits} showLabel={false} size="sm" className="h-2" />
               </div>
@@ -158,103 +136,68 @@ export default function DashboardPage() {
           </Card>
         )}
 
-        {/* Balance Card com gradiente roxo/rosa */}
-        <BalanceCard
-          available={availableBalance}
-          budget={globalLimit}
-          spent={totalSpentMonthly}
-        />
+        {/* Balance Card com gradiente roxo/rosa (Original) - May move/remove in favor of new Stability Widget? 
+            For now keeping it but FinancialStabilityWidget is strictly "Bank Account" view requested. */}
+        {/* <BalanceCard available={availableBalance} budget={globalLimit} spent={totalSpentMonthly} /> */}
 
-        {/* Widgets Row */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <WidgetCard
-            title="Progresso Semanal"
-            value={weeklySpent}
-            subtitle={`de ${formatCents(weeklyGoal)}`}
-            icon="trending"
-            iconColor="text-blue-600"
-            iconBg="bg-blue-100"
-          >
-            {weeklyGoal > 0 && (
-              <div className="mt-3">
-                <div className="h-2 w-full bg-slate-200 rounded-full overflow-hidden">
-                  <div
-                    className="h-full bg-blue-600 transition-all"
-                    style={{ width: `${Math.min((weeklySpent / weeklyGoal) * 100, 100)}%` }}
-                  />
-                </div>
-                <p className="text-xs text-slate-500 mt-1">
-                  {((weeklySpent / weeklyGoal) * 100).toFixed(1)}% da meta semanal
-                </p>
-              </div>
-            )}
-          </WidgetCard>
+        {/* Financial Stability - Full Width at Top */}
+        <FinancialStabilityWidget />
 
-          <WidgetCard
-            title="Entradas no Mês"
-            value={monthlyIncome}
-            subtitle={`${incomeEntries.filter(e => {
-              const d = parseLocalDate(e.received_at);
-              return d.getMonth() === currentMonth && d.getFullYear() === currentYear;
-            }).length} entrada(s)`}
-            icon="dollar"
-            iconColor="text-green-600"
-            iconBg="bg-green-100"
-          />
-
-          <UpcomingInvoicesWidget
-            transactions={transactions}
-            cards={cards}
-            invoices={invoices}
-          />
-        </div>
-
-        {/* Charts Section */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <EvolutionChart transactions={transactions as any} />
-          <CategoryPieChart transactions={monthlyTransactions as any} categories={categories} />
-        </div>
-
-        {/* Original Components */}
+        {/* Widgets Grid - Restructured */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div className="lg:col-span-2 space-y-6">
-            {/* Weekly Progress & Pace */}
+          {/* Left Column: Spending Analysis & Weekly */}
+          <div className="space-y-6 lg:col-span-2">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <WeeklyProgress
-                transactions={transactions as any}
-                monthlyLimit={globalLimit}
-                weeklyGoal={settings?.weekly_goal_cents}
+              <WidgetCard
+                title="Progresso Semanal"
+                value={weeklySpent}
+                subtitle={`de ${formatCents(weeklyGoal)}`}
+                icon="trending"
+                variant="blue"
+              >
+                {weeklyGoal > 0 && (
+                  <div className="mt-3">
+                    <div className="h-2 w-full bg-white/20 rounded-full overflow-hidden">
+                      <div
+                        className="h-full bg-white transition-all shadow-[0_0_8px_rgba(255,255,255,0.8)]"
+                        style={{ width: `${Math.min((weeklySpent / weeklyGoal) * 100, 100)}%` }}
+                      />
+                    </div>
+                    <p className="text-[10px] text-white/60 font-bold mt-2 uppercase tracking-tight">
+                      {((weeklySpent / weeklyGoal) * 100).toFixed(1)}% da meta semanal
+                    </p>
+                  </div>
+                )}
+              </WidgetCard>
+              <WidgetCard
+                title="Entradas no Mês"
+                value={monthlyIncome}
+                subtitle={`${incomeEntries.filter(e => {
+                  const d = parseLocalDate(e.received_at);
+                  return d.getMonth() === currentMonth && d.getFullYear() === currentYear;
+                }).length} entrada(s)`}
+                icon="dollar"
+                variant="green"
               />
-              <FutureCommitments transactions={transactions as any} />
             </div>
-            {/* Monthly Evolution */}
-            <MonthlyPace transactions={transactions} monthlyLimit={globalLimit} />
+
+            <SpendingAnalysisWidget transactions={transactions} monthlyLimit={globalLimit} />
+
+            <CategoryPieChart transactions={monthlyTransactions as any} categories={categories} />
           </div>
 
-          <div className="lg:col-span-1 space-y-6">
-            {/* Income Widget */}
-            <MonthlyIncome />
-
-            {/* Category & Stats */}
-            <CategoryChart transactions={monthlyTransactions} />
-
-            <Card>
-              <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium text-slate-500">Resumo Rápido</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-slate-600">Cartões Ativos</span>
-                  <span className="font-bold">{cards.length}</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-slate-600">Transações (Mês)</span>
-                  <span className="font-bold">{monthlyTransactions.length}</span>
-                </div>
-              </CardContent>
-            </Card>
+          {/* Right Column: Invoices & Quick Stats */}
+          <div className="space-y-6">
+            <UpcomingInvoicesWidget
+              transactions={transactions}
+              cards={cards}
+              invoices={invoices}
+            />
           </div>
         </div>
+
+
+
 
         {/* Budget Configuration Modal */}
         <Modal
@@ -287,6 +230,6 @@ export default function DashboardPage() {
           </div>
         </Modal>
       </div>
-    </div>
+    </div >
   );
 }

@@ -29,7 +29,7 @@ export function ConfirmModal({
     return (
         <Modal isOpen={isOpen} onClose={onClose} title={title}>
             <div className="space-y-4 pt-4">
-                <p className="text-slate-600 ">
+                <p className="text-slate-300 ">
                     {message}
                 </p>
                 <div className="flex justify-end gap-3 pt-4">

@@ -76,6 +76,7 @@ export function useTransactions() {
                 installment_number: 1,
                 user_id: user.id,
                 include_in_weekly_plan: transaction.include_in_weekly_plan ?? true,
+                payment_method: transaction.payment_method || 'credit',
             })
             .select();
 

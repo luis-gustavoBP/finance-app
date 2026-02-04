@@ -78,80 +78,82 @@ export default function GastosPage() {
     };
 
     return (
-        <div className="space-y-6">
-            <div className="flex items-center justify-between flex-wrap gap-3">
-                <div className="flex items-center gap-3">
-                    <h1 className="text-2xl font-bold text-slate-800 ">Minhas Transações</h1>
-                    <MonthSelector />
+        <div className="min-h-full">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+                <div className="flex items-center justify-between flex-wrap gap-3">
+                    <div className="flex items-center gap-3">
+                        <h1 className="text-2xl font-bold text-white">Minhas Transações</h1>
+                        <MonthSelector />
+                    </div>
+                    <div className="flex items-center gap-2">
+                        <Button variant="primary" size="sm" onClick={() => setIsModalOpen(true)}>+ Nova Transação</Button>
+                    </div>
                 </div>
-                <div className="flex items-center gap-2">
-                    <Button variant="primary" size="sm" onClick={() => setIsModalOpen(true)}>+ Nova Transação</Button>
-                </div>
-            </div>
 
-            <Card className="bg-white">
-                <CardContent className="p-0">
-                    {filteredTransactions.length === 0 ? (
-                        <div className="p-12 text-center text-slate-500">Nenhum gasto registrado neste mês.</div>
-                    ) : (
-                        <div className="divide-y divide-slate-100 ">
-                            {filteredTransactions.map(tx => (
-                                <div key={tx.id} className="flex items-center justify-between p-4 hover:bg-slate-50 transition-colors">
-                                    <div className="flex items-center gap-3">
-                                        <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-xl">
-                                            {tx.category?.icon || '📦'}
-                                        </div>
-                                        <div>
-                                            <div className="font-medium text-slate-800 ">{tx.description}</div>
-                                            <div className="flex items-center gap-2 text-xs text-slate-500">
-                                                <span>{formatDate(tx.posted_at)} • {tx.card?.name || 'Dinheiro'}</span>
-                                                {isTransactionPaid(tx) && (
-                                                    <span className="bg-green-100 text-green-700 px-1.5 py-0.5 rounded-full text-[10px] font-bold border border-green-200">
-                                                        PAGO
-                                                    </span>
-                                                )}
+                <Card className="glass-panel text-white p-0">
+                    <CardContent className="p-0">
+                        {filteredTransactions.length === 0 ? (
+                            <div className="p-12 text-center text-slate-200">Nenhum gasto registrado neste mês.</div>
+                        ) : (
+                            <div className="divide-y divide-white/10">
+                                {filteredTransactions.map(tx => (
+                                    <div key={tx.id} className="flex items-center justify-between p-4 hover:bg-white/5 transition-colors">
+                                        <div className="flex items-center gap-3">
+                                            <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-xl">
+                                                {tx.category?.icon || '📦'}
+                                            </div>
+                                            <div>
+                                                <div className="font-medium text-white">{tx.description}</div>
+                                                <div className="flex items-center gap-2 text-xs text-slate-200">
+                                                    <span>{formatDate(tx.posted_at)} • {tx.card?.name || 'Dinheiro'}</span>
+                                                    {isTransactionPaid(tx) && (
+                                                        <span className="bg-green-100 text-green-700 px-1.5 py-0.5 rounded-full text-[10px] font-bold border border-green-200">
+                                                            PAGO
+                                                        </span>
+                                                    )}
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                    <div className="flex items-center gap-4">
-                                        <div className="text-right">
-                                            <div className="font-bold text-slate-800 ">{formatCents(tx.amount_cents)}</div>
-                                            {tx.installments > 1 && (
-                                                <div className="text-[10px] text-indigo-500 font-semibold">
-                                                    {tx.installment_number}/{tx.installments}x
-                                                </div>
-                                            )}
+                                        <div className="flex items-center gap-4">
+                                            <div className="text-right">
+                                                <div className="font-bold text-white">{formatCents(tx.amount_cents)}</div>
+                                                {tx.installments > 1 && (
+                                                    <div className="text-[10px] text-indigo-300 font-semibold">
+                                                        {tx.installment_number}/{tx.installments}x
+                                                    </div>
+                                                )}
+                                            </div>
+                                            <Button
+                                                variant="ghost"
+                                                size="sm"
+                                                className="text-red-400 hover:bg-red-500/10 px-2"
+                                                onClick={(e) => handleDeleteClick(e, tx.id, tx.description)}
+                                            >
+                                                🗑️
+                                            </Button>
                                         </div>
-                                        <Button
-                                            variant="ghost"
-                                            size="sm"
-                                            className="text-red-600 hover:bg-red-50 px-2"
-                                            onClick={(e) => handleDeleteClick(e, tx.id, tx.description)}
-                                        >
-                                            🗑️
-                                        </Button>
                                     </div>
-                                </div>
-                            ))}
-                        </div>
-                    )}
-                </CardContent>
-            </Card>
+                                ))}
+                            </div>
+                        )}
+                    </CardContent>
+                </Card>
 
-            <AddTransactionModal
-                isOpen={isModalOpen}
-                onClose={() => setIsModalOpen(false)}
-            />
+                <AddTransactionModal
+                    isOpen={isModalOpen}
+                    onClose={() => setIsModalOpen(false)}
+                />
 
-            <ConfirmModal
-                isOpen={deleteConfirmOpen}
-                onClose={() => setDeleteConfirmOpen(false)}
-                onConfirm={handleConfirmDelete}
-                title="Excluir Transação"
-                message={`Tem certeza que deseja excluir a transação "${txToDelete?.description}"?`}
-                confirmLabel="Excluir"
-                isLoading={isDeleting}
-            />
+                <ConfirmModal
+                    isOpen={deleteConfirmOpen}
+                    onClose={() => setDeleteConfirmOpen(false)}
+                    onConfirm={handleConfirmDelete}
+                    title="Excluir Transação"
+                    message={`Tem certeza que deseja excluir a transação "${txToDelete?.description}"?`}
+                    confirmLabel="Excluir"
+                    isLoading={isDeleting}
+                />
+            </div>
         </div>
     );
 }

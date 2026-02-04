@@ -78,6 +78,50 @@ export interface Database {
                 }
                 Relationships: []
             }
+            subscriptions: {
+                Row: {
+                    id: string
+                    user_id: string
+                    category_id: string | null
+                    description: string
+                    amount_cents: number
+                    due_day: number
+                    active: boolean
+                    created_at: string
+                    updated_at: string
+                }
+                Insert: {
+                    id?: string
+                    user_id: string
+                    category_id?: string | null
+                    description: string
+                    amount_cents: number
+                    due_day: number
+                    active?: boolean
+                    created_at?: string
+                    updated_at?: string
+                }
+                Update: {
+                    id?: string
+                    user_id?: string
+                    category_id?: string | null
+                    description?: string
+                    amount_cents?: number
+                    due_day?: number
+                    active?: boolean
+                    created_at?: string
+                    updated_at?: string
+                }
+                Relationships: [
+                    {
+                        foreignKeyName: "subscriptions_category_id_fkey"
+                        columns: ["category_id"]
+                        isOneToOne: false
+                        referencedRelation: "categories"
+                        referencedColumns: ["id"]
+                    }
+                ]
+            }
             transactions: {
                 Row: {
                     id: string
@@ -91,6 +135,7 @@ export interface Database {
                     installment_number: number
                     parent_transaction_id: string | null
                     include_in_weekly_plan: boolean
+                    payment_method: 'credit' | 'debit' | 'pix' | 'cash'
                     created_at: string
                 }
                 Insert: {
@@ -105,6 +150,7 @@ export interface Database {
                     installment_number?: number
                     parent_transaction_id?: string | null
                     include_in_weekly_plan?: boolean
+                    payment_method?: 'credit' | 'debit' | 'pix' | 'cash'
                     created_at?: string
                 }
                 Update: {
@@ -119,6 +165,7 @@ export interface Database {
                     installment_number?: number
                     parent_transaction_id?: string | null
                     include_in_weekly_plan?: boolean
+                    payment_method?: 'credit' | 'debit' | 'pix' | 'cash'
                     created_at?: string
                 }
                 Relationships: [

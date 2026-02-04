@@ -38,11 +38,11 @@ export function CategoryPieChart({ transactions, categories }: CategoryPieChartP
 
     if (data.length === 0) {
         return (
-            <div className="rounded-xl bg-white p-6 shadow-sm border border-slate-200">
-                <h3 className="mb-4 font-semibold text-slate-700">
-                    🍕 Gastos por Categoria
+            <div className="glass-panel text-white p-6">
+                <h3 className="mb-4 font-semibold text-white/90">
+                    Gastos por Categoria
                 </h3>
-                <p className="text-center text-slate-500 py-8">
+                <p className="text-center text-slate-300 py-8">
                     Nenhuma transação ainda
                 </p>
             </div>
@@ -52,9 +52,9 @@ export function CategoryPieChart({ transactions, categories }: CategoryPieChartP
     const total = data.reduce((sum, item) => sum + item.value, 0);
 
     return (
-        <div className="rounded-xl bg-white p-6 shadow-sm border border-slate-200">
-            <h3 className="mb-4 font-semibold text-slate-700">
-                🍕 Gastos por Categoria
+        <div className="glass-panel text-white p-6">
+            <h3 className="mb-4 font-semibold text-white/90">
+                Gastos por Categoria
             </h3>
 
             <ResponsiveContainer width="100%" height={300}>
@@ -76,12 +76,13 @@ export function CategoryPieChart({ transactions, categories }: CategoryPieChartP
                     <Tooltip
                         formatter={(value: number | undefined) => value !== undefined ? formatCents(value) : ''}
                         contentStyle={{
-                            backgroundColor: '#ffffff',
-                            border: '1px solid #e2e8f0',
-                            borderRadius: '8px',
-                            color: '#1e293b'
+                            backgroundColor: 'rgba(15, 23, 42, 0.9)',
+                            border: '1px solid rgba(255,255,255,0.1)',
+                            borderRadius: '12px',
+                            color: '#f8fafc',
+                            backdropFilter: 'blur(8px)'
                         }}
-                        itemStyle={{ color: '#1e293b' }}
+                        itemStyle={{ color: '#f8fafc' }}
                     />
                 </PieChart>
             </ResponsiveContainer>

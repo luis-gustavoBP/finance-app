@@ -1,7 +1,8 @@
 'use client';
 
 import { cn } from '@/lib/utils';
-import { useEffect, useCallback } from 'react';
+import { useEffect, useCallback, useState } from 'react';
+import { createPortal } from 'react-dom';
 
 interface ModalProps {
     isOpen: boolean;
@@ -12,6 +13,12 @@ interface ModalProps {
 }
 
 export function Modal({ isOpen, onClose, title, children, size = 'md' }: ModalProps) {
+    const [mounted, setMounted] = useState(false);
+
+    useEffect(() => {
+        setMounted(true);
+    }, []);
+
     const handleEscape = useCallback(
         (e: KeyboardEvent) => {
             if (e.key === 'Escape') {
@@ -33,7 +40,7 @@ export function Modal({ isOpen, onClose, title, children, size = 'md' }: ModalPr
         };
     }, [isOpen, handleEscape]);
 
-    if (!isOpen) return null;
+    if (!isOpen || !mounted) return null;
 
     const sizes = {
         sm: 'max-w-md',
@@ -41,18 +48,18 @@ export function Modal({ isOpen, onClose, title, children, size = 'md' }: ModalPr
         lg: 'max-w-2xl',
     };
 
-    return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center">
+    return createPortal(
+        <div className="fixed inset-0 z-[100] flex items-center justify-center">
             {/* Backdrop */}
             <div
-                className="absolute inset-0 bg-black/50 backdrop-blur-sm transition-opacity"
+                className="absolute inset-0 bg-black/60 backdrop-blur-md transition-opacity"
                 onClick={onClose}
             />
 
             {/* Modal */}
             <div
                 className={cn(
-                    'relative w-full mx-4 bg-white rounded-2xl shadow-2xl',
+                    'relative w-full mx-4 bg-[#080c14] md:bg-[#001242] rounded-2xl shadow-2xl border border-white/20 overflow-hidden',
                     'transform transition-all duration-300 ease-out',
                     'animate-in fade-in zoom-in-95',
                     sizes[size]
@@ -60,13 +67,13 @@ export function Modal({ isOpen, onClose, title, children, size = 'md' }: ModalPr
             >
                 {/* Header */}
                 {title && (
-                    <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200 ">
-                        <h2 className="text-xl font-semibold text-slate-800 ">
+                    <div className="flex items-center justify-between px-6 py-4 border-b border-white/10">
+                        <h2 className="text-xl font-semibold text-white">
                             {title}
                         </h2>
                         <button
                             onClick={onClose}
-                            className="p-1 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors"
+                            className="p-1 rounded-lg text-slate-400 hover:text-white hover:bg-white/10 transition-colors"
                         >
                             <svg
                                 className="w-5 h-5"
@@ -88,6 +95,7 @@ export function Modal({ isOpen, onClose, title, children, size = 'md' }: ModalPr
                 {/* Content */}
                 <div className="p-6">{children}</div>
             </div>
-        </div>
+        </div>,
+        document.body
     );
 }

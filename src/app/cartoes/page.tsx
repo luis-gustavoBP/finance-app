@@ -87,15 +87,15 @@ export default function CartoesPage() {
     }
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-slate-50 via-purple-50 to-pink-50 -m-8 p-8">
-            <div className="max-w-7xl mx-auto space-y-6">
+        <div className="min-h-full">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
                 {/* Header */}
                 <div className="flex items-center justify-between flex-wrap gap-4">
                     <div>
-                        <h1 className="text-2xl font-bold text-slate-800">
+                        <h1 className="text-2xl font-bold text-white">
                             Cartões de Crédito
                         </h1>
-                        <p className="text-slate-500 mt-1">
+                        <p className="text-slate-200 mt-1">
                             Gerencie seus cartões e limites
                         </p>
                     </div>
@@ -113,9 +113,9 @@ export default function CartoesPage() {
 
                 {/* Cards Grid */}
                 {cards.length === 0 ? (
-                    <div className="bg-white rounded-2xl p-12 text-center shadow-sm border border-slate-100">
+                    <div className="glass-panel rounded-2xl p-12 text-center border border-white/10">
                         <div className="text-5xl mb-4">💳</div>
-                        <p className="text-slate-500 text-lg">Nenhum cartão cadastrado ainda.</p>
+                        <p className="text-slate-200 text-lg">Nenhum cartão cadastrado ainda.</p>
                         <p className="text-slate-400 text-sm mt-2">
                             Clique em "Novo Cartão" para adicionar seu primeiro cartão.
                         </p>
@@ -143,7 +143,7 @@ export default function CartoesPage() {
                             return (
                                 <div
                                     key={card.id}
-                                    className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden hover:shadow-md transition-shadow"
+                                    className="glass-panel rounded-2xl overflow-hidden hover:bg-white/5 transition-all"
                                 >
                                     {/* Card Header with Color */}
                                     <div
@@ -187,14 +187,14 @@ export default function CartoesPage() {
                                         {/* Monthly Spending */}
                                         <div>
                                             <div className="flex justify-between items-center mb-2">
-                                                <span className="text-sm text-slate-500">Fatura de {selectedDate.toLocaleString('default', { month: 'long' })}</span>
-                                                <span className="text-xl font-bold text-slate-800">
+                                                <span className="text-sm text-slate-200">Fatura de {selectedDate.toLocaleString('default', { month: 'long' })}</span>
+                                                <span className="text-xl font-bold text-white">
                                                     {formatCents(monthlySpent)}
                                                 </span>
                                             </div>
 
                                             {/* Progress Bar */}
-                                            <div className="h-2 w-full bg-slate-100 rounded-full overflow-hidden mb-2">
+                                            <div className="h-2 w-full bg-white/10 rounded-full overflow-hidden mb-2">
                                                 <div
                                                     className={`h-full transition-all duration-500 ${progressColor}`}
                                                     style={{ width: `${usagePercentage}%` }}
@@ -202,28 +202,28 @@ export default function CartoesPage() {
                                             </div>
 
                                             <div className="flex justify-between items-center text-xs">
-                                                <span className="text-slate-500">
+                                                <span className="text-slate-400">
                                                     {usagePercentage.toFixed(1)}% utilizado
                                                 </span>
-                                                <span className="text-slate-500">
+                                                <span className="text-slate-400">
                                                     Limite: {formatCents(limitCents)}
                                                 </span>
                                             </div>
                                         </div>
 
                                         {/* Invoice Actions */}
-                                        <div className="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
+                                        <div className="flex items-center justify-between p-3 bg-white/5 rounded-lg border border-white/5">
                                             <div className="flex items-center gap-2">
                                                 <div className={`w-2 h-2 rounded-full ${isPaid ? 'bg-green-500' : 'bg-orange-500'}`} />
-                                                <span className="text-sm font-medium text-slate-700">
+                                                <span className="text-sm font-medium text-slate-200">
                                                     {isPaid ? 'Fatura Paga' : 'Aguardando Pagamento'}
                                                 </span>
                                             </div>
                                             <button
                                                 onClick={() => handleTogglePaid(card.id, invoiceStatus)}
-                                                className={`text-xs px-3 py-1.5 rounded-md font-medium transition-colors ${isPaid
-                                                    ? 'bg-slate-200 text-slate-600 hover:bg-slate-300'
-                                                    : 'bg-green-100 text-green-700 hover:bg-green-200'
+                                                className={`text-xs px-3 py-1.5 rounded-md font-medium transition-all ${isPaid
+                                                    ? 'bg-white/10 text-slate-300 hover:bg-white/20 hover:text-white'
+                                                    : 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/20 hover:bg-emerald-500/30'
                                                     }`}
                                             >
                                                 {isPaid ? 'Reabrir' : 'Marcar Paga'}
@@ -231,9 +231,9 @@ export default function CartoesPage() {
                                         </div>
 
                                         {/* Actions */}
-                                        <div className="flex gap-4 pt-2 border-t border-slate-100">
+                                        <div className="flex gap-4 pt-2 border-t border-white/10">
                                             <button
-                                                className="flex items-center gap-2 text-sm text-purple-600 hover:text-purple-700 font-medium transition-colors"
+                                                className="flex items-center gap-2 text-sm text-indigo-400 hover:text-indigo-300 font-medium transition-colors"
                                                 onClick={() => window.location.href = '/configuracoes'}
                                             >
                                                 <Pencil className="w-4 h-4" />

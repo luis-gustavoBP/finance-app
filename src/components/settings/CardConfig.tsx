@@ -93,12 +93,12 @@ export function CardConfig() {
                     </div>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                    <p className="text-sm text-slate-500">
+                    <p className="text-sm text-slate-300">
                         Configure a data de vencimento, fechamento e o limite de crédito de cada cartão.
                     </p>
 
                     {cards.length === 0 ? (
-                        <div className="text-center py-8 text-slate-500">
+                        <div className="text-center py-8 text-slate-300">
                             <p>Nenhum cartão cadastrado ainda.</p>
                             <p className="text-sm mt-2">Clique em "Adicionar Cartão" para começar.</p>
                         </div>
@@ -113,14 +113,14 @@ export function CardConfig() {
                             return (
                                 <div
                                     key={card.id}
-                                    className="p-4 border border-slate-200 rounded-lg space-y-3"
+                                    className="p-4 border border-white/10 rounded-lg space-y-3 hover:bg-white/5 transition-colors"
                                 >
                                     <div className="flex items-center justify-between">
                                         <div>
-                                            <h3 className="font-semibold text-slate-800 ">
+                                            <h3 className="font-semibold text-white">
                                                 {card.name}
                                             </h3>
-                                            <p className="text-xs text-slate-500">
+                                            <p className="text-xs text-slate-300">
                                                 Final {card.last_four} • Limite: {formatCents(card.limit_cents || 0)}
                                             </p>
                                         </div>
@@ -136,7 +136,7 @@ export function CardConfig() {
                                                 <Button
                                                     variant="ghost"
                                                     size="sm"
-                                                    className="text-red-600 hover:bg-red-50 "
+                                                    className="text-red-400 hover:bg-red-500/10 px-2"
                                                     onClick={(e) => handleDeleteClick(e, card.id, card.name)}
                                                 >
                                                     🗑️
@@ -175,11 +175,11 @@ export function CardConfig() {
                                                 />
                                             </div>
 
-                                            <div className="bg-indigo-50 p-3 rounded-md text-sm">
-                                                <p className="text-indigo-700 ">
+                                            <div className="bg-indigo-500/20 border border-indigo-500/20 p-3 rounded-md text-sm">
+                                                <p className="text-indigo-300">
                                                     📅 <strong>Resumo:</strong> Fecha dia <strong>{closingDay}</strong>, vence dia <strong>{dueDay}</strong>
                                                 </p>
-                                                <p className="text-xs text-indigo-600 mt-1">
+                                                <p className="text-xs text-indigo-400 mt-1">
                                                     Compras a partir do dia {closingDay} vão para a próxima fatura.
                                                 </p>
                                             </div>
@@ -202,7 +202,7 @@ export function CardConfig() {
                                             </div>
                                         </div>
                                     ) : (
-                                        <div className="text-sm text-slate-600 grid grid-cols-1 md:grid-cols-2 gap-2">
+                                        <div className="text-sm text-slate-300 grid grid-cols-1 md:grid-cols-2 gap-2">
                                             <p>Vencimento: Dia <strong>{currentDueDay}</strong></p>
                                             <p>Fechamento: Dia <strong>{closingDay}</strong> (com {currentClosingDays} dias de antecedência)</p>
                                         </div>

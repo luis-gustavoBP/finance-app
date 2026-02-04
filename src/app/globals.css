@@ -1,24 +1,30 @@
 @import "tailwindcss";
 
 :root {
-  --background: #f8fafc;
-  --foreground: #1e293b;
-  color-scheme: light !important;
+  --background: #001861;
+  --foreground: #ffffff;
+  color-scheme: dark !important;
 }
 
 html,
-body {
-  background-color: #f8fafc !important;
-  color: #1e293b !important;
-  color-scheme: light !important;
+body,
+:root {
+  background-color: #001861 !important;
+  color: #ffffff !important;
+  color-scheme: dark !important;
 }
 
-/* Force light mode on all svgs and charts */
-svg {
-  filter: none !important;
+/* Force dark mode behavior always */
+@media (prefers-color-scheme: light) {
+
+  html,
+  body {
+    background-color: #001861 !important;
+    color: #ffffff !important;
+  }
 }
 
-/* Ensure common containers stay light */
+/* Ensure common containers stay aligned with theme */
 div,
 section,
 article,
@@ -28,7 +34,7 @@ main,
 footer,
 aside,
 .card {
-  border-color: #e2e8f0;
+  border-color: rgba(255, 255, 255, 0.1);
 }
 
 @theme inline {
@@ -38,22 +44,43 @@ aside,
   --font-mono: var(--font-geist-mono);
 }
 
-
-
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans), system-ui, -apple-system, sans-serif;
   transition: background-color 0.3s ease, color 0.3s ease;
+  overflow-x: hidden;
+  /* Prevent horizontal scroll */
 }
 
-/* Custom scrollbar - Cross browser */
+/* Liquid Glass Utility */
+.glass-panel {
+  @apply bg-white/5 backdrop-blur-xl border border-white/10 shadow-xl;
+}
+
+/* Custom scrollbar - Dark/Glass optimized */
 * {
   scrollbar-width: thin;
-  scrollbar-color: #cbd5e1 transparent;
+  scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
 }
 
-/* Webkit scrollbar */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 3px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.4);
+}
+
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
@@ -64,12 +91,12 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
+  background: rgba(255, 255, 255, 0.2);
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
+  background: rgba(255, 255, 255, 0.4);
 }
 
 /* Animation utilities */

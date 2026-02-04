@@ -19,7 +19,7 @@ const Card = forwardRef<HTMLDivElement, CardProps>(
             <div
                 ref={ref}
                 className={cn(
-                    'bg-white rounded-2xl shadow-sm border border-slate-200 p-6 transition-all duration-200 hover:shadow-md',
+                    'glass-panel rounded-2xl p-6 transition-all duration-300 hover:bg-white/10 hover:shadow-2xl hover:border-white/20',
                     highlightColor && highlightColors[highlightColor],
                     className
                 )}
@@ -49,7 +49,7 @@ const CardTitle = forwardRef<HTMLHeadingElement, CardTitleProps>(
     ({ className, ...props }, ref) => (
         <h3
             ref={ref}
-            className={cn('text-lg font-semibold text-slate-800', className)}
+            className={cn('text-lg font-semibold text-white/90', className)}
             {...props}
         />
     )

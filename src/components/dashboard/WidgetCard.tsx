@@ -1,15 +1,14 @@
 'use client';
 
 import { TrendingUp, DollarSign, Calendar } from 'lucide-react';
-import { formatCents } from '@/lib/utils';
+import { formatCents, cn } from '@/lib/utils';
 
 interface WidgetCardProps {
     title: string;
     value: string | number;
     subtitle?: string;
     icon: 'trending' | 'dollar' | 'calendar';
-    iconColor?: string;
-    iconBg?: string;
+    variant?: 'blue' | 'green' | 'orange' | 'white';
     children?: React.ReactNode;
 }
 
@@ -18,32 +17,50 @@ export function WidgetCard({
     value,
     subtitle,
     icon,
-    iconColor = 'text-indigo-600',
-    iconBg = 'bg-indigo-100',
+    variant = 'white',
     children,
 }: WidgetCardProps) {
-    const Icon = icon === 'trending' ? TrendingUp : icon === 'dollar' ? DollarSign : Calendar;
+    const variants = {
+        white: 'glass-panel text-white',
+        blue: 'glass-panel text-white',
+        green: 'glass-panel text-white',
+        orange: 'glass-panel text-white',
+    };
+
+    const titleBadges = {
+        white: 'bg-slate-50 border-slate-100 text-slate-500',
+        blue: 'bg-blue-600 border-blue-500 text-white shadow-md shadow-blue-200/50',
+        green: 'bg-emerald-600 border-emerald-500 text-white shadow-md shadow-emerald-200/50',
+        orange: 'bg-orange-500 border-orange-400 text-white shadow-md shadow-orange-200/50',
+    };
 
     return (
-        <div className="rounded-xl bg-white p-6 shadow-sm border border-slate-200">
-            {/* Cabeçalho com ícone */}
-            <div className="mb-4 flex items-center gap-3">
-                <div className={`rounded-lg p-2 ${iconBg}`}>
-                    <Icon className={`h-5 w-5 ${iconColor}`} />
-                </div>
-                <h3 className="font-semibold text-slate-700">{title}</h3>
+        <div className={cn(
+            "rounded-xl p-6 shadow-sm border transition-all relative overflow-hidden",
+            variants[variant]
+        )}>
+            {/* Title with badges */}
+            <div className="mb-6 flex items-center justify-between">
+                <span className={cn(
+                    "px-4 py-2 rounded-xl border uppercase tracking-[0.15em] text-[10px] font-black",
+                    titleBadges[variant]
+                )}>
+                    {title}
+                </span>
             </div>
 
-            {/* Valor principal */}
+            {/* Main Value */}
             <div className="mb-2">
-                <p className="text-3xl font-bold text-slate-900">
+                <p className="text-4xl font-black tracking-tight text-white">
                     {typeof value === 'number' ? formatCents(value) : value}
                 </p>
             </div>
 
-            {/* Subtítulo ou conteúdo customizado */}
+            {/* Subtitle */}
             {subtitle && (
-                <p className="text-sm text-slate-500">{subtitle}</p>
+                <p className="text-[10px] font-bold uppercase tracking-widest mb-4 text-slate-300/60">
+                    {subtitle}
+                </p>
             )}
 
             {children}

@@ -1,14 +1,17 @@
 'use client';
 
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-import { Transaction } from '@/types';
+import { Database } from '@/types/database.types';
 import { formatCents, parseLocalDate } from '@/lib/utils';
+
+type Transaction = Database['public']['Tables']['transactions']['Row'];
 
 interface EvolutionChartProps {
     transactions: Transaction[];
+    minimal?: boolean;
 }
 
-export function EvolutionChart({ transactions }: EvolutionChartProps) {
+export function EvolutionChart({ transactions, minimal = false }: EvolutionChartProps) {
     // Preparar dados dos últimos 30 dias
     const prepareChartData = () => {
         const today = new Date();
@@ -57,46 +60,54 @@ export function EvolutionChart({ transactions }: EvolutionChartProps) {
 
     const data = prepareChartData();
 
-    return (
-        <div className="rounded-xl bg-white p-6 shadow-sm border border-slate-200">
-            <h3 className="mb-4 font-semibold text-slate-700">
-                📈 Evolução de Gastos (30 dias)
-            </h3>
+    const chartContent = (
+        <ResponsiveContainer width="100%" height={300}>
+            <LineChart data={data}>
+                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
+                <XAxis
+                    dataKey="day"
+                    stroke="#94a3b8"
+                    fontSize={12}
+                />
+                <YAxis
+                    stroke="#94a3b8"
+                    fontSize={12}
+                    tickFormatter={(value) => `R$ ${value}`}
+                />
+                <Tooltip
+                    formatter={(value: number | undefined) => [`R$ ${value?.toFixed(2) || '0.00'}`, 'Gasto acumulado']}
+                    labelFormatter={(label) => `Dia ${label}`}
+                    contentStyle={{
+                        backgroundColor: 'rgba(15, 23, 42, 0.9)',
+                        border: '1px solid rgba(255,255,255,0.1)',
+                        borderRadius: '12px',
+                        color: '#f8fafc',
+                        backdropFilter: 'blur(8px)'
+                    }}
+                    itemStyle={{ color: '#f8fafc' }}
+                />
+                <Line
+                    type="monotone"
+                    dataKey="value"
+                    stroke="#8b5cf6"
+                    strokeWidth={2}
+                    dot={{ fill: '#8b5cf6', r: 3 }}
+                    activeDot={{ r: 5 }}
+                />
+            </LineChart>
+        </ResponsiveContainer>
+    );
 
-            <ResponsiveContainer width="100%" height={300}>
-                <LineChart data={data}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
-                    <XAxis
-                        dataKey="day"
-                        stroke="#64748b"
-                        fontSize={12}
-                    />
-                    <YAxis
-                        stroke="#64748b"
-                        fontSize={12}
-                        tickFormatter={(value) => `R$ ${value}`}
-                    />
-                    <Tooltip
-                        formatter={(value: number | undefined) => [`R$ ${value?.toFixed(2) || '0.00'}`, 'Gasto acumulado']}
-                        labelFormatter={(label) => `Dia ${label}`}
-                        contentStyle={{
-                            backgroundColor: '#ffffff',
-                            border: '1px solid #e2e8f0',
-                            borderRadius: '8px',
-                            color: '#1e293b'
-                        }}
-                        itemStyle={{ color: '#1e293b' }}
-                    />
-                    <Line
-                        type="monotone"
-                        dataKey="value"
-                        stroke="#8b5cf6"
-                        strokeWidth={2}
-                        dot={{ fill: '#8b5cf6', r: 3 }}
-                        activeDot={{ r: 5 }}
-                    />
-                </LineChart>
-            </ResponsiveContainer>
+    if (minimal) {
+        return <div className="p-4">{chartContent}</div>;
+    }
+
+    return (
+        <div className="glass-panel text-white p-6">
+            <h3 className="mb-4 font-semibold text-white/90">
+                Evolução de Gastos (30 dias)
+            </h3>
+            {chartContent}
         </div>
     );
 }

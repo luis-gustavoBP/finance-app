@@ -101,7 +101,7 @@ export function CategoryManager() {
                     </div>
                 </CardHeader>
                 <CardContent>
-                    <p className="text-sm text-slate-500 mb-4">
+                    <p className="text-sm text-slate-300 mb-4">
                         Organize seus gastos por categorias personalizadas.
                     </p>
 
@@ -114,7 +114,7 @@ export function CategoryManager() {
                             {categories.map(category => (
                                 <div
                                     key={category.id}
-                                    className="p-3 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors"
+                                    className="p-3 border border-white/10 rounded-lg hover:bg-white/5 transition-colors bg-white/5"
                                 >
                                     <div className="flex items-center gap-2 mb-2">
                                         <span className="text-2xl">{category.icon}</span>
@@ -123,14 +123,14 @@ export function CategoryManager() {
                                             style={{ backgroundColor: category.color }}
                                         />
                                     </div>
-                                    <div className="text-sm font-medium text-slate-800 mb-2">
+                                    <div className="text-sm font-medium text-white mb-2">
                                         {category.name}
                                     </div>
                                     <div className="flex gap-1">
                                         <Button
                                             variant="ghost"
                                             size="sm"
-                                            className="flex-1"
+                                            className="flex-1 text-slate-300 hover:text-white hover:bg-white/10"
                                             onClick={() => openEditModal(category)}
                                         >
                                             Editar
@@ -138,7 +138,7 @@ export function CategoryManager() {
                                         <Button
                                             variant="ghost"
                                             size="sm"
-                                            className="text-red-600 hover:bg-red-50 "
+                                            className="text-red-400 hover:bg-red-500/10 px-2"
                                             onClick={(e) => handleDeleteClick(e, category.id, category.name)}
                                         >
                                             Excluir
@@ -165,7 +165,7 @@ export function CategoryManager() {
                     />
 
                     <div className="space-y-2">
-                        <label className="text-sm font-medium text-slate-700 ">
+                        <label className="text-sm font-medium text-slate-300 ">
                             Ícone
                         </label>
                         <div className="grid grid-cols-7 gap-2">
@@ -175,8 +175,8 @@ export function CategoryManager() {
                                     type="button"
                                     onClick={() => setIcon(emoji)}
                                     className={`text-2xl p-2 rounded-md transition-colors ${icon === emoji
-                                        ? 'bg-indigo-100 ring-2 ring-indigo-500'
-                                        : 'hover:bg-slate-100'
+                                        ? 'bg-indigo-500/20 ring-2 ring-indigo-500'
+                                        : 'hover:bg-white/10'
                                         }`}
                                 >
                                     {emoji}
@@ -186,7 +186,7 @@ export function CategoryManager() {
                     </div>
 
                     <div className="space-y-2">
-                        <label className="text-sm font-medium text-slate-700 ">
+                        <label className="text-sm font-medium text-slate-300 ">
                             Cor
                         </label>
                         <div className="grid grid-cols-5 gap-2">

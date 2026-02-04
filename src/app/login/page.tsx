@@ -107,9 +107,14 @@ export default function LoginPage() {
     return (
         <div className="min-h-screen flex items-center justify-center bg-slate-50 p-4">
             <Card className="w-full max-w-md">
-                <CardHeader>
+                <CardHeader className="flex flex-col items-center pb-2">
+                    <img
+                        src="/logo.png"
+                        alt="ContApp Logo"
+                        className="h-12 w-auto mb-4 rounded-xl shadow-md"
+                    />
                     <CardTitle className="text-center text-2xl text-slate-800">
-                        {isLogin ? '🔐 Entrar no ContApp' : '🚀 Criar Conta'}
+                        {isLogin ? 'Entrar no ContApp' : 'Criar Conta'}
                     </CardTitle>
                 </CardHeader>
                 <CardContent>

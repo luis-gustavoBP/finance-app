@@ -119,3 +119,23 @@ export function darken(color: string, percent: number): string {
         (B < 255 ? (B < 1 ? 0 : B) : 255)
     ).toString(16).slice(1);
 }
+
+/**
+ * Formats display name to be just the first word, capitalized
+ */
+export function formatFirstName(input: string | null | undefined): string {
+    if (!input) return 'Usuário';
+
+    // Split by common delimiters (space, dot, underscore)
+    let name = input.split(/[\s._]/)[0];
+
+    // Try to split CamelCase (e.g., LuisGustavo -> Luis)
+    name = name.replace(/([a-z])([A-Z])/g, '$1 $2').split(' ')[0];
+
+    // Clean non-alphabetic chars if any (keep accents)
+    name = name.replace(/[^a-zA-ZáéíóúÁÉÍÓÚâêîôûÂÊÎÔÛãõÃÕçÇ]/g, ' ').trim().split(' ')[0];
+
+    // Capitalize only the first letter, keep others lowercase
+    if (!name) return 'Usuário';
+    return name.charAt(0).toUpperCase() + name.slice(1).toLowerCase();
+}

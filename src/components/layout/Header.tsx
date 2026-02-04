@@ -57,22 +57,21 @@ import { useAuth } from '@/contexts/AuthContext';
 
 export function Header() {
     const pathname = usePathname();
-    const { user } = useAuth();
+    const { user, signOut } = useAuth();
 
     if (!user) return null;
 
     return (
-        <header className="sticky top-0 z-40 bg-white/80 backdrop-blur-lg border-b border-slate-200 ">
+        <header className="sticky top-0 z-40 bg-[#001861]/80 backdrop-blur-md border-b border-white/10">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex items-center justify-between h-16">
                     {/* Logo */}
                     <Link href="/" className="flex items-center gap-2">
-                        <div className="w-9 h-9 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center">
-                            <span className="text-white text-lg">💰</span>
-                        </div>
-                        <span className="font-bold text-xl text-slate-800 ">
-                            ContApp
-                        </span>
+                        <img
+                            src="/logo.png"
+                            alt="ContApp Logo"
+                            className="h-10 w-auto rounded-lg shadow-sm"
+                        />
                     </Link>
 
                     {/* Navigation */}
@@ -82,10 +81,10 @@ export function Header() {
                                 key={item.href}
                                 href={item.href}
                                 className={cn(
-                                    'flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all',
+                                    'flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all duration-300',
                                     pathname === item.href
-                                        ? 'bg-indigo-50 text-indigo-600'
-                                        : 'text-slate-600 hover:bg-slate-100'
+                                        ? 'bg-white/10 text-white shadow-[0_0_15px_rgba(255,255,255,0.1)] border border-white/10'
+                                        : 'text-slate-300 hover:bg-white/5 hover:text-white'
                                 )}
                             >
                                 {item.icon}
@@ -96,15 +95,22 @@ export function Header() {
 
                     {/* Actions */}
                     <div className="flex items-center gap-3">
-                        {/* Organization selector removed - single user app */}
-
-
+                        <button
+                            onClick={() => signOut()}
+                            className="flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-slate-300 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-all"
+                            title="Sair"
+                        >
+                            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                            </svg>
+                            <span className="hidden sm:inline">Sair</span>
+                        </button>
                     </div>
                 </div>
             </div>
 
             {/* Mobile Navigation */}
-            <div className="md:hidden border-t border-slate-200 ">
+            <div className="md:hidden border-t border-white/10">
                 <nav className="flex justify-around py-2">
                     {navItems.map((item) => (
                         <Link
@@ -113,8 +119,8 @@ export function Header() {
                             className={cn(
                                 'flex flex-col items-center gap-1 px-3 py-2 rounded-xl text-xs font-medium transition-all',
                                 pathname === item.href
-                                    ? 'text-indigo-600'
-                                    : 'text-slate-500'
+                                    ? 'text-white bg-white/10'
+                                    : 'text-slate-400 hover:text-white'
                             )}
                         >
                             {item.icon}

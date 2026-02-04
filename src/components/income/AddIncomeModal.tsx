@@ -99,34 +99,34 @@ export function AddIncomeModal({ isOpen, onClose }: AddIncomeModalProps) {
                 />
 
                 <div className="flex flex-col gap-1.5">
-                    <label className="text-sm font-medium text-slate-700 ">
+                    <label className="text-sm font-medium text-slate-300 ">
                         Data de Recebimento
                     </label>
                     <input
                         type="date"
                         value={date}
                         onChange={(e) => setDate(e.target.value)}
-                        className="flex h-10 w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-sm ring-offset-white file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-slate-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-950 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 "
+                        className="flex h-10 w-full rounded-md border border-white/20 bg-[#0f172a] px-3 py-2 text-sm text-white ring-offset-white file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-slate-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-950 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 "
                     />
                 </div>
 
                 <div className="space-y-2">
-                    <label className="text-sm font-medium text-slate-700 ">
+                    <label className="text-sm font-medium text-slate-300 ">
                         Tipo de Entrada
                     </label>
-                    <div className="grid grid-cols-2 gap-2">
+                    <div className="grid grid-cols-2 gap-3">
                         {INCOME_TYPES.map((incomeType) => (
                             <button
                                 key={incomeType.value}
                                 type="button"
                                 onClick={() => setType(incomeType.value)}
-                                className={`p-3 rounded-lg border-2 transition-all text-left ${type === incomeType.value
-                                    ? 'border-green-500 bg-green-50'
-                                    : 'border-slate-200 hover:border-slate-300'
+                                className={`p-4 rounded-xl border-2 transition-all text-left ${type === incomeType.value
+                                    ? 'border-green-500 bg-green-500/10'
+                                    : 'border-white/10 hover:border-white/30 text-slate-300'
                                     } `}
                             >
-                                <div className="font-medium text-sm">{incomeType.label}</div>
-                                <div className="text-xs text-slate-500 ">
+                                <div className="font-medium text-sm text-white">{incomeType.label}</div>
+                                <div className="text-xs text-slate-400 ">
                                     {incomeType.description}
                                 </div>
                             </button>
@@ -135,7 +135,7 @@ export function AddIncomeModal({ isOpen, onClose }: AddIncomeModalProps) {
                 </div>
 
                 <div className="flex flex-col gap-1.5">
-                    <label className="text-sm font-medium text-slate-700 ">
+                    <label className="text-sm font-medium text-slate-300 ">
                         Observações (opcional)
                     </label>
                     <textarea
@@ -143,41 +143,41 @@ export function AddIncomeModal({ isOpen, onClose }: AddIncomeModalProps) {
                         onChange={(e) => setNotes(e.target.value)}
                         placeholder="Informações adicionais..."
                         rows={2}
-                        className="flex w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-sm ring-offset-white placeholder:text-slate-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-950 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 "
+                        className="flex w-full rounded-md border border-white/20 bg-[#0f172a] px-3 py-2 text-sm text-white ring-offset-white placeholder:text-slate-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-950 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 "
                     />
                 </div>
 
                 <div className="space-y-2">
-                    <label className="text-sm font-medium text-slate-700">
+                    <label className="text-sm font-medium text-slate-300">
                         Destino
                     </label>
-                    <div className="grid grid-cols-2 gap-2">
+                    <div className="grid grid-cols-2 gap-3">
                         <button
                             type="button"
                             onClick={() => setDestination('budget')}
-                            className={`p-3 rounded-lg border-2 transition-all text-left ${destination === 'budget'
-                                ? 'border-indigo-500 bg-indigo-50'
-                                : 'border-slate-200 hover:border-slate-300'
+                            className={`p-4 rounded-xl border-2 transition-all text-left ${destination === 'budget'
+                                ? 'border-indigo-500 bg-indigo-500/10'
+                                : 'border-white/10 hover:border-white/30 text-slate-300'
                                 }`}
                         >
-                            <div className="font-medium text-sm">Orçamento do Mês</div>
-                            <div className="text-xs text-slate-500">Soma ao saldo disponível</div>
+                            <div className="font-medium text-sm text-white">Orçamento do Mês</div>
+                            <div className="text-xs text-slate-400">Soma ao saldo disponível</div>
                         </button>
                         <button
                             type="button"
                             onClick={() => setDestination('savings')}
-                            className={`p-3 rounded-lg border-2 transition-all text-left ${destination === 'savings'
-                                ? 'border-amber-500 bg-amber-50'
-                                : 'border-slate-200 hover:border-slate-300'
+                            className={`p-4 rounded-xl border-2 transition-all text-left ${destination === 'savings'
+                                ? 'border-amber-500 bg-amber-500/10'
+                                : 'border-white/10 hover:border-white/30 text-slate-300'
                                 }`}
                         >
-                            <div className="font-medium text-sm">Cofrinho / Reserva</div>
-                            <div className="text-xs text-slate-500">Separado do orçamento</div>
+                            <div className="font-medium text-sm text-white">Cofrinho / Reserva</div>
+                            <div className="text-xs text-slate-400">Separado do orçamento</div>
                         </button>
                     </div>
                 </div>
 
-                <div className="bg-slate-50 p-3 rounded-md text-sm text-slate-600">
+                <div className="bg-white/5 p-3 rounded-md text-sm text-slate-300 border border-white/10">
                     {destination === 'budget'
                         ? '💡 Esta entrada aumentará seu poder de compra neste mês.'
                         : '🐷 Esta entrada será guardada e não afetará seu limite de gastos mensal.'

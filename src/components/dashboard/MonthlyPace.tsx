@@ -10,9 +10,10 @@ type Transaction = Database['public']['Tables']['transactions']['Row'];
 interface MonthlyPaceProps {
     transactions: Transaction[];
     monthlyLimit: number;
+    minimal?: boolean;
 }
 
-export function MonthlyPace({ transactions, monthlyLimit }: MonthlyPaceProps) {
+export function MonthlyPace({ transactions, monthlyLimit, minimal = false }: MonthlyPaceProps) {
     const now = new Date();
     const daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
     const today = now.getDate();
@@ -53,64 +54,71 @@ export function MonthlyPace({ transactions, monthlyLimit }: MonthlyPaceProps) {
         });
     }
 
+    const content = (
+        <div className="h-64">
+            <ResponsiveContainer width="100%" height="100%">
+                <LineChart data={data}>
+                    <XAxis
+                        dataKey="day"
+                        fontSize={12}
+                        tickLine={false}
+                        axisLine={false}
+                        stroke="#94a3b8"
+                    />
+                    <YAxis
+                        fontSize={12}
+                        tickLine={false}
+                        axisLine={false}
+                        stroke="#94a3b8"
+                        tickFormatter={(value) => `R$${value}`}
+                    />
+                    <Tooltip
+                        formatter={(value: number | undefined) => [value ? `R$ ${value.toFixed(2)}` : 'R$ 0.00', '']}
+                        labelFormatter={(label) => `Dia ${label}`}
+                        contentStyle={{
+                            backgroundColor: 'rgba(15, 23, 42, 0.9)',
+                            border: '1px solid rgba(255,255,255,0.1)',
+                            borderRadius: '12px',
+                            color: '#f8fafc',
+                            backdropFilter: 'blur(8px)'
+                        }}
+                        itemStyle={{ color: '#f8fafc' }}
+                    />
+                    {/* Linha Ideal (Pontilhada Cinza) */}
+                    <Line
+                        type="monotone"
+                        dataKey="ideal"
+                        stroke="#94a3b8"
+                        strokeDasharray="5 5"
+                        dot={false}
+                        strokeWidth={2}
+                        name="Ritmo Ideal"
+                    />
+                    {/* Linha Real (Roxa Sólida) */}
+                    <Line
+                        type="monotone"
+                        dataKey="actual"
+                        stroke="#6366f1"
+                        strokeWidth={3}
+                        dot={{ r: 3, fill: '#6366f1' }}
+                        activeDot={{ r: 6 }}
+                        name="Gasto Real"
+                    />
+                    <ReferenceLine x={today} stroke="orange" strokeDasharray="3 3" label="Hoje" />
+                </LineChart>
+            </ResponsiveContainer>
+        </div>
+    );
+
+    if (minimal) return <div className="p-4">{content}</div>;
+
     return (
         <Card>
             <CardHeader>
                 <CardTitle>Ritmo de Gasto</CardTitle>
             </CardHeader>
             <CardContent>
-                <div className="h-64">
-                    <ResponsiveContainer width="100%" height="100%">
-                        <LineChart data={data}>
-                            <XAxis
-                                dataKey="day"
-                                fontSize={12}
-                                tickLine={false}
-                                axisLine={false}
-                                stroke="#64748b"
-                            />
-                            <YAxis
-                                fontSize={12}
-                                tickLine={false}
-                                axisLine={false}
-                                stroke="#64748b"
-                                tickFormatter={(value) => `R$${value}`}
-                            />
-                            <Tooltip
-                                formatter={(value: number | undefined) => [value ? `R$ ${value.toFixed(2)}` : 'R$ 0.00', '']}
-                                labelFormatter={(label) => `Dia ${label}`}
-                                contentStyle={{
-                                    backgroundColor: '#ffffff',
-                                    border: '1px solid #e2e8f0',
-                                    borderRadius: '8px',
-                                    color: '#1e293b'
-                                }}
-                                itemStyle={{ color: '#1e293b' }}
-                            />
-                            {/* Linha Ideal (Pontilhada Cinza) */}
-                            <Line
-                                type="monotone"
-                                dataKey="ideal"
-                                stroke="#94a3b8"
-                                strokeDasharray="5 5"
-                                dot={false}
-                                strokeWidth={2}
-                                name="Ritmo Ideal"
-                            />
-                            {/* Linha Real (Roxa Sólida) */}
-                            <Line
-                                type="monotone"
-                                dataKey="actual"
-                                stroke="#6366f1"
-                                strokeWidth={3}
-                                dot={{ r: 3, fill: '#6366f1' }}
-                                activeDot={{ r: 6 }}
-                                name="Gasto Real"
-                            />
-                            <ReferenceLine x={today} stroke="orange" strokeDasharray="3 3" label="Hoje" />
-                        </LineChart>
-                    </ResponsiveContainer>
-                </div>
+                {content}
             </CardContent>
         </Card>
     );

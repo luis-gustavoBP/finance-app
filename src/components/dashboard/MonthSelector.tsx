@@ -15,17 +15,17 @@ export function MonthSelector() {
     const displayDate = formattedDate.charAt(0).toUpperCase() + formattedDate.slice(1);
 
     return (
-        <div className="flex items-center gap-2 bg-white rounded-xl p-1.5 border border-slate-200 shadow-sm">
+        <div className="flex items-center gap-2 glass-panel bg-white/5 p-1.5 border border-white/10 shadow-sm">
             <Button
                 variant="ghost"
                 size="sm"
                 onClick={prevMonth}
-                className="w-8 h-8 p-0 rounded-lg hover:bg-slate-50"
+                className="w-8 h-8 p-0 rounded-lg hover:bg-white/10"
             >
                 ←
             </Button>
 
-            <div className="min-w-[140px] text-center font-semibold text-slate-700 select-none">
+            <div className="min-w-[140px] text-center font-semibold text-white select-none">
                 {displayDate}
             </div>
 
@@ -33,7 +33,7 @@ export function MonthSelector() {
                 variant="ghost"
                 size="sm"
                 onClick={nextMonth}
-                className="w-8 h-8 p-0 rounded-lg hover:bg-slate-50"
+                className="w-8 h-8 p-0 rounded-lg hover:bg-white/10"
             >
                 →
             </Button>

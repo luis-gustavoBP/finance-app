@@ -11,6 +11,7 @@ import { CategoryManager } from '@/components/settings/CategoryManager';
 import { CardConfig } from '@/components/settings/CardConfig';
 import { WeeklyGoal } from '@/components/settings/WeeklyGoal';
 import { ExportButton } from '@/components/export/ExportButton';
+import { SubscriptionsManager } from '@/components/settings/SubscriptionsManager';
 
 export default function SettingsPage() {
     const { settings, updateSettings, isLoading } = useSettings();
@@ -36,48 +37,48 @@ export default function SettingsPage() {
     const weeklyGoal = settings?.weekly_goal_cents || 0;
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 -m-8 p-8">
-            <div className="max-w-7xl mx-auto space-y-6">
+        <div className="min-h-full">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
                 <div>
-                    <h1 className="text-2xl font-bold text-slate-800 ">
-                        ⚙️ Configurações e Metas
+                    <h1 className="text-2xl font-bold text-white">
+                        Configurações e Metas
                     </h1>
-                    <p className="text-slate-500 mt-1">Defina suas metas financeiras mensais e semanais</p>
+                    <p className="text-slate-200 mt-1">Defina suas metas financeiras mensais e semanais</p>
                 </div>
 
                 {/* Summary Cards */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {/* Monthly Budget - Purple */}
-                    <Card className="bg-gradient-to-br from-purple-600 to-pink-600 text-white border-none shadow-lg">
+                    <Card className="glass-panel bg-purple-600/20 border-purple-500/30 text-white shadow-lg">
                         <CardContent className="pt-6">
                             <div className="flex items-center gap-2 mb-2">
                                 <span className="text-2xl">💵</span>
-                                <span className="text-purple-100 text-lg font-medium">Orçamento Mensal</span>
+                                <span className="text-purple-200 text-lg font-medium">Orçamento Mensal</span>
                             </div>
                             <p className="text-5xl font-bold mb-2">
                                 {formatCents(monthlyLimit)}
                             </p>
-                            <p className="text-sm text-purple-100 opacity-90">Meta de gastos do mês</p>
+                            <p className="text-sm text-purple-200 opacity-90">Meta de gastos do mês</p>
                         </CardContent>
                     </Card>
 
                     {/* Weekly Goal - Blue */}
-                    <Card className="bg-gradient-to-br from-blue-600 to-cyan-600 text-white border-none shadow-lg">
+                    <Card className="glass-panel bg-blue-600/20 border-blue-500/30 text-white shadow-lg">
                         <CardContent className="pt-6">
                             <div className="flex items-center gap-2 mb-2">
                                 <span className="text-2xl">📈</span>
-                                <span className="text-blue-100 text-lg font-medium">Meta Semanal</span>
+                                <span className="text-blue-200 text-lg font-medium">Meta Semanal</span>
                             </div>
                             <p className="text-5xl font-bold mb-2">
                                 {formatCents(weeklyGoal)}
                             </p>
-                            <p className="text-sm text-blue-100 opacity-90">Objetivo de gastos por semana</p>
+                            <p className="text-sm text-blue-200 opacity-90">Objetivo de gastos por semana</p>
                         </CardContent>
                     </Card>
                 </div>
 
                 {/* Adjust Goals Section */}
-                <Card className="bg-white">
+                <Card className="glass-panel text-white">
                     <CardHeader>
                         <CardTitle>🎯 Ajustar Metas Financeiras</CardTitle>
                     </CardHeader>
@@ -93,7 +94,7 @@ export default function SettingsPage() {
                                     }}
                                     placeholder="0,00"
                                 />
-                                <p className="text-xs text-slate-500 mt-1">
+                                <p className="text-xs text-slate-400 mt-1">
                                     Limite total de gastos para o mês
                                 </p>
                             </div>
@@ -106,8 +107,8 @@ export default function SettingsPage() {
                 </Card>
 
                 {/* Tips Card */}
-                <div className="bg-blue-50 border-l-4 border-blue-500 rounded-lg p-4">
-                    <p className="text-sm text-blue-800">
+                <div className="bg-blue-500/10 border-l-4 border-blue-500 rounded-lg p-4">
+                    <p className="text-sm text-blue-200">
                         💡 <strong>Dica:</strong> Estabeleça uma meta de gastos por semana
                         para acompanhar seu progresso e manter o controle financeiro no dia a dia.
                     </p>
@@ -116,6 +117,9 @@ export default function SettingsPage() {
                 {/* Weekly Goal Component */}
                 <WeeklyGoal />
 
+                {/* Subscriptions Manager */}
+                <SubscriptionsManager />
+
                 {/* Category Management */}
                 <CategoryManager />
 
@@ -123,15 +127,15 @@ export default function SettingsPage() {
                 <CardConfig />
 
                 {/* Data Management */}
-                <Card className="bg-white">
+                <Card className="glass-panel text-white">
                     <CardHeader>
                         <CardTitle>📊 Dados e Backup</CardTitle>
                     </CardHeader>
                     <CardContent>
                         <div className="flex items-center justify-between">
                             <div>
-                                <h3 className="font-medium text-slate-700">Exportar Dados</h3>
-                                <p className="text-sm text-slate-500">Baixe suas transações em formato CSV.</p>
+                                <h3 className="font-medium text-white">Exportar Dados</h3>
+                                <p className="text-sm text-slate-400">Baixe suas transações em formato CSV.</p>
                             </div>
                             <ExportButton />
                         </div>
@@ -139,13 +143,13 @@ export default function SettingsPage() {
                 </Card>
 
                 {/* Account Settings */}
-                <Card className="bg-white border-red-100 ">
+                <Card className="glass-panel text-white border-red-500/30">
                     <CardHeader>
-                        <CardTitle className="text-red-600">👤 Conta</CardTitle>
+                        <CardTitle className="text-red-400">👤 Conta</CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-4">
-                        <p className="text-sm text-slate-500">Logado como: {user?.email}</p>
-                        <Button variant="ghost" className="text-red-600 hover:bg-red-50 " onClick={signOut}>
+                        <p className="text-sm text-slate-400">Logado como: {user?.email}</p>
+                        <Button variant="ghost" className="text-red-400 hover:bg-red-500/10" onClick={signOut}>
                             Sair da Conta
                         </Button>
                     </CardContent>
