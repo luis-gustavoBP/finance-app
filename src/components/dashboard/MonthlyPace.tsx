@@ -1,7 +1,7 @@
 'use client';
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
-import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, ReferenceLine } from 'recharts';
+import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, ReferenceLine, CartesianGrid } from 'recharts';
 import { Database } from '@/types/database.types';
 import { parseLocalDate } from '@/lib/utils';
 
@@ -41,7 +41,7 @@ export function MonthlyPace({ transactions, monthlyLimit, minimal = false }: Mon
 
         data.push({
             day,
-            actual: cumulative / 100, // Recharts values in reais easier for ticks
+            actual: cumulative / 100,
             ideal: (idealPerDay * day) / 100,
         });
     }
@@ -55,69 +55,93 @@ export function MonthlyPace({ transactions, monthlyLimit, minimal = false }: Mon
     }
 
     const content = (
-        <div className="h-64">
+        <div className="h-64 mt-2">
             <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={data}>
+                <AreaChart data={data} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
+                    <defs>
+                        <linearGradient id="colorActual" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="5%" stopColor="#6366f1" stopOpacity={0.3} />
+                            <stop offset="95%" stopColor="#6366f1" stopOpacity={0} />
+                        </linearGradient>
+                    </defs>
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255,255,255,0.05)" />
                     <XAxis
                         dataKey="day"
-                        fontSize={12}
+                        fontSize={10}
                         tickLine={false}
                         axisLine={false}
                         stroke="#94a3b8"
+                        interval={2}
+                        dy={10}
                     />
                     <YAxis
-                        fontSize={12}
+                        fontSize={10}
                         tickLine={false}
                         axisLine={false}
                         stroke="#94a3b8"
                         tickFormatter={(value) => `R$${value}`}
+                        hide={minimal}
                     />
                     <Tooltip
-                        formatter={(value: number | undefined) => [value ? `R$ ${value.toFixed(2)}` : 'R$ 0.00', '']}
+                        cursor={{ stroke: '#6366f1', strokeWidth: 1, strokeDasharray: '5 5' }}
+                        formatter={(value: any, name: any) => [
+                            value ? `R$ ${Number(value).toFixed(2)}` : 'R$ 0.00',
+                            name === 'actual' ? 'Gasto Real' : 'Ritmo Ideal'
+                        ]}
                         labelFormatter={(label) => `Dia ${label}`}
                         contentStyle={{
-                            backgroundColor: 'rgba(15, 23, 42, 0.9)',
+                            backgroundColor: '#1e293b',
                             border: '1px solid rgba(255,255,255,0.1)',
                             borderRadius: '12px',
-                            color: '#f8fafc',
-                            backdropFilter: 'blur(8px)'
+                            padding: '12px',
+                            boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.3)'
                         }}
-                        itemStyle={{ color: '#f8fafc' }}
+                        itemStyle={{ fontWeight: 'bold' }}
+                        labelStyle={{ color: '#94a3b8', marginBottom: '4px', fontSize: '12px' }}
                     />
-                    {/* Linha Ideal (Pontilhada Cinza) */}
-                    <Line
+                    {/* Ritmo Ideal (Linha Pontilhada) */}
+                    <Area
                         type="monotone"
                         dataKey="ideal"
                         stroke="#94a3b8"
-                        strokeDasharray="5 5"
-                        dot={false}
                         strokeWidth={2}
-                        name="Ritmo Ideal"
+                        strokeDasharray="5 5"
+                        fill="transparent"
+                        name="ideal"
+                        animationDuration={1000}
                     />
-                    {/* Linha Real (Roxa Sólida) */}
-                    <Line
+                    {/* Gasto Real (Área preenchida) */}
+                    <Area
                         type="monotone"
                         dataKey="actual"
                         stroke="#6366f1"
-                        strokeWidth={3}
-                        dot={{ r: 3, fill: '#6366f1' }}
-                        activeDot={{ r: 6 }}
-                        name="Gasto Real"
+                        strokeWidth={4}
+                        fillOpacity={1}
+                        fill="url(#colorActual)"
+                        name="actual"
+                        animationDuration={1500}
                     />
-                    <ReferenceLine x={today} stroke="orange" strokeDasharray="3 3" label="Hoje" />
-                </LineChart>
+                    <ReferenceLine
+                        x={today}
+                        stroke="#f59e0b"
+                        strokeDasharray="3 3"
+                        label={{ value: 'Hoje', position: 'insideTopRight', fill: '#f59e0b', fontSize: 10, fontWeight: 'bold' }}
+                    />
+                </AreaChart>
             </ResponsiveContainer>
         </div>
     );
 
-    if (minimal) return <div className="p-4">{content}</div>;
+    if (minimal) return <div className="p-0">{content}</div>;
 
     return (
-        <Card>
-            <CardHeader>
-                <CardTitle>Ritmo de Gasto</CardTitle>
+        <Card className="glass-panel text-white">
+            <CardHeader className="pb-0 pt-6 px-6">
+                <CardTitle className="text-sm font-bold uppercase tracking-widest text-white/70">
+                    Ritmo de Gasto Mensal
+                </CardTitle>
             </CardHeader>
-            <CardContent>
+            <CardContent className="p-6">
                 {content}
             </CardContent>
         </Card>
