@@ -53,8 +53,13 @@ const navItems = [
     },
 ];
 
+import { useAuth } from '@/contexts/AuthContext';
+
 export function Header() {
     const pathname = usePathname();
+    const { user } = useAuth();
+
+    if (!user) return null;
 
     return (
         <header className="sticky top-0 z-40 bg-white/80 backdrop-blur-lg border-b border-slate-200 ">

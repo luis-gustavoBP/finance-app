@@ -6,6 +6,7 @@ import { useCards } from '@/hooks/useCards';
 import { useSettings } from '@/hooks/useSettings';
 import { useCategories } from '@/hooks/useCategories';
 import { useIncome } from '@/hooks/useIncome';
+import { useInvoices } from '@/hooks/useInvoices';
 import { Button } from '@/components/ui/Button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Input } from '@/components/ui/Input';
@@ -21,19 +22,25 @@ import { WidgetCard } from '@/components/dashboard/WidgetCard';
 import { EvolutionChart } from '@/components/dashboard/EvolutionChart';
 import { CategoryPieChart } from '@/components/dashboard/CategoryPieChart';
 
+import { useMonthFilter } from '@/contexts/MonthFilterContext';
+import { MonthSelector } from '@/components/dashboard/MonthSelector';
+import { ProgressBar } from '@/components/ui/ProgressBar';
+import { UpcomingInvoicesWidget } from '@/components/dashboard/UpcomingInvoicesWidget';
+
 export default function DashboardPage() {
   const { transactions, isLoading: isTxLoading, error: isTxError } = useTransactions();
   const { cards, isLoading: isCardsLoading, error: isCardsError } = useCards();
   const { categories, isLoading: isCategoriesLoading } = useCategories();
   const { settings, updateSettings, isLoading: isSettingsLoading, error: isSettingsError } = useSettings();
   const { incomeEntries, isLoading: isIncomeLoading } = useIncome();
+  const { invoices, isLoading: isInvoicesLoading } = useInvoices();
+  const { selectedDate } = useMonthFilter();
 
   const [isConfiguringBudget, setIsConfiguringBudget] = useState(false);
   const [newGlobalLimit, setNewGlobalLimit] = useState('');
 
-  const now = new Date();
-  const currentMonth = now.getMonth();
-  const currentYear = now.getFullYear();
+  const currentMonth = selectedDate.getMonth();
+  const currentYear = selectedDate.getFullYear();
 
   const handleSaveBudget = async () => {
     const limitInCents = parseCurrencyInput(newGlobalLimit);
@@ -43,7 +50,7 @@ export default function DashboardPage() {
     setIsConfiguringBudget(false);
   };
 
-  if (isTxLoading || isCardsLoading || isSettingsLoading || isCategoriesLoading) {
+  if (isTxLoading || isCardsLoading || isSettingsLoading || isCategoriesLoading || isInvoicesLoading) {
     return <div className="p-8 text-center animate-pulse">Carregando...</div>;
   }
 
@@ -62,7 +69,7 @@ export default function DashboardPage() {
     );
   }
 
-  // Filter transactions for current month
+  // Filter transactions for selected month
   const monthlyTransactions = transactions.filter(tx => {
     const txDate = parseLocalDate(tx.posted_at);
     return txDate.getMonth() === currentMonth && txDate.getFullYear() === currentYear;
@@ -72,11 +79,21 @@ export default function DashboardPage() {
 
   const globalLimit = settings?.global_monthly_limit_cents || 0;
 
-  // Calculate current month's income
+  // Calculate specific card limits logic implies total cards limit if manual budget is not preferred, 
+  // but we use user setting global_monthly_limit_cents as "Planned Budget".
+  // For "Real Card Limit Available", we sum actual card limits.
+  const totalCardLimits = cards.reduce((sum, card) => sum + (card.limit_cents || 0), 0);
+  const availableCreditLimit = Math.max(0, totalCardLimits - totalSpentMonthly);
+
+  // Filter income for selected month
   const monthlyIncome = incomeEntries
     .filter(entry => {
       const entryDate = parseLocalDate(entry.received_at);
-      return entryDate.getMonth() === currentMonth && entryDate.getFullYear() === currentYear;
+      // Filter by selected month AND only include 'budget' destination (default or explicit)
+      const isBudget = !entry.destination || entry.destination === 'budget';
+      return entryDate.getMonth() === currentMonth &&
+        entryDate.getFullYear() === currentYear &&
+        isBudget;
     })
     .reduce((sum, entry) => sum + entry.amount_cents, 0);
 
@@ -106,6 +123,7 @@ export default function DashboardPage() {
   };
 
   const globalProgress = calculateProgress(totalSpentMonthly, globalLimit);
+  const creditLimitProgress = calculateProgress(totalSpentMonthly, totalCardLimits);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 via-blue-50 to-pink-50 -m-8 p-8">
@@ -120,7 +138,25 @@ export default function DashboardPage() {
               Visão geral dos seus gastos e limites
             </p>
           </div>
+          <div className="flex items-center gap-3">
+            <MonthSelector />
+          </div>
         </div>
+
+        {/* Global Credit Limit Progress (New Requirement) */}
+        {totalCardLimits > 0 && (
+          <Card className="bg-white border-blue-100 shadow-sm">
+            <CardContent className="p-4 flex items-center justify-between gap-4">
+              <div className="flex-1">
+                <div className="flex justify-between text-sm mb-1.5">
+                  <span className="font-semibold text-slate-700">Limite do Cartão Disponível</span>
+                  <span className="text-slate-500">{formatCents(totalCardLimits - totalSpentMonthly)} de {formatCents(totalCardLimits)}</span>
+                </div>
+                <ProgressBar value={totalSpentMonthly} max={totalCardLimits} showLabel={false} size="sm" className="h-2" />
+              </div>
+            </CardContent>
+          </Card>
+        )}
 
         {/* Balance Card com gradiente roxo/rosa */}
         <BalanceCard
@@ -166,16 +202,10 @@ export default function DashboardPage() {
             iconBg="bg-green-100"
           />
 
-          <WidgetCard
-            title="Próximas Parcelas"
-            value={transactions.filter(t =>
-              t.installment_number &&
-              t.installment_number < (t.installments || 1)
-            ).length.toString()}
-            subtitle="parcelas pendentes"
-            icon="calendar"
-            iconColor="text-orange-600"
-            iconBg="bg-orange-100"
+          <UpcomingInvoicesWidget
+            transactions={transactions}
+            cards={cards}
+            invoices={invoices}
           />
         </div>
 

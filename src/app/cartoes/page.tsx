@@ -3,15 +3,20 @@
 import { useState } from 'react';
 import { useCards } from '@/hooks/useCards';
 import { useTransactions } from '@/hooks/useTransactions';
+import { useInvoices } from '@/hooks/useInvoices';
+import { useMonthFilter } from '@/contexts/MonthFilterContext';
+import { MonthSelector } from '@/components/dashboard/MonthSelector';
 import { Button } from '@/components/ui/Button';
 import { AddCardModal } from '@/components/cards/AddCardModal';
 import { ConfirmModal } from '@/components/ui/ConfirmModal';
 import { formatCents, parseLocalDate } from '@/lib/utils';
-import { CreditCard, Calendar, Pencil, Trash2 } from 'lucide-react';
+import { CreditCard, Calendar, Pencil, Trash2, CheckCircle, Clock, AlertCircle } from 'lucide-react';
 
 export default function CartoesPage() {
     const { cards, deleteCard, isLoading } = useCards();
     const { transactions } = useTransactions();
+    const { invoices, updateInvoiceStatus } = useInvoices();
+    const { selectedDate } = useMonthFilter();
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
     // Delete confirmation state
@@ -19,10 +24,9 @@ export default function CartoesPage() {
     const [cardToDelete, setCardToDelete] = useState<{ id: string, name: string } | null>(null);
     const [isDeleting, setIsDeleting] = useState(false);
 
-    // Calculate monthly spending per card
-    const now = new Date();
-    const currentMonth = now.getMonth();
-    const currentYear = now.getFullYear();
+    // Calculate monthly spending per card based on selected date
+    const currentMonth = selectedDate.getMonth();
+    const currentYear = selectedDate.getFullYear();
 
     const getMonthlySpentByCard = (cardId: string) => {
         return transactions
@@ -33,6 +37,20 @@ export default function CartoesPage() {
                     txDate.getFullYear() === currentYear;
             })
             .reduce((sum, tx) => sum + tx.amount_cents, 0);
+    };
+
+    const getInvoiceStatus = (cardId: string) => {
+        const invoice = invoices.find(inv =>
+            inv.card_id === cardId &&
+            inv.month === currentMonth + 1 && // Invoice table uses 1-12
+            inv.year === currentYear
+        );
+        return invoice?.status || 'OPEN';
+    };
+
+    const handleTogglePaid = async (cardId: string, currentStatus: string) => {
+        const newStatus = currentStatus === 'PAID' ? 'OPEN' : 'PAID';
+        await updateInvoiceStatus(cardId, currentMonth + 1, currentYear, newStatus);
     };
 
     const handleDeleteClick = (e: React.MouseEvent, cardId: string, cardName: string) => {
@@ -81,13 +99,16 @@ export default function CartoesPage() {
                             Gerencie seus cartões e limites
                         </p>
                     </div>
-                    <Button
-                        variant="primary"
-                        onClick={() => setIsAddModalOpen(true)}
-                        className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600"
-                    >
-                        + Novo Cartão
-                    </Button>
+                    <div className="flex items-center gap-3">
+                        <MonthSelector />
+                        <Button
+                            variant="primary"
+                            onClick={() => setIsAddModalOpen(true)}
+                            className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600"
+                        >
+                            + Novo Cartão
+                        </Button>
+                    </div>
                 </div>
 
                 {/* Cards Grid */}
@@ -110,6 +131,10 @@ export default function CartoesPage() {
                                 : 0;
                             const closingDay = getClosingDay(card.due_day || 10, card.closing_days_before || 10);
 
+                            const invoiceStatus = getInvoiceStatus(card.id);
+                            const isPaid = invoiceStatus === 'PAID';
+                            const isClosed = invoiceStatus === 'CLOSED';
+
                             // Progress bar color based on usage
                             let progressColor = 'bg-blue-500';
                             if (usagePercentage > 90) progressColor = 'bg-red-500';
@@ -125,14 +150,22 @@ export default function CartoesPage() {
                                         className="p-5 text-white relative"
                                         style={{ backgroundColor: card.color || '#8b5cf6' }}
                                     >
-                                        {/* Card Icon */}
+                                        {/* Card Icon and Status Badge */}
                                         <div className="flex items-start justify-between mb-4">
                                             <div className="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center">
                                                 <CreditCard className="w-6 h-6" />
                                             </div>
-                                            <span className="text-xs bg-white/20 px-3 py-1 rounded-full font-medium">
-                                                Crédito
-                                            </span>
+                                            <div className="flex gap-2">
+                                                {isPaid ? (
+                                                    <span className="flex items-center gap-1 text-xs bg-green-500/90 text-white px-3 py-1 rounded-full font-medium shadow-sm">
+                                                        <CheckCircle className="w-3 h-3" /> Paga
+                                                    </span>
+                                                ) : (
+                                                    <span className="flex items-center gap-1 text-xs bg-white/20 px-3 py-1 rounded-full font-medium">
+                                                        {isClosed ? 'Fechada' : 'Em Aberto'}
+                                                    </span>
+                                                )}
+                                            </div>
                                         </div>
 
                                         {/* Card Name */}
@@ -154,7 +187,7 @@ export default function CartoesPage() {
                                         {/* Monthly Spending */}
                                         <div>
                                             <div className="flex justify-between items-center mb-2">
-                                                <span className="text-sm text-slate-500">Gasto no mês</span>
+                                                <span className="text-sm text-slate-500">Fatura de {selectedDate.toLocaleString('default', { month: 'long' })}</span>
                                                 <span className="text-xl font-bold text-slate-800">
                                                     {formatCents(monthlySpent)}
                                                 </span>
@@ -178,19 +211,23 @@ export default function CartoesPage() {
                                             </div>
                                         </div>
 
-                                        {/* Billing Cycle */}
-                                        <div className="flex items-center gap-3 p-3 bg-slate-50 rounded-lg">
-                                            <div className="w-8 h-8 bg-slate-200 rounded-lg flex items-center justify-center">
-                                                <Calendar className="w-4 h-4 text-slate-600" />
+                                        {/* Invoice Actions */}
+                                        <div className="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
+                                            <div className="flex items-center gap-2">
+                                                <div className={`w-2 h-2 rounded-full ${isPaid ? 'bg-green-500' : 'bg-orange-500'}`} />
+                                                <span className="text-sm font-medium text-slate-700">
+                                                    {isPaid ? 'Fatura Paga' : 'Aguardando Pagamento'}
+                                                </span>
                                             </div>
-                                            <div>
-                                                <p className="text-sm font-medium text-slate-700">
-                                                    Ciclo da Fatura
-                                                </p>
-                                                <p className="text-xs text-slate-500">
-                                                    Fecha dia {closingDay} • Vence dia {card.due_day || 10}
-                                                </p>
-                                            </div>
+                                            <button
+                                                onClick={() => handleTogglePaid(card.id, invoiceStatus)}
+                                                className={`text-xs px-3 py-1.5 rounded-md font-medium transition-colors ${isPaid
+                                                    ? 'bg-slate-200 text-slate-600 hover:bg-slate-300'
+                                                    : 'bg-green-100 text-green-700 hover:bg-green-200'
+                                                    }`}
+                                            >
+                                                {isPaid ? 'Reabrir' : 'Marcar Paga'}
+                                            </button>
                                         </div>
 
                                         {/* Actions */}

@@ -138,6 +138,53 @@ export interface Database {
                     }
                 ]
             }
+            invoices: {
+                Row: {
+                    id: string
+                    user_id: string
+                    card_id: string
+                    month: number
+                    year: number
+                    status: 'OPEN' | 'CLOSED' | 'PAID'
+                    amount_cents: number
+                    paid_at: string | null
+                    created_at: string
+                    updated_at: string
+                }
+                Insert: {
+                    id?: string
+                    user_id: string
+                    card_id: string
+                    month: number
+                    year: number
+                    status?: 'OPEN' | 'CLOSED' | 'PAID'
+                    amount_cents?: number
+                    paid_at?: string | null
+                    created_at?: string
+                    updated_at?: string
+                }
+                Update: {
+                    id?: string
+                    user_id?: string
+                    card_id?: string
+                    month?: number
+                    year?: number
+                    status?: 'OPEN' | 'CLOSED' | 'PAID'
+                    amount_cents?: number
+                    paid_at?: string | null
+                    created_at?: string
+                    updated_at?: string
+                }
+                Relationships: [
+                    {
+                        foreignKeyName: "invoices_card_id_fkey"
+                        columns: ["card_id"]
+                        isOneToOne: false
+                        referencedRelation: "cards"
+                        referencedColumns: ["id"]
+                    }
+                ]
+            }
             income_entries: {
                 Row: {
                     id: string
@@ -146,6 +193,7 @@ export interface Database {
                     amount_cents: number
                     received_at: string
                     type: 'extra' | 'reembolso' | 'presente' | 'freelance' | 'bonus' | 'outros'
+                    destination: 'budget' | 'savings'
                     notes: string | null
                     created_at: string
                 }
@@ -156,6 +204,7 @@ export interface Database {
                     amount_cents: number
                     received_at?: string
                     type: 'extra' | 'reembolso' | 'presente' | 'freelance' | 'bonus' | 'outros'
+                    destination?: 'budget' | 'savings'
                     notes?: string | null
                     created_at?: string
                 }
@@ -166,6 +215,7 @@ export interface Database {
                     amount_cents?: number
                     received_at?: string
                     type?: 'extra' | 'reembolso' | 'presente' | 'freelance' | 'bonus' | 'outros'
+                    destination?: 'budget' | 'savings'
                     notes?: string | null
                     created_at?: string
                 }

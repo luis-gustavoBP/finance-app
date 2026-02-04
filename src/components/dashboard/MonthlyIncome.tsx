@@ -1,20 +1,25 @@
 'use client';
 
 import { useIncome } from '@/hooks/useIncome';
+import { useMonthFilter } from '@/contexts/MonthFilterContext';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
-import { formatCents } from '@/lib/utils';
+import { formatCents, parseLocalDate } from '@/lib/utils';
 
 export function MonthlyIncome() {
     const { incomeEntries, isLoading } = useIncome();
+    const { selectedDate } = useMonthFilter();
 
-    // Calculate current month's income
-    const currentMonth = new Date().getMonth();
-    const currentYear = new Date().getFullYear();
+    // Calculate current month's income based on filter
+    const currentMonth = selectedDate.getMonth();
+    const currentYear = selectedDate.getFullYear();
 
     const monthlyIncome = incomeEntries
         .filter(entry => {
-            const entryDate = new Date(entry.received_at);
-            return entryDate.getMonth() === currentMonth && entryDate.getFullYear() === currentYear;
+            const entryDate = parseLocalDate(entry.received_at);
+            const isBudget = !entry.destination || entry.destination === 'budget';
+            return entryDate.getMonth() === currentMonth &&
+                entryDate.getFullYear() === currentYear &&
+                isBudget;
         })
         .reduce((sum, entry) => sum + entry.amount_cents, 0);
 

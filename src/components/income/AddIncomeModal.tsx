@@ -28,6 +28,7 @@ export function AddIncomeModal({ isOpen, onClose }: AddIncomeModalProps) {
     const [type, setType] = useState<typeof INCOME_TYPES[number]['value']>('extra');
     const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
     const [notes, setNotes] = useState('');
+    const [destination, setDestination] = useState<'budget' | 'savings'>('budget');
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     const handleSubmit = async () => {
@@ -49,6 +50,7 @@ export function AddIncomeModal({ isOpen, onClose }: AddIncomeModalProps) {
                 description,
                 amount_cents: amountCents,
                 type,
+                destination,
                 received_at: date,
                 notes: notes.trim() || null,
             });
@@ -57,12 +59,19 @@ export function AddIncomeModal({ isOpen, onClose }: AddIncomeModalProps) {
             setDescription('');
             setAmount('');
             setType('extra');
+            setDestination('budget');
             setDate(new Date().toISOString().split('T')[0]);
             setNotes('');
             onClose();
-        } catch (error) {
+        } catch (error: any) {
             console.error(error);
-            alert('Erro ao salvar entrada.');
+            const message = error?.message || 'Erro desconhecido';
+            alert(`Erro ao salvar entrada: ${message}`);
+
+            // Check for common schema errors
+            if (message.includes('destination') || message.includes('column')) {
+                alert('Dica: Verifique se a migração V6 (schema enhancements) foi aplicada no Supabase.');
+            }
         } finally {
             setIsSubmitting(false);
         }
@@ -138,8 +147,41 @@ export function AddIncomeModal({ isOpen, onClose }: AddIncomeModalProps) {
                     />
                 </div>
 
-                <div className="bg-green-50 p-3 rounded-md text-sm text-green-700 ">
-                    💡 Esta entrada será somada ao seu saldo disponível do mês, aumentando o quanto você pode gastar.
+                <div className="space-y-2">
+                    <label className="text-sm font-medium text-slate-700">
+                        Destino
+                    </label>
+                    <div className="grid grid-cols-2 gap-2">
+                        <button
+                            type="button"
+                            onClick={() => setDestination('budget')}
+                            className={`p-3 rounded-lg border-2 transition-all text-left ${destination === 'budget'
+                                ? 'border-indigo-500 bg-indigo-50'
+                                : 'border-slate-200 hover:border-slate-300'
+                                }`}
+                        >
+                            <div className="font-medium text-sm">Orçamento do Mês</div>
+                            <div className="text-xs text-slate-500">Soma ao saldo disponível</div>
+                        </button>
+                        <button
+                            type="button"
+                            onClick={() => setDestination('savings')}
+                            className={`p-3 rounded-lg border-2 transition-all text-left ${destination === 'savings'
+                                ? 'border-amber-500 bg-amber-50'
+                                : 'border-slate-200 hover:border-slate-300'
+                                }`}
+                        >
+                            <div className="font-medium text-sm">Cofrinho / Reserva</div>
+                            <div className="text-xs text-slate-500">Separado do orçamento</div>
+                        </button>
+                    </div>
+                </div>
+
+                <div className="bg-slate-50 p-3 rounded-md text-sm text-slate-600">
+                    {destination === 'budget'
+                        ? '💡 Esta entrada aumentará seu poder de compra neste mês.'
+                        : '🐷 Esta entrada será guardada e não afetará seu limite de gastos mensal.'
+                    }
                 </div>
 
                 <div className="flex justify-end gap-2 pt-4">

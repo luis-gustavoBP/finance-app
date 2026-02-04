@@ -10,6 +10,7 @@ import { parseCurrencyInput, formatCurrencyInputValue, formatCents } from '@/lib
 import { CategoryManager } from '@/components/settings/CategoryManager';
 import { CardConfig } from '@/components/settings/CardConfig';
 import { WeeklyGoal } from '@/components/settings/WeeklyGoal';
+import { ExportButton } from '@/components/export/ExportButton';
 
 export default function SettingsPage() {
     const { settings, updateSettings, isLoading } = useSettings();
@@ -120,6 +121,22 @@ export default function SettingsPage() {
 
                 {/* Card Configuration */}
                 <CardConfig />
+
+                {/* Data Management */}
+                <Card className="bg-white">
+                    <CardHeader>
+                        <CardTitle>📊 Dados e Backup</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <div className="flex items-center justify-between">
+                            <div>
+                                <h3 className="font-medium text-slate-700">Exportar Dados</h3>
+                                <p className="text-sm text-slate-500">Baixe suas transações em formato CSV.</p>
+                            </div>
+                            <ExportButton />
+                        </div>
+                    </CardContent>
+                </Card>
 
                 {/* Account Settings */}
                 <Card className="bg-white border-red-100 ">

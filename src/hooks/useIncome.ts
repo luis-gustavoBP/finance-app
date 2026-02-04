@@ -51,6 +51,22 @@ export function useIncome() {
     const addIncome = async (income: Omit<IncomeInsert, 'id' | 'user_id' | 'created_at'>) => {
         if (!user) throw new Error('Not authenticated');
 
+        const tempId = crypto.randomUUID();
+        const optimisticEntry = {
+            id: tempId,
+            user_id: user.id,
+            created_at: new Date().toISOString(),
+            ...income
+        } as IncomeEntry;
+
+        // Optimistic update
+        await mutate(
+            (currentData) => [optimisticEntry, ...(currentData || [])].sort((a, b) =>
+                new Date(b.received_at).getTime() - new Date(a.received_at).getTime()
+            ),
+            false
+        );
+
         const { data, error } = await supabase
             .from('income_entries')
             .insert({
@@ -60,7 +76,13 @@ export function useIncome() {
             .select()
             .single();
 
-        if (error) throw error;
+        if (error) {
+            // Revert on error
+            mutate();
+            throw error;
+        }
+
+        // Revalidate to replace temp ID with real ID
         mutate();
         return data;
     };
@@ -81,13 +103,25 @@ export function useIncome() {
     const deleteIncome = async (id: string) => {
         if (!user) throw new Error('Not authenticated');
 
+        // Optimistic update: remove immediately from cache
+        await mutate(
+            (currentData) => currentData?.filter(entry => entry.id !== id) || [],
+            false
+        );
+
         const { error } = await supabase
             .from('income_entries')
             .delete()
             .eq('id', id)
             .eq('user_id', user.id);
 
-        if (error) throw error;
+        if (error) {
+            // Revalidate on error to restore data
+            mutate();
+            throw error;
+        }
+
+        // Revalidate to ensure consistency
         mutate();
     };
 
