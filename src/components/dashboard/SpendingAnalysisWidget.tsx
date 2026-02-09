@@ -18,14 +18,14 @@ export function SpendingAnalysisWidget({ transactions, monthlyLimit }: SpendingA
 
     return (
         <Card className="glass-panel text-white">
-            <CardHeader className="flex flex-row items-center justify-between pb-2 border-b border-white/10">
-                <CardTitle className="text-lg font-semibold text-white/90">
+            <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center justify-between pb-2 border-b border-white/10 gap-3">
+                <CardTitle className="text-sm sm:text-lg font-semibold text-white/90">
                     {viewMode === 'pace' ? 'Ritmo de Gasto' : 'Evolução (30 Dias)'}
                 </CardTitle>
                 <div className="flex bg-white/5 p-1 rounded-lg">
                     <button
                         onClick={() => setViewMode('pace')}
-                        className={`px-3 py-1 text-xs font-medium rounded-md transition-all ${viewMode === 'pace'
+                        className={`px-3 sm:px-4 py-2 text-xs font-medium rounded-md transition-all min-h-[36px] ${viewMode === 'pace'
                             ? 'bg-white/20 text-white shadow-sm'
                             : 'text-slate-400 hover:text-white'
                             }`}
@@ -34,7 +34,7 @@ export function SpendingAnalysisWidget({ transactions, monthlyLimit }: SpendingA
                     </button>
                     <button
                         onClick={() => setViewMode('evolution')}
-                        className={`px-3 py-1 text-xs font-medium rounded-md transition-all ${viewMode === 'evolution'
+                        className={`px-3 sm:px-4 py-2 text-xs font-medium rounded-md transition-all min-h-[36px] ${viewMode === 'evolution'
                             ? 'bg-white/20 text-white shadow-sm'
                             : 'text-slate-400 hover:text-white'
                             }`}

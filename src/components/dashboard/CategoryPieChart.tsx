@@ -52,55 +52,58 @@ export function CategoryPieChart({ transactions, categories }: CategoryPieChartP
     const total = data.reduce((sum, item) => sum + item.value, 0);
 
     return (
-        <div className="glass-panel text-white p-6">
-            <h3 className="mb-4 font-semibold text-white/90">
+        <div className="glass-panel text-white p-4 sm:p-6">
+            <h3 className="mb-4 font-semibold text-sm sm:text-base text-white/90">
                 Gastos por Categoria
             </h3>
 
-            <ResponsiveContainer width="100%" height={300}>
-                <PieChart>
-                    <Pie
-                        data={data}
-                        cx="50%"
-                        cy="50%"
-                        labelLine={false}
-                        outerRadius={80}
-                        fill="#8884d8"
-                        dataKey="value"
-                        label={({ percent }) => percent !== undefined ? `${(percent * 100).toFixed(0)}%` : ''}
-                    >
-                        {data.map((entry, index) => (
-                            <Cell key={`cell-${index}`} fill={entry.color} />
-                        ))}
-                    </Pie>
-                    <Tooltip
-                        formatter={(value: number | undefined) => value !== undefined ? formatCents(value) : ''}
-                        contentStyle={{
-                            backgroundColor: 'rgba(15, 23, 42, 0.9)',
-                            border: '1px solid rgba(255,255,255,0.1)',
-                            borderRadius: '12px',
-                            color: '#f8fafc',
-                            backdropFilter: 'blur(8px)'
-                        }}
-                        itemStyle={{ color: '#f8fafc' }}
-                    />
-                </PieChart>
-            </ResponsiveContainer>
+            <div className="h-56 sm:h-72">
+                <ResponsiveContainer width="100%" height="100%">
+                    <PieChart>
+                        <Pie
+                            data={data}
+                            cx="50%"
+                            cy="50%"
+                            labelLine={false}
+                            outerRadius={70}
+                            fill="#8884d8"
+                            dataKey="value"
+                            label={false}
+                        >
+                            {data.map((entry, index) => (
+                                <Cell key={`cell-${index}`} fill={entry.color} />
+                            ))}
+                        </Pie>
+                        <Tooltip
+                            formatter={(value: number | undefined) => value !== undefined ? formatCents(value) : ''}
+                            contentStyle={{
+                                backgroundColor: 'rgba(15, 23, 42, 0.9)',
+                                border: '1px solid rgba(255,255,255,0.1)',
+                                borderRadius: '12px',
+                                color: '#f8fafc',
+                                backdropFilter: 'blur(8px)',
+                                fontSize: '12px'
+                            }}
+                            itemStyle={{ color: '#f8fafc' }}
+                        />
+                    </PieChart>
+                </ResponsiveContainer>
+            </div>
 
             {/* Legenda customizada */}
             <div className="mt-4 space-y-2">
                 {data.map((item, index) => (
-                    <div key={index} className="flex items-center justify-between text-sm">
+                    <div key={index} className="flex items-center justify-between text-xs sm:text-sm">
                         <div className="flex items-center gap-2">
                             <div
-                                className="h-3 w-3 rounded-full"
+                                className="h-2.5 w-2.5 sm:h-3 sm:w-3 rounded-full flex-shrink-0"
                                 style={{ backgroundColor: item.color }}
                             />
-                            <span>
+                            <span className="truncate">
                                 {item.icon} {item.name}
                             </span>
                         </div>
-                        <span className="font-semibold">{formatCents(item.value)}</span>
+                        <span className="font-semibold ml-2">{formatCents(item.value)}</span>
                     </div>
                 ))}
             </div>

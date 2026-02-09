@@ -36,7 +36,7 @@ export function WidgetCard({
 
     return (
         <div className={cn(
-            "rounded-xl p-6 shadow-sm border transition-all relative overflow-hidden",
+            "rounded-xl p-4 sm:p-6 shadow-sm border transition-all relative overflow-hidden",
             variants[variant]
         )}>
             {/* Title with badges */}
@@ -51,7 +51,7 @@ export function WidgetCard({
 
             {/* Main Value */}
             <div className="mb-2">
-                <p className="text-4xl font-black tracking-tight text-white">
+                <p className="text-2xl sm:text-4xl font-black tracking-tight text-white">
                     {typeof value === 'number' ? formatCents(value) : value}
                 </p>
             </div>

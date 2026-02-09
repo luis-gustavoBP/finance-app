@@ -66,42 +66,42 @@ export function FinancialStabilityWidget() {
             <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-500/10 rounded-full -mr-32 -mt-32 blur-3xl animate-pulse" />
             <div className="absolute bottom-0 left-0 w-64 h-64 bg-teal-500/10 rounded-full -ml-32 -mb-32 blur-3xl" />
 
-            <CardHeader className="pb-0 pt-8 px-8 flex flex-row items-center justify-between">
+            <CardHeader className="pb-0 pt-6 sm:pt-8 px-4 sm:px-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
                 <CardTitle className="text-xl font-semibold text-white/90">
-                    <span className="px-5 py-2.5 bg-white/10 rounded-xl backdrop-blur-md border border-white/20 uppercase tracking-[0.2em] text-[10px] sm:text-xs font-black shadow-lg">
+                    <span className="px-3 sm:px-5 py-2 sm:py-2.5 bg-white/10 rounded-xl backdrop-blur-md border border-white/20 uppercase tracking-[0.15em] sm:tracking-[0.2em] text-[9px] sm:text-xs font-black shadow-lg">
                         Situação Financeira Geral
                     </span>
                 </CardTitle>
-                <div className="hidden sm:block text-[10px] text-white/40 font-mono uppercase tracking-widest bg-black/20 px-3 py-1 rounded-full">
-                    Status: {selectedDate.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' })}
+                <div className="text-[9px] sm:text-[10px] text-white/40 font-mono uppercase tracking-widest bg-black/20 px-2 sm:px-3 py-1 rounded-full">
+                    {selectedDate.toLocaleDateString('pt-BR', { month: 'short', year: 'numeric' })}
                 </div>
             </CardHeader>
-            <CardContent className="p-8">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-center">
+            <CardContent className="p-4 sm:p-8">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-8 items-center">
                     {/* Liquid Balance */}
                     <div className="space-y-1">
-                        <span className="text-[10px] font-bold text-white/60 uppercase tracking-widest">Saldo em Conta</span>
+                        <span className="text-[9px] sm:text-[10px] font-bold text-white/60 uppercase tracking-widest">Saldo em Conta</span>
                         <div className="flex items-baseline gap-2">
-                            <span className="text-4xl font-black tracking-tighter">
+                            <span className="text-2xl sm:text-4xl font-black tracking-tighter">
                                 {formatCents(currentBalance)}
                             </span>
                             {currentBalance > 0 && (
-                                <span className="text-[9px] bg-emerald-400 text-emerald-950 px-2 py-0.5 rounded-md font-black uppercase">Ativo</span>
+                                <span className="text-[8px] sm:text-[9px] bg-emerald-400 text-emerald-950 px-1.5 sm:px-2 py-0.5 rounded-md font-black uppercase">Ativo</span>
                             )}
                         </div>
                     </div>
 
                     {/* Pending Invoices for current month */}
-                    <div className="space-y-1 border-white/10 md:border-l md:pl-8">
-                        <span className="text-[10px] font-bold text-white/60 uppercase tracking-widest">Comprometido: Faturas e Assinaturas</span>
+                    <div className="space-y-1 border-white/10 pt-4 md:pt-0 border-t md:border-t-0 md:border-l md:pl-8">
+                        <span className="text-[9px] sm:text-[10px] font-bold text-white/60 uppercase tracking-widest">Comprometido</span>
                         <div className="flex flex-col gap-1">
                             <div className="flex items-baseline gap-2">
-                                <span className="text-xl font-bold text-white/90 tracking-tight">
+                                <span className="text-base sm:text-xl font-bold text-white/90 tracking-tight">
                                     Faturas: {formatCents(openInvoicesSum)}
                                 </span>
                             </div>
                             <div className="flex items-baseline gap-2">
-                                <span className="text-xl font-bold text-white/90 tracking-tight">
+                                <span className="text-base sm:text-xl font-bold text-white/90 tracking-tight">
                                     Assinaturas: {formatCents(activeSubscriptionsSum)}
                                 </span>
                             </div>
@@ -109,17 +109,17 @@ export function FinancialStabilityWidget() {
                     </div>
 
                     {/* Final Projection */}
-                    <div className="md:text-right space-y-1 bg-white/10 p-6 rounded-2xl backdrop-blur-md border border-white/10 shadow-xl ring-1 ring-white/20">
-                        <span className="text-[10px] font-black text-white/90 uppercase tracking-widest">Saldo Líquido Estimado</span>
+                    <div className="md:text-right space-y-1 bg-white/10 p-4 sm:p-6 rounded-2xl backdrop-blur-md border border-white/10 shadow-xl ring-1 ring-white/20">
+                        <span className="text-[9px] sm:text-[10px] font-black text-white/90 uppercase tracking-widest">Saldo Líquido Estimado</span>
                         <div className="flex items-baseline md:justify-end gap-2">
                             <span className={cn(
-                                "text-4xl font-black italic tracking-tighter drop-shadow-sm",
+                                "text-2xl sm:text-4xl font-black italic tracking-tighter drop-shadow-sm",
                                 netBalance < 0 ? "text-yellow-300" : "text-white"
                             )}>
                                 {formatCents(netBalance)}
                             </span>
                         </div>
-                        <p className="text-[9px] text-white/50 mt-1 font-bold uppercase tracking-tight">Após quitar as faturas deste mês</p>
+                        <p className="text-[8px] sm:text-[9px] text-white/50 mt-1 font-bold uppercase tracking-tight">Após quitar as faturas deste mês</p>
                     </div>
                 </div>
             </CardContent>

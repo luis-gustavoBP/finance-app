@@ -19,7 +19,7 @@ const Card = forwardRef<HTMLDivElement, CardProps>(
             <div
                 ref={ref}
                 className={cn(
-                    'glass-panel rounded-2xl p-6 transition-all duration-300 hover:bg-white/10 hover:shadow-2xl hover:border-white/20',
+                    'glass-panel rounded-2xl p-4 sm:p-6 transition-all duration-300 hover:bg-white/10 hover:shadow-2xl hover:border-white/20',
                     highlightColor && highlightColors[highlightColor],
                     className
                 )}

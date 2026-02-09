@@ -68,15 +68,15 @@ export function WeeklyProgress({ transactions, monthlyLimit, weeklyGoal, selecte
     return (
         <Card className="glass-panel overflow-hidden border-0 shadow-xl bg-slate-900/40 backdrop-blur-md">
             <CardHeader className="pb-3 border-b border-white/5">
-                <div className="flex justify-between items-center">
-                    <CardTitle className="text-xs font-bold text-white/60 uppercase tracking-widest">Saldo Semanal</CardTitle>
-                    <div className="flex gap-1.5">
+                <div className="flex justify-between items-center gap-2">
+                    <CardTitle className="text-[10px] sm:text-xs font-bold text-white/60 uppercase tracking-widest">Saldo Semanal</CardTitle>
+                    <div className="flex gap-1">
                         {weeks.map((_, idx) => (
                             <button
                                 key={idx}
                                 onClick={() => setSelectedWeekIndex(idx)}
                                 className={cn(
-                                    "w-7 h-7 flex items-center justify-center text-[10px] rounded-full transition-all duration-300",
+                                    "w-8 h-8 sm:w-7 sm:h-7 flex items-center justify-center text-[10px] rounded-full transition-all duration-300 min-h-[32px]",
                                     selectedWeekIndex === idx
                                         ? "bg-indigo-500 text-white shadow-[0_0_12px_rgba(99,102,241,0.5)] font-bold scale-110"
                                         : "bg-white/5 text-white/40 hover:bg-white/10 hover:text-white"
@@ -89,22 +89,22 @@ export function WeeklyProgress({ transactions, monthlyLimit, weeklyGoal, selecte
                     </div>
                 </div>
             </CardHeader>
-            <CardContent className="pt-6">
-                <div className="flex flex-col gap-1 mb-6">
+            <CardContent className="pt-4 sm:pt-6">
+                <div className="flex flex-col gap-1 mb-4 sm:mb-6">
                     <div className="flex items-baseline gap-2">
                         <span className={cn(
-                            "text-4xl font-black tracking-tight transition-colors duration-500",
+                            "text-2xl sm:text-4xl font-black tracking-tight transition-colors duration-500",
                             isOverLimit ? "text-red-400" : "text-white"
                         )}>
                             {formatCents(remainingBalance)}
                         </span>
                         {isOverLimit && (
-                            <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-red-500/20 text-red-400 uppercase">
+                            <span className="text-[9px] sm:text-[10px] font-bold px-1.5 py-0.5 rounded bg-red-500/20 text-red-400 uppercase">
                                 Excedido
                             </span>
                         )}
                     </div>
-                    <span className="text-xs text-white/40 font-medium">
+                    <span className="text-[10px] sm:text-xs text-white/40 font-medium">
                         Ainda pode gastar nesta semana
                     </span>
                 </div>

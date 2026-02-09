@@ -1,0 +1,55 @@
+{
+    "name": "ContApp - Gerenciador Financeiro",
+    "short_name": "ContApp",
+    "description": "Controle financeiro pessoal com foco em cartões de crédito, parcelamentos e planejamento mensal",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#001861",
+    "theme_color": "#3B82F6",
+    "orientation": "portrait",
+    "scope": "/",
+    "icons": [
+        {
+            "src": "/72.png",
+            "sizes": "72x72",
+            "type": "image/png",
+            "purpose": "any"
+        },
+        {
+            "src": "/96.png",
+            "sizes": "96x96",
+            "type": "image/png",
+            "purpose": "any"
+        },
+        {
+            "src": "/128.png",
+            "sizes": "128x128",
+            "type": "image/png",
+            "purpose": "any"
+        },
+        {
+            "src": "/144.png",
+            "sizes": "144x144",
+            "type": "image/png",
+            "purpose": "any"
+        },
+        {
+            "src": "/152.png",
+            "sizes": "152x152",
+            "type": "image/png",
+            "purpose": "any"
+        },
+        {
+            "src": "/192.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "/512.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any maskable"
+        }
+    ]
+}
