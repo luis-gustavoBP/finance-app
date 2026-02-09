@@ -80,14 +80,19 @@ export default function GastosPage() {
     return (
         <div className="min-h-full">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
-                <div className="flex items-center justify-between flex-wrap gap-3">
-                    <div className="flex items-center gap-3">
-                        <h1 className="text-2xl font-bold text-white">Minhas Transações</h1>
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
+                    <div className="flex items-center gap-3 flex-wrap">
+                        <h1 className="text-xl sm:text-2xl font-bold text-white">Minhas Transações</h1>
                         <MonthSelector />
                     </div>
-                    <div className="flex items-center gap-2">
-                        <Button variant="primary" size="sm" onClick={() => setIsModalOpen(true)}>+ Nova Transação</Button>
-                    </div>
+                    <Button
+                        variant="primary"
+                        size="sm"
+                        onClick={() => setIsModalOpen(true)}
+                        className="w-full sm:w-auto shrink-0"
+                    >
+                        + Nova Transação
+                    </Button>
                 </div>
 
                 <Card className="glass-panel text-white p-0">

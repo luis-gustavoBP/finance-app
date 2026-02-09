@@ -1,9 +1,9 @@
 import type { Metadata, Viewport } from "next";
+import Link from "next/link";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Providers } from "./providers";
 import { Header } from "@/components/layout/Header";
-import { MobileNav } from "@/components/layout/MobileNav";
 import { BottomNav } from "@/components/layout/BottomNav";
 import { AuthGuard } from "@/components/auth/AuthGuard";
 
@@ -61,8 +61,18 @@ export default function RootLayout({
       >
         <Providers>
           <AuthGuard>
-            {/* Mobile Navigation - Hamburger menu */}
-            <MobileNav />
+            {/* Mobile Logo Header */}
+            <div className="md:hidden fixed top-0 left-0 right-0 z-50 h-auto min-h-[56px] bg-[#001861]/95 backdrop-blur-md border-b border-white/10 pt-safe">
+              <div className="h-14 flex items-center justify-center px-4">
+                <Link href="/">
+                  <img
+                    src="/logo.png"
+                    alt="ContApp"
+                    className="h-8 w-auto rounded-lg"
+                  />
+                </Link>
+              </div>
+            </div>
             {/* Desktop Header */}
             <div className="hidden md:block">
               <Header />

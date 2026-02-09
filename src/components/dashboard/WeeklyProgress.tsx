@@ -6,15 +6,17 @@ import { formatCents, parseLocalDate, getWeeksInMonth, cn } from '@/lib/utils';
 import { Database } from '@/types/database.types';
 
 type Transaction = Database['public']['Tables']['transactions']['Row'];
+type IncomeEntry = Database['public']['Tables']['income_entries']['Row'];
 
 interface WeeklyProgressProps {
     transactions: Transaction[];
+    incomeEntries: IncomeEntry[];
     monthlyLimit: number;
     weeklyGoal?: number;
     selectedMonth: Date;
 }
 
-export function WeeklyProgress({ transactions, monthlyLimit, weeklyGoal, selectedMonth }: WeeklyProgressProps) {
+export function WeeklyProgress({ transactions, incomeEntries, monthlyLimit, weeklyGoal, selectedMonth }: WeeklyProgressProps) {
     const weeks = useMemo(() => {
         return getWeeksInMonth(selectedMonth.getFullYear(), selectedMonth.getMonth());
     }, [selectedMonth]);
@@ -52,8 +54,26 @@ export function WeeklyProgress({ transactions, monthlyLimit, weeklyGoal, selecte
         })
         .reduce((sum, tx) => sum + tx.amount_cents, 0);
 
-    // O saldo restante é a meta acumulada até o final da semana selecionada menos tudo o que foi gasto até lá
-    const remainingBalance = (weeklyLimit * (selectedWeekIndex + 1)) - spentUntilSelectedWeekEnd;
+    // Calculate income for the selected week (only 'budget' destination)
+    const incomeInSelectedWeek = incomeEntries
+        .filter(entry => {
+            const date = parseLocalDate(entry.received_at);
+            const isBudget = !entry.destination || entry.destination === 'budget';
+            return date >= selectedWeek.start && date <= selectedWeek.end && isBudget;
+        })
+        .reduce((sum, entry) => sum + entry.amount_cents, 0);
+
+    // Calculate total income up to end of selected week
+    const incomeUntilSelectedWeekEnd = incomeEntries
+        .filter(entry => {
+            const date = parseLocalDate(entry.received_at);
+            const isBudget = !entry.destination || entry.destination === 'budget';
+            return date >= weeks[0].start && date <= selectedWeek.end && isBudget;
+        })
+        .reduce((sum, entry) => sum + entry.amount_cents, 0);
+
+    // O saldo restante é a meta acumulada + entrada até o final da semana selecionada menos tudo o que foi gasto até lá
+    const remainingBalance = (weeklyLimit * (selectedWeekIndex + 1)) + incomeUntilSelectedWeekEnd - spentUntilSelectedWeekEnd;
 
     // A meta "real" da semana selecionada (meta base + o que sobrou das anteriores)
     const spentBeforeSelectedWeek = spentUntilSelectedWeekEnd - spentInSelectedWeek;

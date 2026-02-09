@@ -69,16 +69,21 @@ export default function EntradasPage() {
     return (
         <div className="min-h-full">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
-                <div className="flex items-center justify-between flex-wrap gap-3">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
                     <div>
-                        <h1 className="text-2xl font-bold text-white">
+                        <h1 className="text-xl sm:text-2xl font-bold text-white">
                             Entradas de Dinheiro
                         </h1>
-                        <p className="text-sm text-slate-200 mt-1">
+                        <p className="text-xs sm:text-sm text-slate-200 mt-1">
                             Registre dinheiro extra recebido (não regular)
                         </p>
                     </div>
-                    <Button variant="primary" size="sm" onClick={() => setIsModalOpen(true)}>
+                    <Button
+                        variant="primary"
+                        size="sm"
+                        onClick={() => setIsModalOpen(true)}
+                        className="w-full sm:w-auto shrink-0"
+                    >
                         + Nova Entrada
                     </Button>
                 </div>

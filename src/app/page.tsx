@@ -151,6 +151,7 @@ export default function DashboardPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <WeeklyProgress
                 transactions={transactions}
+                incomeEntries={incomeEntries}
                 monthlyLimit={globalLimit}
                 weeklyGoal={weeklyGoal}
                 selectedMonth={selectedDate}
