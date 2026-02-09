@@ -1,5 +1,6 @@
 'use client';
 
+import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
@@ -21,6 +22,15 @@ const navItems = [
         icon: (
             <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+        ),
+    },
+    {
+        href: '/entradas',
+        label: 'Entradas',
+        icon: (
+            <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
         ),
     },
@@ -48,11 +58,46 @@ const navItems = [
 export function BottomNav() {
     const pathname = usePathname();
     const { user } = useAuth();
+    const [isVisible, setIsVisible] = useState(true);
+    const [lastScrollY, setLastScrollY] = useState(0);
+
+    const handleScroll = useCallback(() => {
+        const currentScrollY = window.scrollY;
+
+        // Always show at top of page
+        if (currentScrollY < 10) {
+            setIsVisible(true);
+            setLastScrollY(currentScrollY);
+            return;
+        }
+
+        // Determine direction
+        if (currentScrollY > lastScrollY && currentScrollY > 60) {
+            // Scrolling down
+            setIsVisible(false);
+        } else if (currentScrollY < lastScrollY) {
+            // Scrolling up
+            setIsVisible(true);
+        }
+
+        setLastScrollY(currentScrollY);
+    }, [lastScrollY]);
+
+    useEffect(() => {
+        window.addEventListener('scroll', handleScroll, { passive: true });
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, [handleScroll]);
 
     if (!user) return null;
 
     return (
-        <nav className="md:hidden fixed bottom-0 left-0 right-0 z-40 h-16 bg-[#001861]/95 backdrop-blur-md border-t border-white/10 pb-safe">
+        <nav
+            className={cn(
+                "md:hidden fixed bottom-0 left-0 right-0 z-40 h-16 bg-[#001861]/95 backdrop-blur-md border-t border-white/10 pb-safe transition-transform duration-300 ease-in-out transform-gpu",
+                isVisible ? "translate-y-0" : "translate-y-full"
+            )}
+            style={{ willChange: 'transform' }}
+        >
             <div className="flex justify-around items-center h-full max-w-lg mx-auto">
                 {navItems.map((item) => {
                     const isActive = pathname === item.href;
@@ -61,20 +106,20 @@ export function BottomNav() {
                             key={item.href}
                             href={item.href}
                             className={cn(
-                                'flex flex-col items-center justify-center min-w-[64px] min-h-[48px] px-2 py-1 rounded-xl transition-all',
+                                'flex flex-col items-center justify-center min-w-[50px] sm:min-w-[64px] min-h-[48px] px-2 py-1 rounded-xl transition-all',
                                 isActive
                                     ? 'text-blue-400'
-                                    : 'text-slate-400 hover:text-white'
+                                    : 'text-slate-400'
                             )}
                         >
                             <span className={cn(
-                                'transition-transform',
+                                'transition-transform duration-300',
                                 isActive && 'scale-110'
                             )}>
                                 {item.icon}
                             </span>
                             <span className={cn(
-                                'text-[10px] font-medium mt-1',
+                                'text-[10px] font-medium mt-1 truncate max-w-full px-1',
                                 isActive && 'font-semibold'
                             )}>
                                 {item.label}

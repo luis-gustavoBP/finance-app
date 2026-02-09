@@ -108,27 +108,6 @@ export function Header() {
                     </div>
                 </div>
             </div>
-
-            {/* Mobile Navigation */}
-            <div className="md:hidden border-t border-white/10">
-                <nav className="flex justify-around py-2">
-                    {navItems.map((item) => (
-                        <Link
-                            key={item.href}
-                            href={item.href}
-                            className={cn(
-                                'flex flex-col items-center gap-1 px-3 py-2 rounded-xl text-xs font-medium transition-all',
-                                pathname === item.href
-                                    ? 'text-white bg-white/10'
-                                    : 'text-slate-400 hover:text-white'
-                            )}
-                        >
-                            {item.icon}
-                            {item.label}
-                        </Link>
-                    ))}
-                </nav>
-            </div>
         </header>
     );
 }
