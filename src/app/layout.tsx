@@ -57,7 +57,7 @@ export default function RootLayout({
     <html lang="pt-BR" suppressHydrationWarning>
       <body
         suppressHydrationWarning
-        className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen bg-[#001861] pb-20 md:pb-0`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen bg-[#001861] pb-20 md:pb-0 overflow-x-hidden`}
       >
         <Providers>
           <AuthGuard>
@@ -67,7 +67,7 @@ export default function RootLayout({
             <div className="hidden md:block">
               <Header />
             </div>
-            <main className="min-h-[calc(100vh-64px)] pt-14 md:pt-0">
+            <main className="min-h-[calc(100vh-64px)] pt-header-safe md:pt-0">
               {children}
             </main>
             {/* Mobile Bottom Navigation */}

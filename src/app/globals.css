@@ -139,6 +139,14 @@ body {
   .pr-safe {
     padding-right: env(safe-area-inset-right);
   }
+
+  .mt-header-safe {
+    margin-top: calc(3.5rem + env(safe-area-inset-top));
+  }
+
+  .pt-header-safe {
+    padding-top: calc(3.5rem + env(safe-area-inset-top));
+  }
 }
 
 /* Dynamic viewport height for mobile browsers */

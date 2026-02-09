@@ -49,24 +49,26 @@ export function MobileNav() {
     return (
         <div className="md:hidden">
             {/* Header with Hamburger */}
-            <header className="fixed top-0 left-0 right-0 z-50 h-14 bg-[#001861]/95 backdrop-blur-md border-b border-white/10 flex items-center justify-between px-4">
-                <Link href="/" className="flex items-center gap-2">
-                    <img
-                        src="/logo.png"
-                        alt="ContApp Logo"
-                        className="h-8 w-auto rounded-lg"
-                    />
-                </Link>
+            <header className="fixed top-0 left-0 right-0 z-50 h-auto min-h-[56px] bg-[#001861]/95 backdrop-blur-md border-b border-white/10 flex items-center justify-between px-4 pt-safe">
+                <div className="h-14 flex items-center justify-between w-full">
+                    <Link href="/" className="flex items-center gap-2">
+                        <img
+                            src="/logo.png"
+                            alt="ContApp Logo"
+                            className="h-8 w-auto rounded-lg"
+                        />
+                    </Link>
 
-                <button
-                    onClick={() => setIsOpen(true)}
-                    className="w-11 h-11 flex items-center justify-center rounded-xl hover:bg-white/10 transition-colors"
-                    aria-label="Abrir menu"
-                >
-                    <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-                    </svg>
-                </button>
+                    <button
+                        onClick={() => setIsOpen(true)}
+                        className="w-11 h-11 flex items-center justify-center rounded-xl hover:bg-white/10 transition-colors"
+                        aria-label="Abrir menu"
+                    >
+                        <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                        </svg>
+                    </button>
+                </div>
             </header>
 
             {/* Overlay */}
@@ -89,24 +91,26 @@ export function MobileNav() {
             >
                 <div className="flex flex-col h-full">
                     {/* Drawer Header */}
-                    <div className="h-14 flex items-center justify-between px-4 border-b border-white/10">
-                        <Link href="/" className="flex items-center gap-2" onClick={closeMenu}>
-                            <img
-                                src="/logo.png"
-                                alt="ContApp Logo"
-                                className="h-8 w-auto rounded-lg"
-                            />
-                            <span className="text-white font-semibold">ContApp</span>
-                        </Link>
-                        <button
-                            onClick={closeMenu}
-                            className="w-10 h-10 flex items-center justify-center rounded-xl hover:bg-white/10 transition-colors"
-                            aria-label="Fechar menu"
-                        >
-                            <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                            </svg>
-                        </button>
+                    <div className="h-auto min-h-[56px] pt-safe flex flex-col justify-center border-b border-white/10">
+                        <div className="h-14 flex items-center justify-between px-4">
+                            <Link href="/" className="flex items-center gap-2" onClick={closeMenu}>
+                                <img
+                                    src="/logo.png"
+                                    alt="ContApp Logo"
+                                    className="h-8 w-auto rounded-lg"
+                                />
+                                <span className="text-white font-semibold">ContApp</span>
+                            </Link>
+                            <button
+                                onClick={closeMenu}
+                                className="w-10 h-10 flex items-center justify-center rounded-xl hover:bg-white/10 transition-colors"
+                                aria-label="Fechar menu"
+                            >
+                                <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                            </button>
+                        </div>
                     </div>
 
                     {/* Navigation Links */}
