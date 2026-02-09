@@ -109,6 +109,47 @@ export function getWeekEnd(): Date {
 }
 
 /**
+ * Retorna os períodos semanais de um mês específico
+ */
+export function getWeeksInMonth(year: number, month: number): { start: Date; end: Date; label: string }[] {
+    const weeks: { start: Date; end: Date; label: string }[] = [];
+    const firstDayOfMonth = new Date(year, month, 1);
+    const lastDayOfMonth = new Date(year, month + 1, 0);
+
+    let current = new Date(firstDayOfMonth);
+    let weekIndex = 1;
+
+    while (current <= lastDayOfMonth) {
+        const start = new Date(current);
+        const dayOfWeek = current.getDay(); // 0 - Domingo, 6 - Sábado
+        const daysToSaturday = 6 - dayOfWeek;
+
+        let end = new Date(current);
+        end.setDate(current.getDate() + daysToSaturday);
+
+        if (end > lastDayOfMonth) {
+            end = new Date(lastDayOfMonth);
+        }
+
+        end.setHours(23, 59, 59, 999);
+        start.setHours(0, 0, 0, 0);
+
+        weeks.push({
+            start: new Date(start),
+            end: new Date(end),
+            label: `Semana ${weekIndex}`
+        });
+
+        current = new Date(end);
+        current.setDate(current.getDate() + 1);
+        current.setHours(0, 0, 0, 0);
+        weekIndex++;
+    }
+
+    return weeks;
+}
+
+/**
  * Retorna o início do mês atual
  */
 export function getMonthStart(): Date {

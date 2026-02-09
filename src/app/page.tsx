@@ -23,6 +23,7 @@ import { ProgressBar } from '@/components/ui/ProgressBar';
 import { FinancialStabilityWidget } from '@/components/dashboard/FinancialStabilityWidget';
 import { SpendingAnalysisWidget } from '@/components/dashboard/SpendingAnalysisWidget';
 import { UpcomingInvoicesWidget } from '@/components/dashboard/UpcomingInvoicesWidget';
+import { WeeklyProgress } from '@/components/dashboard/WeeklyProgress';
 
 export default function DashboardPage() {
   const { transactions, isLoading: isTxLoading, error: isTxError } = useTransactions();
@@ -101,16 +102,6 @@ export default function DashboardPage() {
 
   const availableBalance = globalLimit + monthlyIncome - totalSpentMonthly - totalSubscriptions;
 
-  // Calculate weekly spending
-  const weekStart = getWeekStart();
-  const weekEnd = getWeekEnd();
-  const weeklySpent = transactions
-    .filter(t => {
-      const txDate = parseLocalDate(t.posted_at);
-      return txDate >= weekStart && txDate <= weekEnd && (t as any).include_in_weekly_plan !== false;
-    })
-    .reduce((sum, t) => sum + t.amount_cents, 0);
-
   const weeklyGoal = settings?.weekly_goal_cents || 0;
 
   return (
@@ -158,27 +149,12 @@ export default function DashboardPage() {
           {/* Left Column: Spending Analysis & Weekly */}
           <div className="space-y-6 lg:col-span-2">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <WidgetCard
-                title="Progresso Semanal"
-                value={weeklySpent}
-                subtitle={`${weekStart.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' })} a ${weekEnd.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' })} • Meta: ${formatCents(weeklyGoal)}`}
-                icon="trending"
-                variant="blue"
-              >
-                {weeklyGoal > 0 && (
-                  <div className="mt-3">
-                    <div className="h-2 w-full bg-white/20 rounded-full overflow-hidden">
-                      <div
-                        className="h-full bg-white transition-all shadow-[0_0_8px_rgba(255,255,255,0.8)]"
-                        style={{ width: `${Math.min((weeklySpent / weeklyGoal) * 100, 100)}%` }}
-                      />
-                    </div>
-                    <p className="text-[10px] text-white/60 font-bold mt-2 uppercase tracking-tight">
-                      {((weeklySpent / weeklyGoal) * 100).toFixed(1)}% da meta semanal
-                    </p>
-                  </div>
-                )}
-              </WidgetCard>
+              <WeeklyProgress
+                transactions={transactions}
+                monthlyLimit={globalLimit}
+                weeklyGoal={weeklyGoal}
+                selectedMonth={selectedDate}
+              />
               <WidgetCard
                 title="Entradas no Mês"
                 value={monthlyIncome}
