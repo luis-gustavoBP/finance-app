@@ -5,6 +5,7 @@ import { useIncome } from '@/hooks/useIncome';
 import { Modal } from '@/components/ui/Modal';
 import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
+import { useToast } from '@/contexts/ToastContext';
 import { parseCurrencyInput, formatCurrencyInputValue, cn } from '@/lib/utils';
 
 interface AddIncomeModalProps {
@@ -23,6 +24,7 @@ const INCOME_TYPES = [
 
 export function AddIncomeModal({ isOpen, onClose }: AddIncomeModalProps) {
     const { addIncome } = useIncome();
+    const { showToast } = useToast();
     const [description, setDescription] = useState('');
     const [amount, setAmount] = useState('');
     const [type, setType] = useState<typeof INCOME_TYPES[number]['value']>('extra');
@@ -37,12 +39,12 @@ export function AddIncomeModal({ isOpen, onClose }: AddIncomeModalProps) {
             const amountCents = parseCurrencyInput(amount);
 
             if (amountCents <= 0) {
-                alert('O valor deve ser maior que zero.');
+                showToast('O valor deve ser maior que zero.', 'error');
                 return;
             }
 
             if (!description.trim()) {
-                alert('Informe uma descrição.');
+                showToast('Informe uma descrição.', 'error');
                 return;
             }
 
@@ -62,14 +64,15 @@ export function AddIncomeModal({ isOpen, onClose }: AddIncomeModalProps) {
             setDestination('budget');
             setDate(new Date().toISOString().split('T')[0]);
             setNotes('');
+            showToast('Entrada salva com sucesso!', 'success');
             onClose();
         } catch (error: any) {
             console.error(error);
             const message = error?.message || 'Erro desconhecido';
-            alert(`Erro ao salvar entrada: ${message}`);
+            showToast(`Erro ao salvar entrada: ${message}`, 'error');
 
             if (message.includes('destination') || message.includes('column')) {
-                alert('Dica: Verifique se a migração V6 (schema enhancements) foi aplicada no Supabase.');
+                showToast('Dica: Verifique se a migração V6 foi aplicada no Supabase.', 'info');
             }
         } finally {
             setIsSubmitting(false);

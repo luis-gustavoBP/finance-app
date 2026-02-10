@@ -13,9 +13,11 @@ import { parseLocalDate } from '@/lib/utils';
 import { MonthSelector } from '@/components/dashboard/MonthSelector';
 import { useInvoices } from '@/hooks/useInvoices';
 import { getBillingMonth } from '@/lib/calculations';
+import { useToast } from '@/contexts/ToastContext';
 
 export default function GastosPage() {
     const { transactions, isLoading: isTxLoading, deleteTransaction } = useTransactions();
+    const { showToast } = useToast();
     const { selectedDate } = useMonthFilter();
     const { cards } = useCards();
     const { invoices } = useInvoices();
@@ -42,7 +44,7 @@ export default function GastosPage() {
             setTxToDelete(null);
         } catch (error) {
             console.error(error);
-            alert('Erro ao excluir transação.');
+            showToast('Erro ao excluir transação.', 'error');
         } finally {
             setIsDeleting(false);
         }

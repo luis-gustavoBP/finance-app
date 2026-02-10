@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/Button';
 import { formatCents, incomeTypes, formatDate, cn } from '@/lib/utils';
 import { AddIncomeModal } from '@/components/income/AddIncomeModal';
 import { ConfirmModal } from '@/components/ui/ConfirmModal';
+import { useToast } from '@/contexts/ToastContext';
 
 const INCOME_TYPE_LABELS: Record<string, string> = {
     'extra': '💰 Extra',
@@ -19,6 +20,7 @@ const INCOME_TYPE_LABELS: Record<string, string> = {
 
 export default function EntradasPage() {
     const { incomeEntries, isLoading, deleteIncome } = useIncome();
+    const { showToast } = useToast();
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
@@ -42,7 +44,7 @@ export default function EntradasPage() {
             setIncomeToDelete(null);
         } catch (error) {
             console.error(error);
-            alert('Erro ao excluir entrada');
+            showToast('Erro ao excluir entrada', 'error');
         } finally {
             setIsDeleting(false);
         }

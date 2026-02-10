@@ -5,6 +5,7 @@ import { useCards } from '@/hooks/useCards';
 import { Modal } from '@/components/ui/Modal';
 import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
+import { useToast } from '@/contexts/ToastContext';
 
 interface AddCardModalProps {
     isOpen: boolean;
@@ -23,6 +24,7 @@ const CARD_COLORS = [
 
 export function AddCardModal({ isOpen, onClose }: AddCardModalProps) {
     const { addCard } = useCards();
+    const { showToast } = useToast();
 
     const [name, setName] = useState('');
     const [lastFour, setLastFour] = useState('');
@@ -34,12 +36,12 @@ export function AddCardModal({ isOpen, onClose }: AddCardModalProps) {
 
     const handleSubmit = async () => {
         if (!name.trim()) {
-            alert('Preencha o nome do cartão');
+            showToast('Preencha o nome do cartão', 'error');
             return;
         }
 
         if (lastFour && lastFour.length !== 4) {
-            alert('Últimos 4 dígitos devem ter exatamente 4 números');
+            showToast('Últimos 4 dígitos devem ter exatamente 4 números', 'error');
             return;
         }
 
@@ -47,12 +49,12 @@ export function AddCardModal({ isOpen, onClose }: AddCardModalProps) {
         const closingDaysNum = parseInt(closingDaysBefore);
 
         if (dueDayNum < 1 || dueDayNum > 31) {
-            alert('Dia de vencimento deve estar entre 1 e 31');
+            showToast('Dia de vencimento deve estar entre 1 e 31', 'error');
             return;
         }
 
         if (closingDaysNum < 1 || closingDaysNum > 30) {
-            alert('Dias antes do vencimento deve estar entre 1 e 30');
+            showToast('Dias antes do vencimento deve estar entre 1 e 30', 'error');
             return;
         }
 
@@ -81,10 +83,12 @@ export function AddCardModal({ isOpen, onClose }: AddCardModalProps) {
             setDueDay('10');
             setClosingDaysBefore('10');
 
+
+            showToast('Cartão adicionado com sucesso!', 'success');
             onClose();
         } catch (error) {
             console.error(error);
-            alert('Erro ao adicionar cartão');
+            showToast('Erro ao adicionar cartão', 'error');
         } finally {
             setIsSubmitting(false);
         }

@@ -4,27 +4,34 @@ import { useState } from 'react';
 import { useTransactions } from '@/hooks/useTransactions';
 import { useCards } from '@/hooks/useCards';
 import { Button } from '@/components/ui/Button';
+import { useToast } from '@/contexts/ToastContext';
 import { exportMonthTransactions } from '@/lib/csvExport';
 
 export function ExportButton() {
     const { transactions } = useTransactions();
     const { cards } = useCards();
+    const { showToast } = useToast();
     const [selectedMonth, setSelectedMonth] = useState(() => {
         const now = new Date();
         return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
     });
 
     const handleExport = () => {
-        const [year, month] = selectedMonth.split('-').map(Number);
+        try {
+            const [year, month] = selectedMonth.split('-').map(Number);
 
-        // Cast to proper type format
-        const txWithRelations = transactions.map(tx => ({
-            ...tx,
-            category: (tx as any).category || null,
-            card: (tx as any).card || null,
-        }));
+            // Cast to proper type format
+            const txWithRelations = transactions.map(tx => ({
+                ...tx,
+                category: (tx as any).category || null,
+                card: (tx as any).card || null,
+            }));
 
-        exportMonthTransactions(txWithRelations, cards, year, month);
+            exportMonthTransactions(txWithRelations, cards, year, month);
+            showToast('Arquivo CSV gerado com sucesso!', 'success');
+        } catch (error: any) {
+            showToast(error.message || 'Erro ao exportar dados', 'error');
+        }
     };
 
     // Generate last 12 months options

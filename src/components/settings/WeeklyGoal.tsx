@@ -3,12 +3,18 @@
 import { useState, useEffect } from 'react';
 import { useSettings } from '@/hooks/useSettings';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
+import { Modal } from '@/components/ui/Modal';
+import { ConfirmModal } from '@/components/ui/ConfirmModal';
 import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
+import { cn } from '@/lib/utils';
 import { parseCurrencyInput, formatCurrencyInputValue } from '@/lib/utils';
+import { Tooltip } from '@/components/ui/Tooltip';
+import { useToast } from '@/contexts/ToastContext';
 
 export function WeeklyGoal() {
     const { settings, updateSettings, isLoading } = useSettings();
+    const { showToast } = useToast();
     const [weeklyGoal, setWeeklyGoal] = useState('');
 
     useEffect(() => {
@@ -20,16 +26,16 @@ export function WeeklyGoal() {
     const handleSave = async () => {
         const goalInCents = parseCurrencyInput(weeklyGoal);
         if (isNaN(goalInCents)) {
-            alert('Digite um valor válido');
+            showToast('Digite um valor válido', 'error');
             return;
         }
 
         try {
             await updateSettings({ weekly_goal_cents: goalInCents });
-            alert('Meta semanal salva!');
+            showToast('Meta semanal salva!', 'success');
         } catch (error) {
             console.error(error);
-            alert('Erro ao salvar meta');
+            showToast('Erro ao salvar meta', 'error');
         }
     };
 
@@ -43,12 +49,12 @@ export function WeeklyGoal() {
                 <CardTitle>🎯 Meta de Gasto Semanal</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-                <p className="text-sm text-slate-300">
-                    Defina um limite de gasto por semana. O sistema vai alertar quando você ultrapassar 80% e 100% da meta.
-                </p>
-                <p className="text-xs text-amber-400 ">
-                    💡 Esta meta é independente do orçamento mensal e serve como controle adicional.
-                </p>
+                <div className="flex items-center gap-2">
+                    <p className="text-sm text-slate-300">
+                        Defina um limite de gasto por semana.
+                    </p>
+                    <Tooltip content="O sistema vai alertar quando você ultrapassar 80% e 100% da meta. Esta meta é independente do orçamento mensal e serve como controle adicional." />
+                </div>
 
                 <Input
                     label="Limite Semanal (R$)"

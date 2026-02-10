@@ -9,9 +9,11 @@ import { calculateClosingDate } from '@/lib/invoiceLogic';
 import { AddCardModal } from '@/components/cards/AddCardModal';
 import { ConfirmModal } from '@/components/ui/ConfirmModal';
 import { formatCents, parseCurrencyInput, formatCurrencyInputValue } from '@/lib/utils';
+import { useToast } from '@/contexts/ToastContext';
 
 export function CardConfig() {
     const { cards, updateCardConfig, deleteCard, isLoading } = useCards();
+    const { showToast } = useToast();
     const [editingCard, setEditingCard] = useState<string | null>(null);
     const [dueDay, setDueDay] = useState<number>(10);
     const [closingDaysBefore, setClosingDaysBefore] = useState<number>(10);
@@ -39,10 +41,10 @@ export function CardConfig() {
                 limit_cents: limitCents
             });
             setEditingCard(null);
-            alert('Configuração do cartão salva!');
+            showToast('Configuração do cartão salva!', 'success');
         } catch (error) {
             console.error(error);
-            alert('Erro ao salvar configuração');
+            showToast('Erro ao salvar configuração', 'error');
         }
     };
 
@@ -59,11 +61,12 @@ export function CardConfig() {
         setIsDeleting(true);
         try {
             await deleteCard(cardToDelete.id);
+            showToast('Cartão excluído!', 'success');
             setDeleteConfirmOpen(false);
             setCardToDelete(null);
         } catch (error: any) {
             console.error(error);
-            alert(error.message || 'Erro ao excluir cartão');
+            showToast(error.message || 'Erro ao excluir cartão', 'error');
         } finally {
             setIsDeleting(false);
         }

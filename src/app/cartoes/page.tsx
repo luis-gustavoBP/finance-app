@@ -11,9 +11,11 @@ import { AddCardModal } from '@/components/cards/AddCardModal';
 import { ConfirmModal } from '@/components/ui/ConfirmModal';
 import { formatCents, parseLocalDate, cn } from '@/lib/utils';
 import { CreditCard, Pencil, Trash2, CheckCircle } from 'lucide-react';
+import { useToast } from '@/contexts/ToastContext';
 
 export default function CartoesPage() {
     const { cards, deleteCard, isLoading } = useCards();
+    const { showToast } = useToast();
     const { transactions } = useTransactions();
     const { invoices, updateInvoiceStatus } = useInvoices();
     const { selectedDate } = useMonthFilter();
@@ -68,7 +70,7 @@ export default function CartoesPage() {
             setCardToDelete(null);
         } catch (error: any) {
             console.error(error);
-            alert(error.message || 'Erro ao excluir cartão');
+            showToast('Erro ao excluir transação.', 'error');
         } finally {
             setIsDeleting(false);
         }

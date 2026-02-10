@@ -145,8 +145,7 @@ export function exportMonthTransactions(
     });
 
     if (filtered.length === 0) {
-        alert('Nenhuma transação encontrada para este mês.');
-        return;
+        throw new Error('Nenhuma transação encontrada para este mês.');
     }
 
     const csvContent = generateTransactionsCsv(filtered, cards);

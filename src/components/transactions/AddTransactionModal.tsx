@@ -7,6 +7,7 @@ import { useCategories } from '@/hooks/useCategories';
 import { Modal } from '@/components/ui/Modal';
 import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
+import { useToast } from '@/contexts/ToastContext';
 import { parseCurrencyInput, formatCurrencyInputValue } from '@/lib/utils';
 import { Database } from '@/types/database.types';
 
@@ -17,6 +18,7 @@ interface AddTransactionModalProps {
 
 export function AddTransactionModal({ isOpen, onClose }: AddTransactionModalProps) {
     const { addTransactionWithInstallments } = useTransactions();
+    const { showToast } = useToast();
     const { cards } = useCards();
     const { categories, isLoading: isCategoriesLoading } = useCategories();
 
@@ -43,22 +45,22 @@ export function AddTransactionModal({ isOpen, onClose }: AddTransactionModalProp
             setIsSubmitting(true);
             const amountCents = parseCurrencyInput(amount);
             if (amountCents <= 0) {
-                alert('O valor deve ser maior que zero.');
+                showToast('O valor deve ser maior que zero.', 'error');
                 return;
             }
 
             if (!description.trim()) {
-                alert('Informe uma descrição.');
+                showToast('Informe uma descrição.', 'error');
                 return;
             }
 
             if (!categoryId) {
-                alert('Selecione uma categoria. Se não houver, crie uma primeiro.');
+                showToast('Selecione uma categoria. Se não houver, crie uma primeiro.', 'error');
                 return;
             }
 
             if (paymentMethod === 'credit' && !cardId) {
-                alert('Selecione um cartão de crédito.');
+                showToast('Selecione um cartão de crédito.', 'error');
                 return;
             }
 
@@ -73,6 +75,7 @@ export function AddTransactionModal({ isOpen, onClose }: AddTransactionModalProp
                 payment_method: paymentMethod,
             } as any);
 
+            showToast('Transação salva com sucesso!', 'success');
             onClose();
             // Reset form
             setDescription('');
@@ -82,7 +85,7 @@ export function AddTransactionModal({ isOpen, onClose }: AddTransactionModalProp
         } catch (error: any) {
             console.error('Submit error:', error);
             const errorMessage = error.message || error.error_description || (typeof error === 'object' ? JSON.stringify(error) : String(error));
-            alert('Erro ao salvar transação: ' + errorMessage);
+            showToast('Erro ao salvar transação: ' + errorMessage, 'error');
         } finally {
             setIsSubmitting(false);
         }

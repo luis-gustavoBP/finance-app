@@ -9,9 +9,12 @@ import { Input } from '@/components/ui/Input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { formatCents, parseCurrencyInput, formatCurrencyInputValue } from '@/lib/utils';
 import { Modal } from '@/components/ui/Modal';
+import { ConfirmModal } from '@/components/ui/ConfirmModal';
+import { useToast } from '@/contexts/ToastContext';
 
 export function SubscriptionsManager() {
     const { subscriptions, addSubscription, deleteSubscription, toggleActive, isLoading } = useSubscriptions();
+    const { showToast } = useToast();
     const { categories } = useCategories();
     const { cards } = useCards();
 
@@ -23,6 +26,8 @@ export function SubscriptionsManager() {
     const [paymentMethod, setPaymentMethod] = useState<'credit' | 'debit' | 'pix' | 'cash'>('credit');
     const [cardId, setCardId] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [subToDelete, setSubToDelete] = useState<{ id: string, name: string } | null>(null);
+    const [isDeleting, setIsDeleting] = useState(false);
 
     const totalMonthly = subscriptions
         .filter(s => s.active)
@@ -34,7 +39,7 @@ export function SubscriptionsManager() {
             const amountCents = parseCurrencyInput(amount);
 
             if (!description || amountCents <= 0 || !categoryId) {
-                alert('Preencha todos os campos obrigatórios.');
+                showToast('Preencha todos os campos obrigatórios.', 'error');
                 return;
             }
 
@@ -53,11 +58,30 @@ export function SubscriptionsManager() {
             setAmount('');
             setDueDay('10');
             setCategoryId('');
+            showToast('Assinatura adicionada!', 'success');
         } catch (error) {
             console.error(error);
-            alert('Erro ao adicionar assinatura.');
+            showToast('Erro ao adicionar assinatura.', 'error');
         } finally {
             setIsSubmitting(false);
+        }
+    };
+
+    const handleDeleteClick = (id: string, name: string) => {
+        setSubToDelete({ id, name });
+    };
+
+    const handleConfirmDelete = async () => {
+        if (!subToDelete) return;
+        setIsDeleting(true);
+        try {
+            await deleteSubscription(subToDelete.id);
+            showToast('Assinatura excluída!', 'success');
+            setSubToDelete(null);
+        } catch (error) {
+            showToast('Erro ao excluir assinatura.', 'error');
+        } finally {
+            setIsDeleting(false);
         }
     };
 
@@ -115,9 +139,7 @@ export function SubscriptionsManager() {
                                                 variant="ghost"
                                                 size="sm"
                                                 className="text-red-500 hover:text-red-700"
-                                                onClick={() => {
-                                                    if (confirm('Excluir esta assinatura?')) deleteSubscription(sub.id);
-                                                }}
+                                                onClick={() => handleDeleteClick(sub.id, sub.description)}
                                             >
                                                 🗑️
                                             </Button>
@@ -263,6 +285,16 @@ export function SubscriptionsManager() {
                         </div>
                     </div>
                 </Modal>
+
+                <ConfirmModal
+                    isOpen={!!subToDelete}
+                    onClose={() => setSubToDelete(null)}
+                    onConfirm={handleConfirmDelete}
+                    title="Excluir Assinatura"
+                    message={`Tem certeza que deseja excluir a assinatura "${subToDelete?.name}"?`}
+                    confirmLabel="Excluir"
+                    isLoading={isDeleting}
+                />
             </CardContent>
         </Card>
     );

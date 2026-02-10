@@ -12,10 +12,13 @@ import { CardConfig } from '@/components/settings/CardConfig';
 import { WeeklyGoal } from '@/components/settings/WeeklyGoal';
 import { ExportButton } from '@/components/export/ExportButton';
 import { SubscriptionsManager } from '@/components/settings/SubscriptionsManager';
+import { Tooltip } from '@/components/ui/Tooltip';
+import { useToast } from '@/contexts/ToastContext';
 
 export default function SettingsPage() {
     const { settings, updateSettings, isLoading } = useSettings();
     const { user, signOut } = useAuth();
+    const { showToast } = useToast();
     const [globalLimit, setGlobalLimit] = useState('');
 
     useEffect(() => {
@@ -28,7 +31,7 @@ export default function SettingsPage() {
         const limitInCents = parseCurrencyInput(globalLimit);
         if (isNaN(limitInCents)) return;
         await updateSettings({ global_monthly_limit_cents: limitInCents });
-        alert('Configurações salvas!');
+        showToast('Configurações salvas!', 'success');
     };
 
     if (isLoading) {
@@ -50,7 +53,7 @@ export default function SettingsPage() {
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-5 animate-in">
                 <div>
                     <h1 className="text-xl sm:text-2xl font-bold text-white">
-                        Configurações
+                        Ajustes
                     </h1>
                     <p className="text-sm text-white/30 mt-0.5">Metas financeiras e preferências</p>
                 </div>
@@ -63,6 +66,7 @@ export default function SettingsPage() {
                             <div className="flex items-center gap-2 mb-2">
                                 <span className="text-lg">💵</span>
                                 <span className="text-[11px] font-semibold text-violet-400/60 uppercase tracking-wider">Orçamento Mensal</span>
+                                <Tooltip content="O valor total disponível para gastar no mês, considerando todas as categorias." />
                             </div>
                             <p className="text-3xl sm:text-4xl font-bold text-white mb-1">
                                 {formatCents(monthlyLimit)}
@@ -77,6 +81,7 @@ export default function SettingsPage() {
                             <div className="flex items-center gap-2 mb-2">
                                 <span className="text-lg">📈</span>
                                 <span className="text-[11px] font-semibold text-blue-400/60 uppercase tracking-wider">Meta Semanal</span>
+                                <Tooltip content="Estabeleça uma meta de gastos por semana para acompanhar seu progresso." />
                             </div>
                             <p className="text-3xl sm:text-4xl font-bold text-white mb-1">
                                 {formatCents(weeklyGoal)}
@@ -89,7 +94,10 @@ export default function SettingsPage() {
                 {/* Adjust Goals Section */}
                 <Card>
                     <CardHeader>
-                        <CardTitle>Ajustar Metas</CardTitle>
+                        <div className="flex items-center gap-2">
+                            <CardTitle>Ajustar Metas</CardTitle>
+                            <Tooltip content="Aqui você define o teto principal de gastos que o sistema usará para calcular sua saúde financeira." />
+                        </div>
                     </CardHeader>
                     <CardContent className="space-y-5">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -115,13 +123,6 @@ export default function SettingsPage() {
                     </CardContent>
                 </Card>
 
-                {/* Tips */}
-                <div className="bg-indigo-500/[0.04] border border-indigo-400/[0.08] rounded-xl p-4">
-                    <p className="text-[13px] text-white/40">
-                        💡 <strong className="text-white/50">Dica:</strong> Estabeleça uma meta de gastos por semana
-                        para acompanhar seu progresso e manter o controle financeiro no dia a dia.
-                    </p>
-                </div>
 
                 <WeeklyGoal />
                 <SubscriptionsManager />
