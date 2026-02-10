@@ -4,8 +4,8 @@
     "description": "Controle financeiro pessoal com foco em cartões de crédito, parcelamentos e planejamento mensal",
     "start_url": "/",
     "display": "standalone",
-    "background_color": "#001861",
-    "theme_color": "#3B82F6",
+    "background_color": "#0a0f1e",
+    "theme_color": "#6366f1",
     "orientation": "portrait",
     "scope": "/",
     "icons": [

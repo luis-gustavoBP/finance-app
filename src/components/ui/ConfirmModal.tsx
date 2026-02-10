@@ -27,16 +27,17 @@ export function ConfirmModal({
     isLoading = false
 }: ConfirmModalProps) {
     return (
-        <Modal isOpen={isOpen} onClose={onClose} title={title}>
-            <div className="space-y-4 pt-4">
-                <p className="text-slate-300 ">
+        <Modal isOpen={isOpen} onClose={onClose} title={title} size="sm">
+            <div className="space-y-4">
+                <p className="text-[14px] text-white/50 leading-relaxed">
                     {message}
                 </p>
-                <div className="flex justify-end gap-3 pt-4">
+                <div className="flex gap-2 pt-2">
                     <Button
                         variant="ghost"
                         onClick={onClose}
                         disabled={isLoading}
+                        className="flex-1"
                     >
                         {cancelLabel}
                     </Button>
@@ -44,6 +45,7 @@ export function ConfirmModal({
                         variant={variant}
                         onClick={onConfirm}
                         isLoading={isLoading}
+                        className="flex-1"
                     >
                         {confirmLabel}
                     </Button>

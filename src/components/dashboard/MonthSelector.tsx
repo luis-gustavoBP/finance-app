@@ -1,7 +1,6 @@
 'use client';
 
 import { useMonthFilter } from '@/contexts/MonthFilterContext';
-import { Button } from '@/components/ui/Button';
 
 export function MonthSelector() {
     const { selectedDate, nextMonth, prevMonth } = useMonthFilter();
@@ -11,34 +10,33 @@ export function MonthSelector() {
         year: 'numeric'
     }).format(selectedDate);
 
-    // Capitalize first letter
     const displayDate = formattedDate.charAt(0).toUpperCase() + formattedDate.slice(1);
 
     return (
-        <div className="flex items-center gap-2 glass-panel bg-white/5 p-1.5 rounded-xl border border-white/10 shadow-sm">
-            <Button
-                variant="ghost"
-                size="sm"
+        <div className="flex items-center gap-1 bg-white/[0.04] p-1 rounded-xl border border-white/[0.06]">
+            <button
                 onClick={prevMonth}
-                className="w-10 h-10 sm:w-8 sm:h-8 p-0 rounded-lg hover:bg-white/10 min-h-[40px]"
+                className="w-9 h-9 flex items-center justify-center rounded-lg text-white/30 hover:text-white/60 hover:bg-white/[0.06] transition-all active:scale-95"
                 aria-label="Mês anterior"
             >
-                ←
-            </Button>
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+                </svg>
+            </button>
 
-            <div className="min-w-[120px] sm:min-w-[140px] text-center font-semibold text-white text-sm sm:text-base select-none">
+            <div className="min-w-[110px] sm:min-w-[130px] text-center font-medium text-white/70 text-[13px] select-none">
                 {displayDate}
             </div>
 
-            <Button
-                variant="ghost"
-                size="sm"
+            <button
                 onClick={nextMonth}
-                className="w-10 h-10 sm:w-8 sm:h-8 p-0 rounded-lg hover:bg-white/10 min-h-[40px]"
+                className="w-9 h-9 flex items-center justify-center rounded-lg text-white/30 hover:text-white/60 hover:bg-white/[0.06] transition-all active:scale-95"
                 aria-label="Próximo mês"
             >
-                →
-            </Button>
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                </svg>
+            </button>
         </div>
     );
 }

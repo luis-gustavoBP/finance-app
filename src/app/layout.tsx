@@ -22,7 +22,7 @@ export const viewport: Viewport = {
   initialScale: 1,
   maximumScale: 1,
   userScalable: false,
-  themeColor: "#3B82F6",
+  themeColor: "#0a0f1e",
   viewportFit: "cover",
 };
 
@@ -57,19 +57,20 @@ export default function RootLayout({
     <html lang="pt-BR" suppressHydrationWarning>
       <body
         suppressHydrationWarning
-        className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen bg-[#001861] pb-20 md:pb-0 overflow-x-hidden`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen bg-[#0a0f1e] pb-20 md:pb-0 overflow-x-hidden`}
       >
         <Providers>
           <AuthGuard>
             {/* Mobile Logo Header */}
-            <div className="md:hidden fixed top-0 left-0 right-0 z-50 h-auto min-h-[56px] bg-[#001861]/95 backdrop-blur-md border-b border-white/10 pt-safe">
+            <div className="md:hidden fixed top-0 left-0 right-0 z-50 h-auto min-h-[56px] bg-[#0a0f1e]/90 backdrop-blur-2xl border-b border-white/[0.06] pt-safe">
               <div className="h-14 flex items-center justify-center px-4">
-                <Link href="/">
+                <Link href="/" className="flex items-center gap-2">
                   <img
                     src="/logo.png"
                     alt="ContApp"
                     className="h-8 w-auto rounded-lg"
                   />
+                  <span className="text-white/80 font-semibold text-sm tracking-wide">ContApp</span>
                 </Link>
               </div>
             </div>
@@ -77,7 +78,7 @@ export default function RootLayout({
             <div className="hidden md:block">
               <Header />
             </div>
-            <main className="min-h-[calc(100vh-64px)] pt-header-safe md:pt-0">
+            <main className="min-h-[calc(100vh-64px)] pt-header-safe md:pt-0 mesh-bg">
               {children}
             </main>
             {/* Mobile Bottom Navigation */}
@@ -88,4 +89,3 @@ export default function RootLayout({
     </html>
   );
 }
-

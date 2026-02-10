@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useIncome } from '@/hooks/useIncome';
 import { Card, CardContent } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
-import { formatCents, incomeTypes, formatDate } from '@/lib/utils';
+import { formatCents, incomeTypes, formatDate, cn } from '@/lib/utils';
 import { AddIncomeModal } from '@/components/income/AddIncomeModal';
 import { ConfirmModal } from '@/components/ui/ConfirmModal';
 
@@ -21,7 +21,6 @@ export default function EntradasPage() {
     const { incomeEntries, isLoading, deleteIncome } = useIncome();
     const [isModalOpen, setIsModalOpen] = useState(false);
 
-    // Confirm delete state
     const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
     const [incomeToDelete, setIncomeToDelete] = useState<{ id: string, description: string } | null>(null);
     const [isDeleting, setIsDeleting] = useState(false);
@@ -50,12 +49,18 @@ export default function EntradasPage() {
     };
 
     if (isLoading) {
-        return <div className="p-8 text-center animate-pulse">Carregando entradas...</div>;
+        return (
+            <div className="flex items-center justify-center min-h-[60vh]">
+                <div className="flex flex-col items-center gap-3">
+                    <div className="w-8 h-8 border-2 border-emerald-400/30 border-t-emerald-400 rounded-full animate-spin" />
+                    <span className="text-sm text-white/30">Carregando entradas...</span>
+                </div>
+            </div>
+        );
     }
 
     const totalIncome = incomeEntries.reduce((sum, entry) => sum + entry.amount_cents, 0);
 
-    // Calculate statistics by type
     const statsByType = incomeEntries.reduce((acc, entry) => {
         const type = entry.type || 'outros';
         if (!acc[type]) {
@@ -68,14 +73,15 @@ export default function EntradasPage() {
 
     return (
         <div className="min-h-full">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
-                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-5 animate-in">
+                {/* Header */}
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
                     <div>
                         <h1 className="text-xl sm:text-2xl font-bold text-white">
                             Entradas de Dinheiro
                         </h1>
-                        <p className="text-xs sm:text-sm text-slate-200 mt-1">
-                            Registre dinheiro extra recebido (não regular)
+                        <p className="text-sm text-white/30 mt-0.5">
+                            Registre dinheiro extra recebido
                         </p>
                     </div>
                     <Button
@@ -89,42 +95,42 @@ export default function EntradasPage() {
                 </div>
 
                 {/* Summary Card */}
-                <Card className="glass-panel bg-emerald-500/20 border-emerald-500/30 text-white shadow-lg">
-                    <CardContent className="pt-6">
+                <Card className="!bg-gradient-to-br from-emerald-500/[0.08] to-transparent !border-emerald-500/[0.12]">
+                    <CardContent className="pt-1">
                         <div className="flex items-center gap-2 mb-2">
-                            <span className="text-2xl">💵</span>
-                            <span className="text-emerald-100 text-sm font-medium">Entradas no Mês</span>
+                            <span className="text-lg">💵</span>
+                            <span className="text-[11px] font-semibold text-emerald-400/60 uppercase tracking-wider">Entradas no Mês</span>
                         </div>
-                        <h2 className="text-5xl font-bold mb-2">{formatCents(totalIncome)}</h2>
-                        <p className="text-sm text-emerald-100 opacity-90">
-                            {incomeEntries.length} registro{incomeEntries.length !== 1 ? 's' : ''} registrado{incomeEntries.length !== 1 ? 's' : ''}
+                        <h2 className="text-3xl sm:text-4xl font-bold text-white mb-1">{formatCents(totalIncome)}</h2>
+                        <p className="text-[12px] text-white/25">
+                            {incomeEntries.length} registro{incomeEntries.length !== 1 ? 's' : ''}
                         </p>
                     </CardContent>
                 </Card>
 
                 {/* Statistics by Type */}
                 {Object.keys(statsByType).length > 0 && (
-                    <Card className="glass-panel p-0 text-white">
-                        <CardContent className="pt-6">
-                            <h3 className="font-semibold text-white/90 mb-4">📊 Por Tipo de Entrada</h3>
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <Card>
+                        <CardContent>
+                            <h3 className="text-[10px] font-bold text-white/40 uppercase tracking-widest mb-4">Por Tipo de Entrada</h3>
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
                                 {Object.entries(statsByType).map(([type, stats]) => (
                                     <div
                                         key={type}
-                                        className="p-4 rounded-lg bg-emerald-500/10 border-l-4 border-emerald-500"
+                                        className="p-3.5 rounded-xl bg-emerald-500/[0.04] border border-emerald-500/[0.08]"
                                     >
                                         <div className="flex items-center justify-between mb-2">
-                                            <span className="text-sm font-medium text-slate-200">
+                                            <span className="text-[13px] font-medium text-white/60">
                                                 {INCOME_TYPE_LABELS[type] || '📦 Outros'}
                                             </span>
-                                            <span className="text-xs bg-emerald-500/20 text-emerald-300 px-2 py-1 rounded-full font-semibold border border-emerald-500/20">
+                                            <span className="text-[10px] bg-emerald-400/10 text-emerald-400 px-2 py-0.5 rounded-md font-bold">
                                                 {stats.count}x
                                             </span>
                                         </div>
-                                        <div className="text-xl font-bold text-emerald-400">
+                                        <div className="text-lg font-bold text-emerald-400">
                                             {formatCents(stats.total)}
                                         </div>
-                                        <div className="text-xs text-slate-400 mt-1">
+                                        <div className="text-[11px] text-white/20 mt-0.5">
                                             {((stats.total / totalIncome) * 100).toFixed(1)}% do total
                                         </div>
                                     </div>
@@ -135,59 +141,55 @@ export default function EntradasPage() {
                 )}
 
                 {/* Income List */}
-                <Card className="glass-panel p-0 text-white">
+                <Card className="!p-0 overflow-hidden">
                     <CardContent className="p-0">
                         {incomeEntries.length === 0 ? (
-                            <div className="p-12 text-center text-slate-200">
-                                <div className="text-4xl mb-4">💵</div>
-                                <p>Nenhuma entrada registrada ainda.</p>
-                                <p className="text-sm mt-2">
+                            <div className="p-10 text-center">
+                                <div className="text-3xl mb-3 opacity-50">💵</div>
+                                <p className="text-white/40 text-sm">Nenhuma entrada registrada ainda.</p>
+                                <p className="text-white/20 text-xs mt-1">
                                     Clique em "Nova Entrada" para registrar dinheiro recebido.
                                 </p>
                             </div>
                         ) : (
-                            <div className="divide-y divide-white/10">
+                            <div className="divide-y divide-white/[0.04]">
                                 {incomeEntries.map(entry => (
                                     <div
                                         key={entry.id}
-                                        className="flex items-center justify-between p-4 hover:bg-emerald-500/10 transition-colors border-l-4 border-transparent hover:border-emerald-500"
+                                        className="flex items-center justify-between p-4 hover:bg-white/[0.02] transition-colors"
                                     >
-                                        <div className="flex items-center gap-3 flex-1">
-                                            <div className="w-12 h-12 rounded-full bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center text-2xl shadow-sm">
+                                        <div className="flex items-center gap-3 flex-1 min-w-0">
+                                            <div className="w-10 h-10 rounded-xl bg-emerald-500/[0.08] border border-emerald-500/[0.12] flex items-center justify-center text-lg shrink-0">
                                                 {INCOME_TYPE_LABELS[entry.type]?.split(' ')[0] || '💵'}
                                             </div>
-                                            <div className="flex-1">
-                                                <div className="font-semibold text-white">
+                                            <div className="flex-1 min-w-0">
+                                                <div className="font-medium text-white/80 text-sm truncate">
                                                     {entry.description}
                                                 </div>
-                                                <div className="text-xs text-slate-400 flex items-center gap-2 mt-1">
-                                                    <span className="flex items-center gap-1">
-                                                        📅 {formatDate(entry.received_at)}
-                                                    </span>
-                                                    <span>•</span>
-                                                    <span className="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/20 font-medium">
-                                                        {INCOME_TYPE_LABELS[entry.type]}
-                                                    </span>
+                                                <div className="text-[11px] text-white/25 flex items-center gap-2 mt-0.5">
+                                                    <span>{formatDate(entry.received_at)}</span>
+                                                    <span className="text-white/10">·</span>
+                                                    <span className="text-emerald-400/50">{INCOME_TYPE_LABELS[entry.type]}</span>
                                                 </div>
                                                 {entry.notes && (
-                                                    <div className="text-xs text-slate-400 mt-1 italic">
-                                                        📝 {entry.notes}
+                                                    <div className="text-[11px] text-white/20 mt-0.5 italic truncate">
+                                                        {entry.notes}
                                                     </div>
                                                 )}
                                             </div>
                                         </div>
-                                        <div className="text-right flex items-center gap-3">
-                                            <div className="font-bold text-xl text-emerald-400">
+                                        <div className="text-right flex items-center gap-2 shrink-0">
+                                            <div className="font-semibold text-base text-emerald-400">
                                                 +{formatCents(entry.amount_cents)}
                                             </div>
-                                            <Button
-                                                variant="ghost"
-                                                size="sm"
-                                                className="text-red-400 hover:bg-red-500/10"
+                                            <button
+                                                className="w-8 h-8 flex items-center justify-center rounded-lg text-white/15 hover:text-red-400 hover:bg-red-400/[0.06] transition-all"
                                                 onClick={(e) => handleDeleteClick(e, entry.id, entry.description)}
                                             >
-                                                🗑️
-                                            </Button>
+                                                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
+                                                    <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                                </svg>
+                                            </button>
                                         </div>
                                     </div>
                                 ))}

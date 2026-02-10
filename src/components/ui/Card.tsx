@@ -9,17 +9,18 @@ interface CardProps extends HTMLAttributes<HTMLDivElement> {
 const Card = forwardRef<HTMLDivElement, CardProps>(
     ({ className, variant = 'default', highlightColor, children, ...props }, ref) => {
         const highlightColors = {
-            green: 'border-l-4 border-l-green-500',
-            yellow: 'border-l-4 border-l-amber-500',
-            red: 'border-l-4 border-l-red-500',
-            indigo: 'border-l-4 border-l-indigo-500',
+            green: 'border-l-[3px] border-l-emerald-400/60',
+            yellow: 'border-l-[3px] border-l-amber-400/60',
+            red: 'border-l-[3px] border-l-red-400/60',
+            indigo: 'border-l-[3px] border-l-indigo-400/60',
         };
 
         return (
             <div
                 ref={ref}
                 className={cn(
-                    'glass-panel rounded-2xl p-4 sm:p-6 transition-all duration-300 hover:bg-white/10 hover:shadow-2xl hover:border-white/20',
+                    'glass-panel rounded-2xl p-4 sm:p-5 transition-all duration-300',
+                    'hover:bg-white/[0.06] hover:border-white/[0.12]',
                     highlightColor && highlightColors[highlightColor],
                     className
                 )}
@@ -37,7 +38,7 @@ interface CardHeaderProps extends HTMLAttributes<HTMLDivElement> { }
 
 const CardHeader = forwardRef<HTMLDivElement, CardHeaderProps>(
     ({ className, ...props }, ref) => (
-        <div ref={ref} className={cn('mb-4', className)} {...props} />
+        <div ref={ref} className={cn('mb-3', className)} {...props} />
     )
 );
 
@@ -49,7 +50,7 @@ const CardTitle = forwardRef<HTMLHeadingElement, CardTitleProps>(
     ({ className, ...props }, ref) => (
         <h3
             ref={ref}
-            className={cn('text-lg font-semibold text-white/90', className)}
+            className={cn('text-sm font-semibold text-white/70 uppercase tracking-wide', className)}
             {...props}
         />
     )

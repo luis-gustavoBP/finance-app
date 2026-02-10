@@ -1,6 +1,5 @@
 'use client';
 
-import { TrendingUp, DollarSign, Calendar } from 'lucide-react';
 import { formatCents, cn } from '@/lib/utils';
 
 interface WidgetCardProps {
@@ -20,45 +19,46 @@ export function WidgetCard({
     variant = 'white',
     children,
 }: WidgetCardProps) {
-    const variants = {
-        white: 'glass-panel text-white',
-        blue: 'glass-panel text-white',
-        green: 'glass-panel text-white',
-        orange: 'glass-panel text-white',
+    const accentColors = {
+        white: 'from-white/[0.08] to-transparent',
+        blue: 'from-blue-500/10 to-transparent',
+        green: 'from-emerald-500/10 to-transparent',
+        orange: 'from-amber-500/10 to-transparent',
     };
 
-    const titleBadges = {
-        white: 'bg-slate-50 border-slate-100 text-slate-500',
-        blue: 'bg-blue-600 border-blue-500 text-white shadow-md shadow-blue-200/50',
-        green: 'bg-emerald-600 border-emerald-500 text-white shadow-md shadow-emerald-200/50',
-        orange: 'bg-orange-500 border-orange-400 text-white shadow-md shadow-orange-200/50',
+    const badgeColors = {
+        white: 'text-white/50 border-white/[0.08]',
+        blue: 'text-blue-400 border-blue-500/20 bg-blue-500/[0.06]',
+        green: 'text-emerald-400 border-emerald-500/20 bg-emerald-500/[0.06]',
+        orange: 'text-amber-400 border-amber-500/20 bg-amber-500/[0.06]',
     };
 
     return (
         <div className={cn(
-            "rounded-xl p-4 sm:p-6 shadow-sm border transition-all relative overflow-hidden",
-            variants[variant]
+            "glass-panel rounded-2xl p-4 sm:p-5 transition-all relative overflow-hidden",
+            "bg-gradient-to-br",
+            accentColors[variant]
         )}>
-            {/* Title with badges */}
-            <div className="mb-6 flex items-center justify-between">
+            {/* Title badge */}
+            <div className="mb-4">
                 <span className={cn(
-                    "px-4 py-2 rounded-xl border uppercase tracking-[0.15em] text-[10px] font-black",
-                    titleBadges[variant]
+                    "px-3 py-1.5 rounded-lg border text-[10px] font-bold uppercase tracking-widest",
+                    badgeColors[variant]
                 )}>
                     {title}
                 </span>
             </div>
 
             {/* Main Value */}
-            <div className="mb-2">
-                <p className="text-2xl sm:text-4xl font-black tracking-tight text-white">
+            <div className="mb-1">
+                <p className="text-2xl sm:text-3xl font-bold tracking-tight text-white">
                     {typeof value === 'number' ? formatCents(value) : value}
                 </p>
             </div>
 
             {/* Subtitle */}
             {subtitle && (
-                <p className="text-[10px] font-bold uppercase tracking-widest mb-4 text-slate-300/60">
+                <p className="text-[11px] font-medium text-white/30 mb-3">
                     {subtitle}
                 </p>
             )}

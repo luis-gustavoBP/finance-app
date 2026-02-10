@@ -31,62 +31,71 @@ export default function SettingsPage() {
         alert('Configurações salvas!');
     };
 
-    if (isLoading) return <div className="p-8 text-center animate-pulse">Carregando ajustes...</div>;
+    if (isLoading) {
+        return (
+            <div className="flex items-center justify-center min-h-[60vh]">
+                <div className="flex flex-col items-center gap-3">
+                    <div className="w-8 h-8 border-2 border-indigo-400/30 border-t-indigo-400 rounded-full animate-spin" />
+                    <span className="text-sm text-white/30">Carregando ajustes...</span>
+                </div>
+            </div>
+        );
+    }
 
     const monthlyLimit = settings?.global_monthly_limit_cents || 0;
     const weeklyGoal = settings?.weekly_goal_cents || 0;
 
     return (
         <div className="min-h-full">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-5 animate-in">
                 <div>
-                    <h1 className="text-2xl font-bold text-white">
-                        Configurações e Metas
+                    <h1 className="text-xl sm:text-2xl font-bold text-white">
+                        Configurações
                     </h1>
-                    <p className="text-slate-200 mt-1">Defina suas metas financeiras mensais e semanais</p>
+                    <p className="text-sm text-white/30 mt-0.5">Metas financeiras e preferências</p>
                 </div>
 
                 {/* Summary Cards */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {/* Monthly Budget - Purple */}
-                    <Card className="glass-panel bg-purple-600/20 border-purple-500/30 text-white shadow-lg">
-                        <CardContent className="pt-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {/* Monthly Budget */}
+                    <Card className="!bg-gradient-to-br from-violet-500/[0.08] to-transparent !border-violet-500/[0.12]">
+                        <CardContent className="pt-1">
                             <div className="flex items-center gap-2 mb-2">
-                                <span className="text-2xl">💵</span>
-                                <span className="text-purple-200 text-lg font-medium">Orçamento Mensal</span>
+                                <span className="text-lg">💵</span>
+                                <span className="text-[11px] font-semibold text-violet-400/60 uppercase tracking-wider">Orçamento Mensal</span>
                             </div>
-                            <p className="text-5xl font-bold mb-2">
+                            <p className="text-3xl sm:text-4xl font-bold text-white mb-1">
                                 {formatCents(monthlyLimit)}
                             </p>
-                            <p className="text-sm text-purple-200 opacity-90">Meta de gastos do mês</p>
+                            <p className="text-[12px] text-white/25">Meta de gastos do mês</p>
                         </CardContent>
                     </Card>
 
-                    {/* Weekly Goal - Blue */}
-                    <Card className="glass-panel bg-blue-600/20 border-blue-500/30 text-white shadow-lg">
-                        <CardContent className="pt-6">
+                    {/* Weekly Goal */}
+                    <Card className="!bg-gradient-to-br from-blue-500/[0.08] to-transparent !border-blue-500/[0.12]">
+                        <CardContent className="pt-1">
                             <div className="flex items-center gap-2 mb-2">
-                                <span className="text-2xl">📈</span>
-                                <span className="text-blue-200 text-lg font-medium">Meta Semanal</span>
+                                <span className="text-lg">📈</span>
+                                <span className="text-[11px] font-semibold text-blue-400/60 uppercase tracking-wider">Meta Semanal</span>
                             </div>
-                            <p className="text-5xl font-bold mb-2">
+                            <p className="text-3xl sm:text-4xl font-bold text-white mb-1">
                                 {formatCents(weeklyGoal)}
                             </p>
-                            <p className="text-sm text-blue-200 opacity-90">Objetivo de gastos por semana</p>
+                            <p className="text-[12px] text-white/25">Objetivo por semana</p>
                         </CardContent>
                     </Card>
                 </div>
 
                 {/* Adjust Goals Section */}
-                <Card className="glass-panel text-white">
+                <Card>
                     <CardHeader>
-                        <CardTitle>🎯 Ajustar Metas Financeiras</CardTitle>
+                        <CardTitle>Ajustar Metas</CardTitle>
                     </CardHeader>
-                    <CardContent className="space-y-6">
+                    <CardContent className="space-y-5">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
                                 <Input
-                                    label="💰 Orçamento Mensal (R$)"
+                                    label="Orçamento Mensal (R$)"
                                     value={globalLimit}
                                     onChange={(e) => {
                                         const cents = parseCurrencyInput(e.target.value);
@@ -94,48 +103,41 @@ export default function SettingsPage() {
                                     }}
                                     placeholder="0,00"
                                 />
-                                <p className="text-xs text-slate-400 mt-1">
+                                <p className="text-[11px] text-white/20 mt-1.5">
                                     Limite total de gastos para o mês
                                 </p>
                             </div>
                         </div>
 
-                        <Button onClick={handleSave} variant="primary">
+                        <Button onClick={handleSave} variant="primary" size="sm">
                             Salvar Metas
                         </Button>
                     </CardContent>
                 </Card>
 
-                {/* Tips Card */}
-                <div className="bg-blue-500/10 border-l-4 border-blue-500 rounded-lg p-4">
-                    <p className="text-sm text-blue-200">
-                        💡 <strong>Dica:</strong> Estabeleça uma meta de gastos por semana
+                {/* Tips */}
+                <div className="bg-indigo-500/[0.04] border border-indigo-400/[0.08] rounded-xl p-4">
+                    <p className="text-[13px] text-white/40">
+                        💡 <strong className="text-white/50">Dica:</strong> Estabeleça uma meta de gastos por semana
                         para acompanhar seu progresso e manter o controle financeiro no dia a dia.
                     </p>
                 </div>
 
-                {/* Weekly Goal Component */}
                 <WeeklyGoal />
-
-                {/* Subscriptions Manager */}
                 <SubscriptionsManager />
-
-                {/* Category Management */}
                 <CategoryManager />
-
-                {/* Card Configuration */}
                 <CardConfig />
 
                 {/* Data Management */}
-                <Card className="glass-panel text-white">
+                <Card>
                     <CardHeader>
-                        <CardTitle>📊 Dados e Backup</CardTitle>
+                        <CardTitle>Dados e Backup</CardTitle>
                     </CardHeader>
                     <CardContent>
                         <div className="flex items-center justify-between">
                             <div>
-                                <h3 className="font-medium text-white">Exportar Dados</h3>
-                                <p className="text-sm text-slate-400">Baixe suas transações em formato CSV.</p>
+                                <h3 className="font-medium text-white/70 text-sm">Exportar Dados</h3>
+                                <p className="text-[12px] text-white/25">Baixe suas transações em CSV</p>
                             </div>
                             <ExportButton />
                         </div>
@@ -143,19 +145,19 @@ export default function SettingsPage() {
                 </Card>
 
                 {/* Account Settings */}
-                <Card className="glass-panel text-white border-red-500/30">
+                <Card className="!border-white/[0.04]">
                     <CardHeader>
-                        <CardTitle className="text-red-400">👤 Conta</CardTitle>
+                        <CardTitle>Conta</CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-4">
-                        <p className="text-sm text-slate-400">Logado como: {user?.email}</p>
+                        <p className="text-[13px] text-white/25">Logado como: {user?.email}</p>
                         <Button
                             variant="ghost"
-                            className="w-full text-red-400 hover:bg-red-500/10 hover:text-red-300 min-h-[48px] justify-center"
+                            className="w-full text-red-400/70 hover:bg-red-400/[0.06] hover:text-red-400 min-h-[48px] justify-center rounded-xl"
                             onClick={signOut}
                         >
-                            <svg className="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                            <svg className="w-[18px] h-[18px] mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
                             </svg>
                             Sair da Conta
                         </Button>
@@ -163,8 +165,8 @@ export default function SettingsPage() {
                 </Card>
 
                 {!settings && (
-                    <div className="p-4 bg-amber-50 text-amber-700 rounded-lg text-sm">
-                        ⚠️ Nota: Se as configurações não forem salvas, verifique se executou as migrações SQL (V4, V5, V6) no Supabase.
+                    <div className="p-4 bg-amber-500/[0.04] border border-amber-400/[0.08] text-white/40 rounded-xl text-[13px]">
+                        ⚠️ Nota: Se as configurações não forem salvas, verifique se executou as migrações SQL no Supabase.
                     </div>
                 )}
             </div>

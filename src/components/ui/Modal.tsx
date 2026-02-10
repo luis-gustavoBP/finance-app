@@ -49,31 +49,37 @@ export function Modal({ isOpen, onClose, title, children, size = 'md' }: ModalPr
     };
 
     return createPortal(
-        <div className="fixed inset-0 z-[100] flex items-center justify-center">
+        <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4">
             {/* Backdrop */}
             <div
-                className="absolute inset-0 bg-black/60 backdrop-blur-md transition-opacity"
+                className="absolute inset-0 bg-black/70 backdrop-blur-sm transition-opacity"
                 onClick={onClose}
             />
 
-            {/* Modal */}
+            {/* Modal - slides up on mobile like a native sheet */}
             <div
                 className={cn(
-                    'relative w-full mx-4 bg-[#080c14] md:bg-[#001242] rounded-2xl shadow-2xl border border-white/20 overflow-hidden',
+                    'relative w-full bg-[#0d1225] sm:rounded-2xl rounded-t-3xl shadow-2xl border border-white/[0.08]',
                     'transform transition-all duration-300 ease-out',
-                    'animate-in fade-in zoom-in-95',
+                    'animate-in fade-in',
+                    'max-h-[92vh] sm:max-h-[85vh] flex flex-col',
                     sizes[size]
                 )}
             >
+                {/* Drag handle for mobile */}
+                <div className="sm:hidden flex justify-center pt-3 pb-1 shrink-0">
+                    <div className="w-10 h-1 rounded-full bg-white/20" />
+                </div>
+
                 {/* Header */}
                 {title && (
-                    <div className="flex items-center justify-between px-6 py-4 border-b border-white/10">
-                        <h2 className="text-xl font-semibold text-white">
+                    <div className="flex items-center justify-between px-5 sm:px-6 py-3 sm:py-4 border-b border-white/[0.06] shrink-0">
+                        <h2 className="text-base sm:text-lg font-semibold text-white/90">
                             {title}
                         </h2>
                         <button
                             onClick={onClose}
-                            className="p-1 rounded-lg text-slate-400 hover:text-white hover:bg-white/10 transition-colors"
+                            className="w-8 h-8 flex items-center justify-center rounded-full text-white/30 hover:text-white/60 hover:bg-white/[0.06] transition-colors"
                         >
                             <svg
                                 className="w-5 h-5"
@@ -92,8 +98,8 @@ export function Modal({ isOpen, onClose, title, children, size = 'md' }: ModalPr
                     </div>
                 )}
 
-                {/* Content */}
-                <div className="p-6">{children}</div>
+                {/* Content - scrollable */}
+                <div className="overflow-y-auto px-5 sm:px-6 py-4 sm:py-5 pb-safe">{children}</div>
             </div>
         </div>,
         document.body

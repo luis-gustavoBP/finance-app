@@ -1,7 +1,6 @@
 'use client';
 
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
-import { TrendingUp, DollarSign, Calendar } from 'lucide-react';
+import { Card, CardContent } from '@/components/ui/Card';
 import { formatCents, cn, parseLocalDate } from '@/lib/utils';
 import { Database } from '@/types/database.types';
 
@@ -17,11 +16,10 @@ interface UpcomingInvoicesWidgetProps {
 
 export function UpcomingInvoicesWidget({ transactions, cards, invoices }: UpcomingInvoicesWidgetProps) {
     const today = new Date();
-    const currentMonth = today.getMonth() + 1; // 1-12
+    const currentMonth = today.getMonth() + 1;
     const currentYear = today.getFullYear();
 
     const getTargetInvoiceData = (cardId: string) => {
-        // Find invoice for current month
         const currentInvoice = invoices.find(inv =>
             inv.card_id === cardId &&
             inv.month === currentMonth &&
@@ -32,7 +30,6 @@ export function UpcomingInvoicesWidget({ transactions, cards, invoices }: Upcomi
         let targetYear = currentYear;
         let isNextMonth = false;
 
-        // If current month is PAID, look at next month
         if (currentInvoice?.status === 'PAID') {
             isNextMonth = true;
             if (currentMonth === 12) {
@@ -43,12 +40,10 @@ export function UpcomingInvoicesWidget({ transactions, cards, invoices }: Upcomi
             }
         }
 
-        // Calculate amount for this target month by summing transactions
         const upcomingAmount = transactions
             .filter(tx => {
                 if (tx.card_id !== cardId) return false;
                 const txDate = parseLocalDate(tx.posted_at);
-                // Adjust txDate month to 1-12 range for comparison
                 const txMonth = txDate.getMonth() + 1;
                 const txYear = txDate.getFullYear();
 
@@ -56,8 +51,6 @@ export function UpcomingInvoicesWidget({ transactions, cards, invoices }: Upcomi
             })
             .reduce((sum, tx) => sum + tx.amount_cents, 0);
 
-        // Determine status to display: if we moved to next month, it's implicitly OPEN (unless a record exists)
-        // If we are in current month, use its status (default OPEN)
         let displayStatus = 'OPEN';
         if (isNextMonth) {
             const nextInvoice = invoices.find(inv =>
@@ -78,7 +71,6 @@ export function UpcomingInvoicesWidget({ transactions, cards, invoices }: Upcomi
         };
     };
 
-    // Calculate details for each card
     const cardData = cards.map(card => {
         const data = getTargetInvoiceData(card.id);
         return {
@@ -91,24 +83,25 @@ export function UpcomingInvoicesWidget({ transactions, cards, invoices }: Upcomi
     const totalUpcoming = cardData.reduce((sum, item) => sum + item.upcomingData.amount, 0);
 
     return (
-        <Card className="glass-panel text-white p-0">
-            <CardHeader className="pb-0 pt-4 sm:pt-6 px-4 sm:px-6 mb-4 sm:mb-6">
-                <div className="flex items-center justify-between">
-                    <span className="px-3 sm:px-4 py-1.5 sm:py-2 bg-orange-500 border border-orange-400 text-white rounded-xl uppercase tracking-[0.12em] sm:tracking-[0.15em] text-[9px] sm:text-[10px] font-black shadow-md shadow-orange-200/50">
+        <Card className="overflow-hidden">
+            <div className="px-4 sm:px-5 py-4 sm:py-5">
+                {/* Header */}
+                <div className="flex items-center justify-between mb-4">
+                    <span className="px-3 py-1.5 rounded-lg border border-amber-500/20 bg-amber-500/[0.06] text-[10px] font-bold text-amber-400 uppercase tracking-widest">
                         Próximas Faturas
                     </span>
                 </div>
-            </CardHeader>
-            <CardContent className="px-4 sm:px-6 pb-4 sm:pb-6 pt-0">
-                <div className="mb-2">
-                    <p className="text-2xl sm:text-4xl font-black text-white tracking-tight">
+
+                {/* Total */}
+                <div className="mb-1">
+                    <p className="text-2xl sm:text-3xl font-bold text-white tracking-tight">
                         {formatCents(totalUpcoming)}
                     </p>
                 </div>
-                <p className="text-[9px] sm:text-[10px] font-bold uppercase tracking-widest mb-4 sm:mb-6 text-slate-300/60">Total Estimado</p>
+                <p className="text-[11px] text-white/25 font-medium mb-5">Total estimado</p>
 
-                {/* Cards Horizontal Container */}
-                <div className="flex gap-3 sm:gap-4 overflow-x-auto pb-4 snap-x snap-mandatory custom-scrollbar -mx-1 px-1">
+                {/* Cards */}
+                <div className="flex gap-3 overflow-x-auto pb-2 snap-x snap-mandatory custom-scrollbar -mx-1 px-1">
                     {cardData.map(card => {
                         const { amount, month, year, status } = card.upcomingData;
                         const monthName = new Date(year, month - 1).toLocaleDateString('pt-BR', { month: 'short' });
@@ -120,27 +113,27 @@ export function UpcomingInvoicesWidget({ transactions, cards, invoices }: Upcomi
                         return (
                             <div
                                 key={card.id}
-                                className="flex-shrink-0 w-[180px] sm:w-[240px] snap-start bg-white/5 border border-white/10 rounded-xl p-3 sm:p-4 hover:bg-white/10 transition-colors"
+                                className="flex-shrink-0 w-[170px] sm:w-[200px] snap-start bg-white/[0.03] border border-white/[0.06] rounded-xl p-3.5 hover:bg-white/[0.05] transition-colors"
                             >
-                                <div className="flex flex-col h-full">
-                                    <div className="flex justify-between items-start mb-2 sm:mb-3">
-                                        <span className="text-xs sm:text-sm font-bold text-white line-clamp-1">{card.name}</span>
+                                <div className="flex flex-col h-full gap-3">
+                                    <div className="flex justify-between items-start">
+                                        <span className="text-[13px] font-medium text-white/70 line-clamp-1">{card.name}</span>
                                         <span className={cn(
-                                            "text-[9px] sm:text-[10px] px-1.5 sm:px-2 py-0.5 rounded-md font-bold uppercase tracking-tighter",
-                                            isPaid ? "bg-green-500/20 text-green-300 border border-green-500/30" :
-                                                isClosed ? "bg-red-500/20 text-red-300 border border-red-500/30" :
-                                                    "bg-blue-500/20 text-blue-300 border border-blue-500/30"
+                                            "text-[9px] px-1.5 py-0.5 rounded-md font-bold uppercase",
+                                            isPaid ? "bg-emerald-400/10 text-emerald-400" :
+                                                isClosed ? "bg-red-400/10 text-red-400" :
+                                                    "bg-blue-400/10 text-blue-400"
                                         )}>
                                             {cleanMonth}
                                         </span>
                                     </div>
 
                                     <div className="mt-auto">
-                                        <span className="text-lg sm:text-xl font-black text-white block">
+                                        <span className="text-lg font-bold text-white block">
                                             {formatCents(amount)}
                                         </span>
-                                        <span className="text-[9px] sm:text-[10px] text-slate-400 font-medium">
-                                            {isPaid ? '✓ Fatura Paga' : (isClosed ? '⚠ Fatura Fechada' : '⚙ Fatura Aberta')}
+                                        <span className="text-[10px] text-white/20 font-medium">
+                                            {isPaid ? '✓ Paga' : (isClosed ? '⚠ Fechada' : '⚙ Aberta')}
                                         </span>
                                     </div>
                                 </div>
@@ -148,12 +141,12 @@ export function UpcomingInvoicesWidget({ transactions, cards, invoices }: Upcomi
                         );
                     })}
                     {cardData.length === 0 && (
-                        <div className="w-full text-center py-8 bg-white/5 rounded-xl border border-dashed border-white/10">
-                            <p className="text-sm text-slate-400">Sem faturas futuras</p>
+                        <div className="w-full text-center py-6 bg-white/[0.02] rounded-xl border border-dashed border-white/[0.06]">
+                            <p className="text-[13px] text-white/20">Sem faturas futuras</p>
                         </div>
                     )}
                 </div>
-            </CardContent>
+            </div>
         </Card>
     );
 }

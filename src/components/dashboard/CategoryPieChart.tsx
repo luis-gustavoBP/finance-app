@@ -1,8 +1,9 @@
 'use client';
 
-import { PieChart, Pie, Cell, Legend, Tooltip, ResponsiveContainer } from 'recharts';
+import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from 'recharts';
 import { Transaction, Category } from '@/types';
 import { formatCents } from '@/lib/utils';
+import { Card } from '@/components/ui/Card';
 
 interface CategoryPieChartProps {
     transactions: Transaction[];
@@ -10,7 +11,6 @@ interface CategoryPieChartProps {
 }
 
 export function CategoryPieChart({ transactions, categories }: CategoryPieChartProps) {
-    // Preparar dados por categoria
     const prepareData = () => {
         const categoryTotals = new Map<string, { name: string; value: number; color: string; icon: string }>();
 
@@ -31,82 +31,89 @@ export function CategoryPieChart({ transactions, categories }: CategoryPieChartP
 
         return Array.from(categoryTotals.values())
             .sort((a, b) => b.value - a.value)
-            .slice(0, 6); // Top 6 categorias
+            .slice(0, 6);
     };
 
     const data = prepareData();
 
     if (data.length === 0) {
         return (
-            <div className="glass-panel text-white p-6">
-                <h3 className="mb-4 font-semibold text-white/90">
-                    Gastos por Categoria
-                </h3>
-                <p className="text-center text-slate-300 py-8">
-                    Nenhuma transação ainda
-                </p>
-            </div>
+            <Card>
+                <div className="px-4 sm:px-5 py-4 sm:py-5">
+                    <span className="px-3 py-1.5 rounded-lg border border-white/[0.08] text-[10px] font-bold text-white/50 uppercase tracking-widest">
+                        Gastos por Categoria
+                    </span>
+                    <p className="text-center text-white/20 py-8 text-sm">
+                        Nenhuma transação ainda
+                    </p>
+                </div>
+            </Card>
         );
     }
 
     const total = data.reduce((sum, item) => sum + item.value, 0);
 
     return (
-        <div className="glass-panel text-white p-4 sm:p-6">
-            <h3 className="mb-4 font-semibold text-sm sm:text-base text-white/90">
-                Gastos por Categoria
-            </h3>
+        <Card>
+            <div className="px-4 sm:px-5 py-4 sm:py-5">
+                <span className="px-3 py-1.5 rounded-lg border border-white/[0.08] text-[10px] font-bold text-white/50 uppercase tracking-widest">
+                    Gastos por Categoria
+                </span>
 
-            <div className="h-56 sm:h-72">
-                <ResponsiveContainer width="100%" height="100%">
-                    <PieChart>
-                        <Pie
-                            data={data}
-                            cx="50%"
-                            cy="50%"
-                            labelLine={false}
-                            outerRadius={70}
-                            fill="#8884d8"
-                            dataKey="value"
-                            label={false}
-                        >
-                            {data.map((entry, index) => (
-                                <Cell key={`cell-${index}`} fill={entry.color} />
-                            ))}
-                        </Pie>
-                        <Tooltip
-                            formatter={(value: number | undefined) => value !== undefined ? formatCents(value) : ''}
-                            contentStyle={{
-                                backgroundColor: 'rgba(15, 23, 42, 0.9)',
-                                border: '1px solid rgba(255,255,255,0.1)',
-                                borderRadius: '12px',
-                                color: '#f8fafc',
-                                backdropFilter: 'blur(8px)',
-                                fontSize: '12px'
-                            }}
-                            itemStyle={{ color: '#f8fafc' }}
-                        />
-                    </PieChart>
-                </ResponsiveContainer>
-            </div>
-
-            {/* Legenda customizada */}
-            <div className="mt-4 space-y-2">
-                {data.map((item, index) => (
-                    <div key={index} className="flex items-center justify-between text-xs sm:text-sm">
-                        <div className="flex items-center gap-2">
-                            <div
-                                className="h-2.5 w-2.5 sm:h-3 sm:w-3 rounded-full flex-shrink-0"
-                                style={{ backgroundColor: item.color }}
+                <div className="h-56 sm:h-64 mt-4">
+                    <ResponsiveContainer width="100%" height="100%">
+                        <PieChart>
+                            <Pie
+                                data={data}
+                                cx="50%"
+                                cy="50%"
+                                labelLine={false}
+                                outerRadius={65}
+                                innerRadius={30}
+                                fill="#8884d8"
+                                dataKey="value"
+                                label={false}
+                                strokeWidth={0}
+                            >
+                                {data.map((entry, index) => (
+                                    <Cell key={`cell-${index}`} fill={entry.color} opacity={0.8} />
+                                ))}
+                            </Pie>
+                            <Tooltip
+                                formatter={(value: number | undefined) => value !== undefined ? formatCents(value) : ''}
+                                contentStyle={{
+                                    backgroundColor: 'rgba(10, 15, 30, 0.95)',
+                                    border: '1px solid rgba(255,255,255,0.08)',
+                                    borderRadius: '12px',
+                                    color: '#f0f2f8',
+                                    backdropFilter: 'blur(16px)',
+                                    fontSize: '12px',
+                                    padding: '8px 12px',
+                                }}
+                                itemStyle={{ color: '#f0f2f8' }}
                             />
-                            <span className="truncate">
-                                {item.icon} {item.name}
-                            </span>
+                        </PieChart>
+                    </ResponsiveContainer>
+                </div>
+
+                {/* Legend */}
+                <div className="mt-4 space-y-2">
+                    {data.map((item, index) => (
+                        <div key={index} className="flex items-center justify-between text-[13px]">
+                            <div className="flex items-center gap-2 min-w-0">
+                                <div
+                                    className="h-2 w-2 rounded-full flex-shrink-0"
+                                    style={{ backgroundColor: item.color }}
+                                />
+                                <span className="truncate text-white/50">
+                                    {item.icon} {item.name}
+                                </span>
+                            </div>
+                            <span className="font-medium text-white/70 ml-2 shrink-0">{formatCents(item.value)}</span>
                         </div>
-                        <span className="font-semibold ml-2">{formatCents(item.value)}</span>
-                    </div>
-                ))}
+                    ))}
+                </div>
             </div>
-        </div>
+        </Card>
     );
 }

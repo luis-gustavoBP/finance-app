@@ -9,8 +9,8 @@ import { MonthSelector } from '@/components/dashboard/MonthSelector';
 import { Button } from '@/components/ui/Button';
 import { AddCardModal } from '@/components/cards/AddCardModal';
 import { ConfirmModal } from '@/components/ui/ConfirmModal';
-import { formatCents, parseLocalDate } from '@/lib/utils';
-import { CreditCard, Calendar, Pencil, Trash2, CheckCircle, Clock, AlertCircle } from 'lucide-react';
+import { formatCents, parseLocalDate, cn } from '@/lib/utils';
+import { CreditCard, Pencil, Trash2, CheckCircle } from 'lucide-react';
 
 export default function CartoesPage() {
     const { cards, deleteCard, isLoading } = useCards();
@@ -19,12 +19,10 @@ export default function CartoesPage() {
     const { selectedDate } = useMonthFilter();
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
-    // Delete confirmation state
     const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
     const [cardToDelete, setCardToDelete] = useState<{ id: string, name: string } | null>(null);
     const [isDeleting, setIsDeleting] = useState(false);
 
-    // Calculate monthly spending per card based on selected date
     const currentMonth = selectedDate.getMonth();
     const currentYear = selectedDate.getFullYear();
 
@@ -42,7 +40,7 @@ export default function CartoesPage() {
     const getInvoiceStatus = (cardId: string) => {
         const invoice = invoices.find(inv =>
             inv.card_id === cardId &&
-            inv.month === currentMonth + 1 && // Invoice table uses 1-12
+            inv.month === currentMonth + 1 &&
             inv.year === currentYear
         );
         return invoice?.status || 'OPEN';
@@ -83,45 +81,53 @@ export default function CartoesPage() {
     };
 
     if (isLoading) {
-        return <div className="p-8 text-center animate-pulse">Carregando cartões...</div>;
+        return (
+            <div className="flex items-center justify-center min-h-[60vh]">
+                <div className="flex flex-col items-center gap-3">
+                    <div className="w-8 h-8 border-2 border-violet-400/30 border-t-violet-400 rounded-full animate-spin" />
+                    <span className="text-sm text-white/30">Carregando cartões...</span>
+                </div>
+            </div>
+        );
     }
 
     return (
         <div className="min-h-full">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-5 animate-in">
                 {/* Header */}
-                <div className="flex items-center justify-between flex-wrap gap-4">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
                     <div>
-                        <h1 className="text-2xl font-bold text-white">
+                        <h1 className="text-xl sm:text-2xl font-bold text-white">
                             Cartões de Crédito
                         </h1>
-                        <p className="text-slate-200 mt-1">
+                        <p className="text-sm text-white/30 mt-0.5">
                             Gerencie seus cartões e limites
                         </p>
                     </div>
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-2 w-full sm:w-auto">
                         <MonthSelector />
                         <Button
                             variant="primary"
+                            size="sm"
                             onClick={() => setIsAddModalOpen(true)}
-                            className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600"
+                            className="shrink-0"
                         >
-                            + Novo Cartão
+                            + Novo
                         </Button>
                     </div>
                 </div>
 
                 {/* Cards Grid */}
                 {cards.length === 0 ? (
-                    <div className="glass-panel rounded-2xl p-12 text-center border border-white/10">
-                        <div className="text-5xl mb-4">💳</div>
-                        <p className="text-slate-200 text-lg">Nenhum cartão cadastrado ainda.</p>
-                        <p className="text-slate-400 text-sm mt-2">
-                            Clique em "Novo Cartão" para adicionar seu primeiro cartão.
+                    <div className="glass-panel rounded-2xl p-10 text-center border border-white/[0.06]">
+                        <div className="text-3xl mb-3 opacity-50">💳</div>
+                        <p className="text-white/40 text-sm">Nenhum cartão cadastrado ainda.</p>
+                        <p className="text-white/20 text-xs mt-1">
+                            Clique em "Novo" para adicionar seu primeiro cartão.
                         </p>
                     </div>
                 ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                         {cards.map(card => {
                             const monthlySpent = getMonthlySpentByCard(card.id);
                             const limitCents = card.limit_cents || 0;
@@ -129,121 +135,128 @@ export default function CartoesPage() {
                             const usagePercentage = limitCents > 0
                                 ? Math.min((monthlySpent / limitCents) * 100, 100)
                                 : 0;
-                            const closingDay = getClosingDay(card.due_day || 10, card.closing_days_before || 10);
 
                             const invoiceStatus = getInvoiceStatus(card.id);
                             const isPaid = invoiceStatus === 'PAID';
                             const isClosed = invoiceStatus === 'CLOSED';
 
-                            // Progress bar color based on usage
-                            let progressColor = 'bg-blue-500';
-                            if (usagePercentage > 90) progressColor = 'bg-red-500';
-                            else if (usagePercentage > 70) progressColor = 'bg-orange-500';
+                            let progressColor = 'bg-indigo-400';
+                            if (usagePercentage > 90) progressColor = 'bg-red-400';
+                            else if (usagePercentage > 70) progressColor = 'bg-amber-400';
 
                             return (
                                 <div
                                     key={card.id}
-                                    className="glass-panel rounded-2xl overflow-hidden hover:bg-white/5 transition-all"
+                                    className="glass-panel rounded-2xl overflow-hidden hover:bg-white/[0.04] transition-all"
                                 >
-                                    {/* Card Header with Color */}
+                                    {/* Card Header */}
                                     <div
-                                        className="p-5 text-white relative"
-                                        style={{ backgroundColor: card.color || '#8b5cf6' }}
+                                        className="p-4 sm:p-5 text-white relative"
+                                        style={{ backgroundColor: `${card.color || '#6366f1'}20` }}
                                     >
-                                        {/* Card Icon and Status Badge */}
-                                        <div className="flex items-start justify-between mb-4">
-                                            <div className="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center">
-                                                <CreditCard className="w-6 h-6" />
+                                        <div className="flex items-start justify-between mb-3">
+                                            <div
+                                                className="w-9 h-9 rounded-xl flex items-center justify-center"
+                                                style={{ backgroundColor: `${card.color || '#6366f1'}30` }}
+                                            >
+                                                <CreditCard className="w-5 h-5" style={{ color: card.color || '#6366f1' }} />
                                             </div>
-                                            <div className="flex gap-2">
+                                            <div className="flex gap-1.5">
                                                 {isPaid ? (
-                                                    <span className="flex items-center gap-1 text-xs bg-green-500/90 text-white px-3 py-1 rounded-full font-medium shadow-sm">
+                                                    <span className="flex items-center gap-1 text-[10px] bg-emerald-400/15 text-emerald-400 px-2 py-0.5 rounded-md font-bold">
                                                         <CheckCircle className="w-3 h-3" /> Paga
                                                     </span>
                                                 ) : (
-                                                    <span className="flex items-center gap-1 text-xs bg-white/20 px-3 py-1 rounded-full font-medium">
-                                                        {isClosed ? 'Fechada' : 'Em Aberto'}
+                                                    <span className={cn(
+                                                        "text-[10px] px-2 py-0.5 rounded-md font-bold",
+                                                        isClosed
+                                                            ? "bg-amber-400/10 text-amber-400"
+                                                            : "bg-white/[0.06] text-white/40"
+                                                    )}>
+                                                        {isClosed ? 'Fechada' : 'Aberta'}
                                                     </span>
                                                 )}
                                             </div>
                                         </div>
 
-                                        {/* Card Name */}
-                                        <p className="text-white/80 text-xs uppercase tracking-wider mb-1">
-                                            Nome do Cartão
+                                        <p className="text-[10px] text-white/30 uppercase tracking-wider mb-0.5">
+                                            Cartão
                                         </p>
-                                        <h3 className="text-2xl font-bold mb-3">
+                                        <h3 className="text-lg font-bold text-white/90 mb-1.5">
                                             {card.name}
                                         </h3>
 
-                                        {/* Card Number */}
-                                        <p className="font-mono text-lg tracking-widest opacity-90">
+                                        <p className="font-mono text-sm tracking-widest text-white/25">
                                             •••• •••• •••• {card.last_four || '****'}
                                         </p>
                                     </div>
 
                                     {/* Card Details */}
-                                    <div className="p-5 space-y-4">
+                                    <div className="p-4 sm:p-5 space-y-4">
                                         {/* Monthly Spending */}
                                         <div>
                                             <div className="flex justify-between items-center mb-2">
-                                                <span className="text-sm text-slate-200">Fatura de {selectedDate.toLocaleString('default', { month: 'long' })}</span>
-                                                <span className="text-xl font-bold text-white">
+                                                <span className="text-[12px] text-white/30">Fatura do mês</span>
+                                                <span className="text-base font-bold text-white/80">
                                                     {formatCents(monthlySpent)}
                                                 </span>
                                             </div>
 
-                                            {/* Progress Bar */}
-                                            <div className="h-2 w-full bg-white/10 rounded-full overflow-hidden mb-2">
+                                            <div className="h-1.5 w-full bg-white/[0.06] rounded-full overflow-hidden mb-1.5">
                                                 <div
-                                                    className={`h-full transition-all duration-500 ${progressColor}`}
+                                                    className={`h-full transition-all duration-700 ${progressColor} rounded-full`}
                                                     style={{ width: `${usagePercentage}%` }}
                                                 />
                                             </div>
 
-                                            <div className="flex justify-between items-center text-xs">
-                                                <span className="text-slate-400">
-                                                    {usagePercentage.toFixed(1)}% utilizado
+                                            <div className="flex justify-between items-center text-[11px]">
+                                                <span className="text-white/20">
+                                                    {usagePercentage.toFixed(0)}% usado
                                                 </span>
-                                                <span className="text-slate-400">
+                                                <span className="text-white/20">
                                                     Limite: {formatCents(limitCents)}
                                                 </span>
                                             </div>
                                         </div>
 
                                         {/* Invoice Actions */}
-                                        <div className="flex items-center justify-between p-3 bg-white/5 rounded-lg border border-white/5">
+                                        <div className="flex items-center justify-between p-3 bg-white/[0.03] rounded-xl border border-white/[0.04]">
                                             <div className="flex items-center gap-2">
-                                                <div className={`w-2 h-2 rounded-full ${isPaid ? 'bg-green-500' : 'bg-orange-500'}`} />
-                                                <span className="text-sm font-medium text-slate-200">
-                                                    {isPaid ? 'Fatura Paga' : 'Aguardando Pagamento'}
+                                                <div className={cn(
+                                                    "w-1.5 h-1.5 rounded-full",
+                                                    isPaid ? "bg-emerald-400" : "bg-amber-400"
+                                                )} />
+                                                <span className="text-[12px] font-medium text-white/40">
+                                                    {isPaid ? 'Fatura Paga' : 'Aguardando'}
                                                 </span>
                                             </div>
                                             <button
                                                 onClick={() => handleTogglePaid(card.id, invoiceStatus)}
-                                                className={`text-xs px-3 py-1.5 rounded-md font-medium transition-all ${isPaid
-                                                    ? 'bg-white/10 text-slate-300 hover:bg-white/20 hover:text-white'
-                                                    : 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/20 hover:bg-emerald-500/30'
-                                                    }`}
+                                                className={cn(
+                                                    "text-[11px] px-3 py-1.5 rounded-lg font-medium transition-all",
+                                                    isPaid
+                                                        ? "bg-white/[0.04] text-white/30 hover:bg-white/[0.08]"
+                                                        : "bg-emerald-400/10 text-emerald-400 hover:bg-emerald-400/15"
+                                                )}
                                             >
                                                 {isPaid ? 'Reabrir' : 'Marcar Paga'}
                                             </button>
                                         </div>
 
                                         {/* Actions */}
-                                        <div className="flex gap-4 pt-2 border-t border-white/10">
+                                        <div className="flex gap-3 pt-2 border-t border-white/[0.04]">
                                             <button
-                                                className="flex items-center gap-2 text-sm text-indigo-400 hover:text-indigo-300 font-medium transition-colors"
+                                                className="flex items-center gap-1.5 text-[12px] text-white/25 hover:text-indigo-400 font-medium transition-colors"
                                                 onClick={() => window.location.href = '/configuracoes'}
                                             >
-                                                <Pencil className="w-4 h-4" />
+                                                <Pencil className="w-3.5 h-3.5" />
                                                 Editar
                                             </button>
                                             <button
-                                                className="flex items-center gap-2 text-sm text-red-500 hover:text-red-600 font-medium transition-colors"
+                                                className="flex items-center gap-1.5 text-[12px] text-white/25 hover:text-red-400 font-medium transition-colors"
                                                 onClick={(e) => handleDeleteClick(e, card.id, card.name)}
                                             >
-                                                <Trash2 className="w-4 h-4" />
+                                                <Trash2 className="w-3.5 h-3.5" />
                                                 Excluir
                                             </button>
                                         </div>
