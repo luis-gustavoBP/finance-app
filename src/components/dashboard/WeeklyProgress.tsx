@@ -10,13 +10,12 @@ type IncomeEntry = Database['public']['Tables']['income_entries']['Row'];
 
 interface WeeklyProgressProps {
     transactions: Transaction[];
-    incomeEntries: IncomeEntry[];
     monthlyLimit: number;
     weeklyGoal?: number;
     selectedMonth: Date;
 }
 
-export function WeeklyProgress({ transactions, incomeEntries, monthlyLimit, weeklyGoal, selectedMonth }: WeeklyProgressProps) {
+export function WeeklyProgress({ transactions, monthlyLimit, weeklyGoal, selectedMonth }: WeeklyProgressProps) {
     const weeks = useMemo(() => {
         return getWeeksInMonth(selectedMonth.getFullYear(), selectedMonth.getMonth());
     }, [selectedMonth]);
@@ -53,15 +52,7 @@ export function WeeklyProgress({ transactions, incomeEntries, monthlyLimit, week
         })
         .reduce((sum, tx) => sum + tx.amount_cents, 0);
 
-    const incomeUntilSelectedWeekEnd = incomeEntries
-        .filter(entry => {
-            const date = parseLocalDate(entry.received_at);
-            const isBudget = !entry.destination || entry.destination === 'budget';
-            return date >= weeks[0].start && date <= selectedWeek.end && isBudget;
-        })
-        .reduce((sum, entry) => sum + entry.amount_cents, 0);
-
-    const remainingBalance = (weeklyLimit * (selectedWeekIndex + 1)) + incomeUntilSelectedWeekEnd - spentUntilSelectedWeekEnd;
+    const remainingBalance = (weeklyLimit * (selectedWeekIndex + 1)) - spentUntilSelectedWeekEnd;
 
     const spentBeforeSelectedWeek = spentUntilSelectedWeekEnd - spentInSelectedWeek;
     const adjustedWeeklyGoal = (weeklyLimit * (selectedWeekIndex + 1)) - spentBeforeSelectedWeek;
