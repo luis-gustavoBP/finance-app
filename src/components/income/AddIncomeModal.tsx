@@ -1,16 +1,20 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useIncome } from '@/hooks/useIncome';
 import { Modal } from '@/components/ui/Modal';
 import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
 import { useToast } from '@/contexts/ToastContext';
 import { parseCurrencyInput, formatCurrencyInputValue, cn } from '@/lib/utils';
+import { Database } from '@/types/database.types';
+
+type IncomeEntry = Database['public']['Tables']['income_entries']['Row'];
 
 interface AddIncomeModalProps {
     isOpen: boolean;
     onClose: () => void;
+    incomeToEdit?: IncomeEntry | null;
 }
 
 const INCOME_TYPES = [
@@ -22,8 +26,8 @@ const INCOME_TYPES = [
     { value: 'outros', label: '📦 Outros', description: 'Outro tipo' },
 ] as const;
 
-export function AddIncomeModal({ isOpen, onClose }: AddIncomeModalProps) {
-    const { addIncome } = useIncome();
+export function AddIncomeModal({ isOpen, onClose, incomeToEdit }: AddIncomeModalProps) {
+    const { addIncome, updateIncome } = useIncome();
     const { showToast } = useToast();
     const [description, setDescription] = useState('');
     const [amount, setAmount] = useState('');
@@ -32,6 +36,24 @@ export function AddIncomeModal({ isOpen, onClose }: AddIncomeModalProps) {
     const [notes, setNotes] = useState('');
     const [destination, setDestination] = useState<'budget' | 'savings'>('budget');
     const [isSubmitting, setIsSubmitting] = useState(false);
+
+    useEffect(() => {
+        if (incomeToEdit && isOpen) {
+            setDescription(incomeToEdit.description);
+            setAmount(formatCurrencyInputValue(incomeToEdit.amount_cents));
+            setType(incomeToEdit.type as any);
+            setDate(incomeToEdit.received_at.split('T')[0]);
+            setNotes(incomeToEdit.notes || '');
+            setDestination(incomeToEdit.destination as any);
+        } else if (isOpen) {
+            setDescription('');
+            setAmount('');
+            setType('extra');
+            setDestination('budget');
+            setDate(new Date().toISOString().split('T')[0]);
+            setNotes('');
+        }
+    }, [incomeToEdit, isOpen]);
 
     const handleSubmit = async () => {
         try {
@@ -48,39 +70,35 @@ export function AddIncomeModal({ isOpen, onClose }: AddIncomeModalProps) {
                 return;
             }
 
-            await addIncome({
-                description,
+            const incomeData = {
+                description: description.trim(),
                 amount_cents: amountCents,
                 type,
                 destination,
                 received_at: date,
                 notes: notes.trim() || null,
-            });
+            };
 
-            // Reset form
-            setDescription('');
-            setAmount('');
-            setType('extra');
-            setDestination('budget');
-            setDate(new Date().toISOString().split('T')[0]);
-            setNotes('');
-            showToast('Entrada salva com sucesso!', 'success');
+            if (incomeToEdit) {
+                await updateIncome(incomeToEdit.id, incomeData);
+                showToast('Entrada atualizada com sucesso!', 'success');
+            } else {
+                await addIncome(incomeData);
+                showToast('Entrada salva com sucesso!', 'success');
+            }
+
             onClose();
         } catch (error: any) {
             console.error(error);
             const message = error?.message || 'Erro desconhecido';
             showToast(`Erro ao salvar entrada: ${message}`, 'error');
-
-            if (message.includes('destination') || message.includes('column')) {
-                showToast('Dica: Verifique se a migração V6 foi aplicada no Supabase.', 'info');
-            }
         } finally {
             setIsSubmitting(false);
         }
     };
 
     return (
-        <Modal isOpen={isOpen} onClose={onClose} title="Nova Entrada de Dinheiro">
+        <Modal isOpen={isOpen} onClose={onClose} title={incomeToEdit ? "Editar Entrada" : "Nova Entrada de Dinheiro"}>
             <div className="space-y-5">
                 <Input
                     label="Valor Recebido (R$)"
@@ -181,13 +199,6 @@ export function AddIncomeModal({ isOpen, onClose }: AddIncomeModalProps) {
                             <div className="text-[11px] text-white/30">Separado do orçamento</div>
                         </button>
                     </div>
-                </div>
-
-                <div className="bg-white/[0.03] p-3 rounded-xl text-[13px] text-white/40 border border-white/[0.04]">
-                    {destination === 'budget'
-                        ? '💡 Esta entrada aumentará seu poder de compra neste mês.'
-                        : '🐷 Esta entrada será guardada e não afetará seu limite de gastos mensal.'
-                    }
                 </div>
 
                 <div className="flex gap-2 pt-2">

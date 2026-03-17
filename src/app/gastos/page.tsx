@@ -12,7 +12,6 @@ import { useMonthFilter } from '@/contexts/MonthFilterContext';
 import { parseLocalDate } from '@/lib/utils';
 import { MonthSelector } from '@/components/dashboard/MonthSelector';
 import { useInvoices } from '@/hooks/useInvoices';
-import { getBillingMonth } from '@/lib/calculations';
 import { useToast } from '@/contexts/ToastContext';
 
 export default function GastosPage() {
@@ -22,10 +21,23 @@ export default function GastosPage() {
     const { cards } = useCards();
     const { invoices } = useInvoices();
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [txToEdit, setTxToEdit] = useState<any>(null);
 
     const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
     const [txToDelete, setTxToDelete] = useState<{ id: string, description: string } | null>(null);
     const [isDeleting, setIsDeleting] = useState(false);
+
+    const handleEditClick = (e: React.MouseEvent, tx: any) => {
+        e.preventDefault();
+        e.stopPropagation();
+        setTxToEdit(tx);
+        setIsModalOpen(true);
+    };
+
+    const handleCloseModal = () => {
+        setIsModalOpen(false);
+        setTxToEdit(null);
+    };
 
     const handleDeleteClick = (e: React.MouseEvent, id: string, description: string) => {
         e.preventDefault();
@@ -112,7 +124,7 @@ export default function GastosPage() {
                         ) : (
                             <div className="divide-y divide-white/[0.04]">
                                 {filteredTransactions.map(tx => (
-                                    <div key={tx.id} className="flex items-center justify-between p-4 hover:bg-white/[0.02] transition-colors">
+                                    <div key={tx.id} className="flex items-center justify-between p-4 hover:bg-white/[0.02] transition-colors group">
                                         <div className="flex items-center gap-3 min-w-0 flex-1">
                                             <div className="w-10 h-10 rounded-xl bg-white/[0.05] border border-white/[0.06] flex items-center justify-center text-lg shrink-0">
                                                 {tx.category?.icon || '📦'}
@@ -140,14 +152,26 @@ export default function GastosPage() {
                                                     </div>
                                                 )}
                                             </div>
-                                            <button
-                                                className="w-8 h-8 flex items-center justify-center rounded-lg text-white/15 hover:text-red-400 hover:bg-red-400/[0.06] transition-all"
-                                                onClick={(e) => handleDeleteClick(e, tx.id, tx.description)}
-                                            >
-                                                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
-                                                    <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                                </svg>
-                                            </button>
+                                            <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                                <button
+                                                    className="w-8 h-8 flex items-center justify-center rounded-lg text-white/15 hover:text-white hover:bg-white/10 transition-all"
+                                                    onClick={(e) => handleEditClick(e, tx)}
+                                                    title="Editar"
+                                                >
+                                                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
+                                                        <path strokeLinecap="round" strokeLinejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                                                    </svg>
+                                                </button>
+                                                <button
+                                                    className="w-8 h-8 flex items-center justify-center rounded-lg text-white/15 hover:text-red-400 hover:bg-red-400/[0.06] transition-all"
+                                                    onClick={(e) => handleDeleteClick(e, tx.id, tx.description)}
+                                                    title="Excluir"
+                                                >
+                                                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
+                                                        <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                                    </svg>
+                                                </button>
+                                            </div>
                                         </div>
                                     </div>
                                 ))}
@@ -158,7 +182,8 @@ export default function GastosPage() {
 
                 <AddTransactionModal
                     isOpen={isModalOpen}
-                    onClose={() => setIsModalOpen(false)}
+                    onClose={handleCloseModal}
+                    transactionToEdit={txToEdit}
                 />
 
                 <ConfirmModal

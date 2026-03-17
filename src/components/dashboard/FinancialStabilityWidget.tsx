@@ -28,6 +28,17 @@ export function FinancialStabilityWidget() {
 
     const currentBalance = totalIncomeBudget - totalSpentDebit;
 
+    // Determine next month/year
+    const nextMonth = currentMonth === 12 ? 1 : currentMonth + 1;
+    const nextYear = currentMonth === 12 ? currentYear + 1 : currentYear;
+
+    // Check which cards have their current month invoice paid
+    const paidCardIds = new Set(
+        invoices
+            .filter(inv => inv.month === currentMonth && inv.year === currentYear && inv.status === 'PAID')
+            .map(inv => inv.card_id)
+    );
+
     const openInvoicesSum = transactions
         .filter(tx => {
             if (tx.payment_method !== 'credit') return false;
@@ -35,16 +46,17 @@ export function FinancialStabilityWidget() {
             const txMonth = txDate.getMonth() + 1;
             const txYear = txDate.getFullYear();
 
-            if (txMonth !== currentMonth || txYear !== currentYear) return false;
+            // Current month transactions with unpaid invoices
+            if (txMonth === currentMonth && txYear === currentYear) {
+                return !paidCardIds.has(tx.card_id || '');
+            }
 
-            const isPaid = invoices.some(inv =>
-                inv.card_id === tx.card_id &&
-                inv.month === txMonth &&
-                inv.year === txYear &&
-                inv.status === 'PAID'
-            );
+            // Next month transactions — only for cards whose current month invoice is NOT paid
+            if (txMonth === nextMonth && txYear === nextYear) {
+                return !paidCardIds.has(tx.card_id || '');
+            }
 
-            return !isPaid;
+            return false;
         })
         .reduce((sum, tx) => sum + tx.amount_cents, 0);
 

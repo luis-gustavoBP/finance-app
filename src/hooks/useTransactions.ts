@@ -118,6 +118,19 @@ export function useTransactions() {
         mutate();
     };
 
+    const updateTransaction = async (id: string, updates: Partial<Omit<Transaction, 'id' | 'user_id' | 'created_at'>>) => {
+        if (!user) throw new Error('Not authenticated');
+
+        const { error } = await supabase
+            .from('transactions')
+            .update(updates)
+            .eq('id', id)
+            .eq('user_id', user.id);
+
+        if (error) throw error;
+        mutate();
+    };
+
     const deleteTransaction = async (transactionId: string) => {
         if (!user) throw new Error('Not authenticated');
 
@@ -138,6 +151,7 @@ export function useTransactions() {
         refresh: mutate,
         addTransaction,
         addTransactionWithInstallments,
+        updateTransaction,
         deleteTransaction,
     };
 }

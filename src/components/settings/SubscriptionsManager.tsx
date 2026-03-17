@@ -13,7 +13,7 @@ import { ConfirmModal } from '@/components/ui/ConfirmModal';
 import { useToast } from '@/contexts/ToastContext';
 
 export function SubscriptionsManager() {
-    const { subscriptions, addSubscription, deleteSubscription, toggleActive, isLoading } = useSubscriptions();
+    const { subscriptions, addSubscription, updateSubscription, deleteSubscription, toggleActive, isLoading } = useSubscriptions();
     const { showToast } = useToast();
     const { categories } = useCategories();
     const { cards } = useCards();
@@ -28,6 +28,11 @@ export function SubscriptionsManager() {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [subToDelete, setSubToDelete] = useState<{ id: string, name: string } | null>(null);
     const [isDeleting, setIsDeleting] = useState(false);
+
+    // Edit state
+    const [editingSub, setEditingSub] = useState<{ id: string, description: string } | null>(null);
+    const [editAmount, setEditAmount] = useState('');
+    const [isSavingEdit, setIsSavingEdit] = useState(false);
 
     const totalMonthly = subscriptions
         .filter(s => s.active)
@@ -85,6 +90,30 @@ export function SubscriptionsManager() {
         }
     };
 
+    const handleEditClick = (sub: { id: string, description: string, amount_cents: number }) => {
+        setEditingSub({ id: sub.id, description: sub.description });
+        setEditAmount(formatCurrencyInputValue(sub.amount_cents));
+    };
+
+    const handleSaveEdit = async () => {
+        if (!editingSub) return;
+        setIsSavingEdit(true);
+        try {
+            const amountCents = parseCurrencyInput(editAmount);
+            if (amountCents <= 0) {
+                showToast('Informe um valor válido.', 'error');
+                return;
+            }
+            await updateSubscription(editingSub.id, { amount_cents: amountCents });
+            showToast('Valor atualizado!', 'success');
+            setEditingSub(null);
+        } catch (error) {
+            showToast('Erro ao atualizar valor.', 'error');
+        } finally {
+            setIsSavingEdit(false);
+        }
+    };
+
     if (isLoading) return <div className="text-center p-4">Carregando assinaturas...</div>;
 
     return (
@@ -126,6 +155,15 @@ export function SubscriptionsManager() {
                                             {formatCents(sub.amount_cents)}
                                         </span>
                                         <div className="flex items-center gap-1">
+                                            <Button
+                                                variant="ghost"
+                                                size="sm"
+                                                className="text-white/40 hover:text-indigo-400"
+                                                onClick={() => handleEditClick(sub)}
+                                                title="Editar valor"
+                                            >
+                                                ✏️
+                                            </Button>
                                             <Button
                                                 variant="ghost"
                                                 size="sm"
@@ -295,6 +333,27 @@ export function SubscriptionsManager() {
                     confirmLabel="Excluir"
                     isLoading={isDeleting}
                 />
+
+                {/* Edit Amount Modal */}
+                <Modal isOpen={!!editingSub} onClose={() => setEditingSub(null)} title={`Editar Valor — ${editingSub?.description || ''}`}>
+                    <div className="space-y-4 pt-4">
+                        <Input
+                            label="Novo Valor (R$)"
+                            value={editAmount}
+                            onChange={(e) => {
+                                const cents = parseCurrencyInput(e.target.value);
+                                setEditAmount(formatCurrencyInputValue(cents));
+                            }}
+                            placeholder="0,00"
+                        />
+                        <div className="flex justify-end gap-2 pt-2">
+                            <Button variant="ghost" onClick={() => setEditingSub(null)}>Cancelar</Button>
+                            <Button variant="primary" onClick={handleSaveEdit} disabled={isSavingEdit}>
+                                {isSavingEdit ? 'Salvando...' : 'Salvar'}
+                            </Button>
+                        </div>
+                    </div>
+                </Modal>
             </CardContent>
         </Card>
     );

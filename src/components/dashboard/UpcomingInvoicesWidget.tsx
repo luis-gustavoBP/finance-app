@@ -8,6 +8,8 @@ type Transaction = Database['public']['Tables']['transactions']['Row'];
 type CardType = Database['public']['Tables']['cards']['Row'];
 type Invoice = Database['public']['Tables']['invoices']['Row'];
 
+import { useMonthFilter } from '@/contexts/MonthFilterContext';
+
 interface UpcomingInvoicesWidgetProps {
     transactions: Transaction[];
     cards: CardType[];
@@ -15,9 +17,9 @@ interface UpcomingInvoicesWidgetProps {
 }
 
 export function UpcomingInvoicesWidget({ transactions, cards, invoices }: UpcomingInvoicesWidgetProps) {
-    const today = new Date();
-    const currentMonth = today.getMonth() + 1;
-    const currentYear = today.getFullYear();
+    const { selectedDate } = useMonthFilter();
+    const currentMonth = selectedDate.getMonth() + 1;
+    const currentYear = selectedDate.getFullYear();
 
     const getTargetInvoiceData = (cardId: string) => {
         const currentInvoice = invoices.find(inv =>
@@ -26,19 +28,8 @@ export function UpcomingInvoicesWidget({ transactions, cards, invoices }: Upcomi
             inv.year === currentYear
         );
 
-        let targetMonth = currentMonth;
-        let targetYear = currentYear;
-        let isNextMonth = false;
-
-        if (currentInvoice?.status === 'PAID') {
-            isNextMonth = true;
-            if (currentMonth === 12) {
-                targetMonth = 1;
-                targetYear = currentYear + 1;
-            } else {
-                targetMonth = currentMonth + 1;
-            }
-        }
+        const targetMonth = currentMonth;
+        const targetYear = currentYear;
 
         const upcomingAmount = transactions
             .filter(tx => {
@@ -51,17 +42,7 @@ export function UpcomingInvoicesWidget({ transactions, cards, invoices }: Upcomi
             })
             .reduce((sum, tx) => sum + tx.amount_cents, 0);
 
-        let displayStatus = 'OPEN';
-        if (isNextMonth) {
-            const nextInvoice = invoices.find(inv =>
-                inv.card_id === cardId &&
-                inv.month === targetMonth &&
-                inv.year === targetYear
-            );
-            displayStatus = nextInvoice?.status || 'OPEN';
-        } else {
-            displayStatus = currentInvoice?.status || 'OPEN';
-        }
+        const displayStatus = currentInvoice?.status || 'OPEN';
 
         return {
             amount: upcomingAmount,

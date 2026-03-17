@@ -11,13 +11,16 @@ import { useToast } from '@/contexts/ToastContext';
 import { parseCurrencyInput, formatCurrencyInputValue } from '@/lib/utils';
 import { Database } from '@/types/database.types';
 
+type Transaction = Database['public']['Tables']['transactions']['Row'];
+
 interface AddTransactionModalProps {
     isOpen: boolean;
     onClose: () => void;
+    transactionToEdit?: Transaction | null;
 }
 
-export function AddTransactionModal({ isOpen, onClose }: AddTransactionModalProps) {
-    const { addTransactionWithInstallments } = useTransactions();
+export function AddTransactionModal({ isOpen, onClose, transactionToEdit }: AddTransactionModalProps) {
+    const { addTransactionWithInstallments, updateTransaction } = useTransactions();
     const { showToast } = useToast();
     const { cards } = useCards();
     const { categories, isLoading: isCategoriesLoading } = useCategories();
@@ -30,15 +33,28 @@ export function AddTransactionModal({ isOpen, onClose }: AddTransactionModalProp
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [categoryId, setCategoryId] = useState('');
     const [includeInWeeklyPlan, setIncludeInWeeklyPlan] = useState(true);
-
     const [paymentMethod, setPaymentMethod] = useState<'credit' | 'debit' | 'pix' | 'cash'>('credit');
 
-    // Set default category and reset payment method when opening/closing
     useEffect(() => {
-        if (categories.length > 0 && !categoryId) {
-            setCategoryId(categories[0].id);
+        if (transactionToEdit && isOpen) {
+            setDescription(transactionToEdit.description);
+            setAmount(formatCurrencyInputValue(transactionToEdit.amount_cents));
+            setInstallments(String(transactionToEdit.installments));
+            setCardId(transactionToEdit.card_id || '');
+            setDate(transactionToEdit.posted_at.split('T')[0]);
+            setCategoryId(transactionToEdit.category_id || '');
+            setIncludeInWeeklyPlan(transactionToEdit.include_in_weekly_plan);
+            setPaymentMethod(transactionToEdit.payment_method as any);
+        } else if (isOpen) {
+            setDescription('');
+            setAmount('');
+            setInstallments('1');
+            setPaymentMethod('credit');
+            setDate(new Date().toISOString().split('T')[0]);
+            setIncludeInWeeklyPlan(true);
+            if (categories.length > 0) setCategoryId(categories[0].id);
         }
-    }, [categories, categoryId]);
+    }, [transactionToEdit, isOpen, categories]);
 
     const handleSubmit = async () => {
         try {
@@ -55,44 +71,42 @@ export function AddTransactionModal({ isOpen, onClose }: AddTransactionModalProp
             }
 
             if (!categoryId) {
-                showToast('Selecione uma categoria. Se não houver, crie uma primeiro.', 'error');
+                showToast('Selecione uma categoria.', 'error');
                 return;
             }
 
-            if (paymentMethod === 'credit' && !cardId) {
-                showToast('Selecione um cartão de crédito.', 'error');
-                return;
-            }
-
-            await addTransactionWithInstallments({
-                description,
+            const txData = {
+                description: description.trim(),
                 amount_cents: amountCents,
                 category_id: categoryId,
                 card_id: paymentMethod === 'credit' ? cardId : null,
-                installments: paymentMethod === 'credit' ? (parseInt(installments) || 1) : 1,
                 posted_at: date,
                 include_in_weekly_plan: includeInWeeklyPlan,
                 payment_method: paymentMethod,
-            } as any);
+            };
 
-            showToast('Transação salva com sucesso!', 'success');
+            if (transactionToEdit) {
+                await updateTransaction(transactionToEdit.id, txData);
+                showToast('Transação atualizada com sucesso!', 'success');
+            } else {
+                await addTransactionWithInstallments({
+                    ...txData,
+                    installments: paymentMethod === 'credit' ? (parseInt(installments) || 1) : 1,
+                } as any);
+                showToast('Transação salva com sucesso!', 'success');
+            }
+
             onClose();
-            // Reset form
-            setDescription('');
-            setAmount('');
-            setInstallments('1');
-            setPaymentMethod('credit');
         } catch (error: any) {
             console.error('Submit error:', error);
-            const errorMessage = error.message || error.error_description || (typeof error === 'object' ? JSON.stringify(error) : String(error));
-            showToast('Erro ao salvar transação: ' + errorMessage, 'error');
+            showToast('Erro ao salvar transação: ' + (error.message || 'Erro desconhecido'), 'error');
         } finally {
             setIsSubmitting(false);
         }
     };
 
     return (
-        <Modal isOpen={isOpen} onClose={onClose} title="Nova Transação">
+        <Modal isOpen={isOpen} onClose={onClose} title={transactionToEdit ? "Editar Transação" : "Nova Transação"}>
             <div className="space-y-4 pt-4">
                 <Input
                     label="Valor (R$)"
@@ -112,62 +126,32 @@ export function AddTransactionModal({ isOpen, onClose }: AddTransactionModalProp
                     placeholder="Ex: Almoço, Uber, Mercado..."
                 />
 
-                {/* Date Picker */}
                 <div className="flex flex-col gap-1.5">
                     <label className="text-sm font-medium text-slate-300 ">Data</label>
                     <input
                         type="date"
                         value={date}
                         onChange={(e) => setDate(e.target.value)}
-                        className="flex h-10 w-full rounded-md border border-white/20 bg-[#0f172a] px-3 py-2 text-sm text-white ring-offset-white file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-slate-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 "
+                        className="flex h-10 w-full rounded-md border border-white/20 bg-[#0f172a] px-3 py-2 text-sm text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
                     />
                 </div>
 
                 <div className="flex flex-col gap-1.5">
-                    <label className="text-sm font-medium text-slate-300 ">
-                        Forma de Pagamento
-                    </label>
+                    <label className="text-sm font-medium text-slate-300 ">Forma de Pagamento</label>
                     <div className="grid grid-cols-2 gap-2">
-                        <button
-                            type="button"
-                            onClick={() => setPaymentMethod('credit')}
-                            className={`flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-sm font-medium border transition-all ${paymentMethod === 'credit'
-                                ? 'bg-indigo-500/20 border-indigo-500/50 text-indigo-300'
-                                : 'bg-[#0f172a] border-white/10 text-slate-300 hover:bg-white/5'
-                                }`}
-                        >
-                            💳 Crédito
-                        </button>
-                        <button
-                            type="button"
-                            onClick={() => setPaymentMethod('debit')}
-                            className={`flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-sm font-medium border transition-all ${paymentMethod === 'debit'
-                                ? 'bg-emerald-500/20 border-emerald-500/50 text-emerald-300'
-                                : 'bg-[#0f172a] border-white/10 text-slate-300 hover:bg-white/5'
-                                }`}
-                        >
-                            💸 Débito
-                        </button>
-                        <button
-                            type="button"
-                            onClick={() => setPaymentMethod('pix')}
-                            className={`flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-sm font-medium border transition-all ${paymentMethod === 'pix'
-                                ? 'bg-emerald-500/20 border-emerald-500/50 text-emerald-300'
-                                : 'bg-[#0f172a] border-white/10 text-slate-300 hover:bg-white/5'
-                                }`}
-                        >
-                            💠 PIX
-                        </button>
-                        <button
-                            type="button"
-                            onClick={() => setPaymentMethod('cash')}
-                            className={`flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-sm font-medium border transition-all ${paymentMethod === 'cash'
-                                ? 'bg-emerald-500/20 border-emerald-500/50 text-emerald-300'
-                                : 'bg-[#0f172a] border-white/10 text-slate-300 hover:bg-white/5'
-                                }`}
-                        >
-                            💵 Dinheiro
-                        </button>
+                        {['credit', 'debit', 'pix', 'cash'].map((method) => (
+                            <button
+                                key={method}
+                                type="button"
+                                onClick={() => setPaymentMethod(method as any)}
+                                className={`flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-sm font-medium border transition-all ${paymentMethod === method
+                                    ? 'bg-indigo-500/20 border-indigo-500/50 text-indigo-300'
+                                    : 'bg-[#0f172a] border-white/10 text-slate-300 hover:bg-white/5'
+                                    }`}
+                            >
+                                {method === 'credit' ? '💳 Crédito' : method === 'debit' ? '💸 Débito' : method === 'pix' ? '💠 PIX' : '💵 Dinheiro'}
+                            </button>
+                        ))}
                     </div>
                 </div>
 
@@ -178,7 +162,7 @@ export function AddTransactionModal({ isOpen, onClose }: AddTransactionModalProp
                             <select
                                 value={cardId}
                                 onChange={(e) => setCardId(e.target.value)}
-                                className="flex h-10 w-full rounded-md border border-white/20 bg-[#0f172a] px-3 py-2 text-sm text-white ring-offset-white placeholder:text-slate-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2"
+                                className="flex h-10 w-full rounded-md border border-white/20 bg-[#0f172a] px-3 py-2 text-sm text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
                             >
                                 <option value="" className="bg-[#001242] text-white">Selecione...</option>
                                 {cards.map(card => (
@@ -186,14 +170,16 @@ export function AddTransactionModal({ isOpen, onClose }: AddTransactionModalProp
                                 ))}
                             </select>
                         </div>
-                        <Input
-                            label="Parcelas"
-                            type="number"
-                            min={1}
-                            max={24}
-                            value={installments}
-                            onChange={(e) => setInstallments(e.target.value)}
-                        />
+                        {!transactionToEdit && (
+                            <Input
+                                label="Parcelas"
+                                type="number"
+                                min={1}
+                                max={24}
+                                value={installments}
+                                onChange={(e) => setInstallments(e.target.value)}
+                            />
+                        )}
                     </div>
                 )}
 
@@ -203,15 +189,11 @@ export function AddTransactionModal({ isOpen, onClose }: AddTransactionModalProp
                         value={categoryId}
                         onChange={(e) => setCategoryId(e.target.value)}
                         disabled={isCategoriesLoading}
-                        className="flex h-10 w-full rounded-md border border-white/20 bg-[#0f172a] px-3 py-2 text-sm text-white ring-offset-white placeholder:text-slate-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 "
+                        className="flex h-10 w-full rounded-md border border-white/20 bg-[#0f172a] px-3 py-2 text-sm text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
                     >
-                        {isCategoriesLoading ? (
-                            <option className="bg-[#001242] text-white">Carregando...</option>
-                        ) : (
-                            categories.map(cat => (
-                                <option key={cat.id} value={cat.id} className="bg-[#001242] text-white">{cat.icon} {cat.name}</option>
-                            ))
-                        )}
+                        {categories.map(cat => (
+                            <option key={cat.id} value={cat.id} className="bg-[#001242] text-white">{cat.icon} {cat.name}</option>
+                        ))}
                     </select>
                 </div>
 
