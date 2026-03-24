@@ -12,9 +12,10 @@ type Transaction = Database['public']['Tables']['transactions']['Row'];
 interface SpendingAnalysisWidgetProps {
     transactions: Transaction[];
     monthlyLimit: number;
+    selectedMonth?: Date;
 }
 
-export function SpendingAnalysisWidget({ transactions, monthlyLimit }: SpendingAnalysisWidgetProps) {
+export function SpendingAnalysisWidget({ transactions, monthlyLimit, selectedMonth }: SpendingAnalysisWidgetProps) {
     const [viewMode, setViewMode] = useState<'pace' | 'evolution'>('pace');
 
     return (
@@ -23,7 +24,7 @@ export function SpendingAnalysisWidget({ transactions, monthlyLimit }: SpendingA
                 {/* Header */}
                 <div className="flex items-center justify-between mb-4">
                     <span className="px-3 py-1.5 rounded-lg border border-white/[0.08] text-[10px] font-bold text-white/50 uppercase tracking-widest">
-                        {viewMode === 'pace' ? 'Ritmo de Gasto' : 'Evolução (30 Dias)'}
+                        {viewMode === 'pace' ? 'Ritmo de Gasto' : 'Evolução do Mês'}
                     </span>
                     <div className="flex bg-white/[0.04] p-0.5 rounded-lg border border-white/[0.04]">
                         <button
@@ -54,11 +55,11 @@ export function SpendingAnalysisWidget({ transactions, monthlyLimit }: SpendingA
             <CardContent className="px-0 pb-0">
                 {viewMode === 'pace' ? (
                     <div className="animate-in" key="pace">
-                        <MonthlyPace transactions={transactions} monthlyLimit={monthlyLimit} minimal />
+                        <MonthlyPace transactions={transactions} monthlyLimit={monthlyLimit} minimal selectedMonth={selectedMonth} />
                     </div>
                 ) : (
                     <div className="animate-in" key="evolution">
-                        <EvolutionChart transactions={transactions} minimal />
+                        <EvolutionChart transactions={transactions} minimal selectedMonth={selectedMonth} />
                     </div>
                 )}
             </CardContent>

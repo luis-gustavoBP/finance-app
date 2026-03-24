@@ -11,17 +11,25 @@ interface MonthlyPaceProps {
     transactions: Transaction[];
     monthlyLimit: number;
     minimal?: boolean;
+    selectedMonth?: Date;
 }
 
-export function MonthlyPace({ transactions, monthlyLimit, minimal = false }: MonthlyPaceProps) {
+export function MonthlyPace({ transactions, monthlyLimit, minimal = false, selectedMonth }: MonthlyPaceProps) {
     const now = new Date();
-    const daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
-    const today = now.getDate();
+    const target = selectedMonth || now;
+    const targetMonth = target.getMonth();
+    const targetYear = target.getFullYear();
+    const daysInMonth = new Date(targetYear, targetMonth + 1, 0).getDate();
 
-    // Filtrar apenas transações deste mês até hoje
+    // Determine "today" relative to the selected month
+    const isCurrentMonth = now.getMonth() === targetMonth && now.getFullYear() === targetYear;
+    const isPastMonth = targetYear < now.getFullYear() || (targetYear === now.getFullYear() && targetMonth < now.getMonth());
+    const today = isCurrentMonth ? now.getDate() : isPastMonth ? daysInMonth : 0;
+
+    // Filtrar transações do mês selecionado
     const currentMonthTx = transactions.filter(tx => {
         const d = parseLocalDate(tx.posted_at);
-        return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+        return d.getMonth() === targetMonth && d.getFullYear() === targetYear;
     });
 
     // Construir dados dia a dia

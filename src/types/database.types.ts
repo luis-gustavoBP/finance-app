@@ -143,6 +143,7 @@ export interface Database {
                     include_in_weekly_plan: boolean
                     payment_method: 'credit' | 'debit' | 'pix' | 'cash'
                     created_at: string
+                    updated_at: string
                 }
                 Insert: {
                     id?: string
@@ -158,6 +159,7 @@ export interface Database {
                     include_in_weekly_plan?: boolean
                     payment_method?: 'credit' | 'debit' | 'pix' | 'cash'
                     created_at?: string
+                    updated_at?: string
                 }
                 Update: {
                     id?: string
@@ -173,6 +175,7 @@ export interface Database {
                     include_in_weekly_plan?: boolean
                     payment_method?: 'credit' | 'debit' | 'pix' | 'cash'
                     created_at?: string
+                    updated_at?: string
                 }
                 Relationships: [
                     {
@@ -249,6 +252,7 @@ export interface Database {
                     destination: 'budget' | 'savings'
                     notes: string | null
                     created_at: string
+                    updated_at: string
                 }
                 Insert: {
                     id?: string
@@ -260,6 +264,7 @@ export interface Database {
                     destination?: 'budget' | 'savings'
                     notes?: string | null
                     created_at?: string
+                    updated_at?: string
                 }
                 Update: {
                     id?: string
@@ -271,6 +276,7 @@ export interface Database {
                     destination?: 'budget' | 'savings'
                     notes?: string | null
                     created_at?: string
+                    updated_at?: string
                 }
                 Relationships: []
             }
@@ -279,18 +285,21 @@ export interface Database {
                     user_id: string
                     global_monthly_limit_cents: number
                     weekly_goal_cents: number
+                    starting_balance_cents: number
                     updated_at: string
                 }
                 Insert: {
                     user_id: string
                     global_monthly_limit_cents?: number
                     weekly_goal_cents?: number
+                    starting_balance_cents?: number
                     updated_at?: string
                 }
                 Update: {
                     user_id?: string
                     global_monthly_limit_cents?: number
                     weekly_goal_cents?: number
+                    starting_balance_cents?: number
                     updated_at?: string
                 }
                 Relationships: []

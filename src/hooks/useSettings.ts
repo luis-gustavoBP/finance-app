@@ -31,7 +31,7 @@ export function useSettings() {
                     try {
                         const { data: newData, error: createError } = await supabase
                             .from('user_settings')
-                            .insert({ user_id: user!.id, global_monthly_limit_cents: 0 })
+                            .insert({ user_id: user!.id, global_monthly_limit_cents: 0, starting_balance_cents: 0 })
                             .select()
                             .single();
 

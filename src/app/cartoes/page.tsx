@@ -48,9 +48,9 @@ export default function CartoesPage() {
         return invoice?.status || 'OPEN';
     };
 
-    const handleTogglePaid = async (cardId: string, currentStatus: string) => {
+    const handleTogglePaid = async (cardId: string, currentStatus: string, amount: number) => {
         const newStatus = currentStatus === 'PAID' ? 'OPEN' : 'PAID';
-        await updateInvoiceStatus(cardId, currentMonth + 1, currentYear, newStatus);
+        await updateInvoiceStatus(cardId, currentMonth + 1, currentYear, newStatus, amount);
     };
 
     const handleDeleteClick = (e: React.MouseEvent, cardId: string, cardName: string) => {
@@ -233,7 +233,7 @@ export default function CartoesPage() {
                                                 </span>
                                             </div>
                                             <button
-                                                onClick={() => handleTogglePaid(card.id, invoiceStatus)}
+                                                onClick={() => handleTogglePaid(card.id, invoiceStatus, monthlySpent)}
                                                 className={cn(
                                                     "text-[11px] px-3 py-1.5 rounded-lg font-medium transition-all",
                                                     isPaid

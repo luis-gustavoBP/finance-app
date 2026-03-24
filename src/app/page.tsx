@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+
 import { useTransactions } from '@/hooks/useTransactions';
 import { useCards } from '@/hooks/useCards';
 import { useSettings } from '@/hooks/useSettings';
@@ -10,9 +10,7 @@ import { useInvoices } from '@/hooks/useInvoices';
 import { useSubscriptions } from '@/hooks/useSubscriptions';
 import { Button } from '@/components/ui/Button';
 import { Card, CardContent } from '@/components/ui/Card';
-import { Input } from '@/components/ui/Input';
-import { Modal } from '@/components/ui/Modal';
-import { formatCents, parseLocalDate, cn, formatFirstName, parseCurrencyInput, formatCurrencyInputValue } from '@/lib/utils';
+import { formatCents, parseLocalDate, cn, formatFirstName } from '@/lib/utils';
 import { WidgetCard } from '@/components/dashboard/WidgetCard';
 import { CategoryPieChart } from '@/components/dashboard/CategoryPieChart';
 
@@ -29,28 +27,17 @@ export default function DashboardPage() {
   const { transactions, isLoading: isTxLoading, error: isTxError } = useTransactions();
   const { cards, isLoading: isCardsLoading, error: isCardsError } = useCards();
   const { categories, isLoading: isCategoriesLoading } = useCategories();
-  const { settings, updateSettings, isLoading: isSettingsLoading, error: isSettingsError } = useSettings();
+  const { settings, isLoading: isSettingsLoading, error: isSettingsError } = useSettings();
   const { incomeEntries, isLoading: isIncomeLoading } = useIncome();
   const { invoices, isLoading: isInvoicesLoading } = useInvoices();
   const { subscriptions, isLoading: isSubsLoading } = useSubscriptions();
   const { selectedDate } = useMonthFilter();
   const { user } = useAuth();
 
-  const [isConfiguringBudget, setIsConfiguringBudget] = useState(false);
-  const [newGlobalLimit, setNewGlobalLimit] = useState('');
 
   const currentMonth = selectedDate.getMonth();
   const currentYear = selectedDate.getFullYear();
-
-  const handleSaveBudget = async () => {
-    const limitInCents = parseCurrencyInput(newGlobalLimit);
-    if (isNaN(limitInCents)) return;
-
-    await updateSettings({ global_monthly_limit_cents: limitInCents });
-    setIsConfiguringBudget(false);
-  };
-
-  if (isTxLoading || isCardsLoading || isSettingsLoading || isCategoriesLoading || isInvoicesLoading || isSubsLoading) {
+  if (isTxLoading || isCardsLoading || isSettingsLoading || isCategoriesLoading || isInvoicesLoading || isSubsLoading || isIncomeLoading) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
         <div className="flex flex-col items-center gap-3">
@@ -82,7 +69,10 @@ export default function DashboardPage() {
     return txDate.getMonth() === currentMonth && txDate.getFullYear() === currentYear;
   });
 
-  const totalSpentMonthly = monthlyTransactions.reduce((sum, tx) => sum + tx.amount_cents, 0);
+
+  const totalCreditSpentMonthly = monthlyTransactions
+    .filter(tx => tx.payment_method === 'credit')
+    .reduce((sum, tx) => sum + tx.amount_cents, 0);
   const globalLimit = settings?.global_monthly_limit_cents || 0;
   const totalCardLimits = cards.reduce((sum, card) => sum + (card.limit_cents || 0), 0);
 
@@ -96,25 +86,26 @@ export default function DashboardPage() {
     })
     .reduce((sum, entry) => sum + entry.amount_cents, 0);
 
-  const totalSubscriptions = subscriptions
-    .filter(s => s.active)
-    .reduce((sum, s) => sum + s.amount_cents, 0);
 
-  const availableBalance = globalLimit + monthlyIncome - totalSpentMonthly - totalSubscriptions;
+
+
   const weeklyGoal = settings?.weekly_goal_cents || 0;
 
   return (
     <div className="min-h-full">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-5 animate-in">
         {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-          <div>
-            <h1 className="text-xl sm:text-2xl font-bold text-white">
-              Olá, {formatFirstName(user?.user_metadata?.full_name || user?.email?.split('@')[0])}
-            </h1>
-            <p className="text-sm text-white/30 mt-0.5">
-              Visão geral dos seus gastos
-            </p>
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          <div className="flex flex-1 items-center justify-between">
+            <div>
+              <h1 className="text-xl sm:text-2xl font-bold text-white">
+                Olá, {formatFirstName(user?.user_metadata?.full_name || user?.email?.split('@')[0])}
+              </h1>
+              <p className="text-sm text-white/30 mt-0.5">
+                Visão geral dos seus gastos
+              </p>
+            </div>
+            <div />
           </div>
           <MonthSelector />
         </div>
@@ -125,9 +116,9 @@ export default function DashboardPage() {
             <div className="flex-1">
               <div className="flex justify-between text-[12px] mb-1.5">
                 <span className="font-medium text-white/40">Limite Disponível</span>
-                <span className="text-white/50">{formatCents(totalCardLimits - totalSpentMonthly)} de {formatCents(totalCardLimits)}</span>
+                <span className="text-white/50">{formatCents(totalCardLimits - totalCreditSpentMonthly)} de {formatCents(totalCardLimits)}</span>
               </div>
-              <ProgressBar value={totalSpentMonthly} max={totalCardLimits} showLabel={false} size="sm" className="h-1.5" />
+              <ProgressBar value={totalCreditSpentMonthly} max={totalCardLimits} showLabel={false} size="sm" className="h-1.5" />
             </div>
           </Card>
         )}
@@ -158,7 +149,7 @@ export default function DashboardPage() {
               />
             </div>
 
-            <SpendingAnalysisWidget transactions={transactions} monthlyLimit={globalLimit} />
+            <SpendingAnalysisWidget transactions={transactions} monthlyLimit={globalLimit} selectedMonth={selectedDate} />
             <CategoryPieChart transactions={monthlyTransactions as any} categories={categories} />
           </div>
 
@@ -172,36 +163,7 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        {/* Budget Configuration Modal */}
-        <Modal
-          isOpen={isConfiguringBudget}
-          onClose={() => setIsConfiguringBudget(false)}
-          title="Configurar Orçamento"
-        >
-          <div className="space-y-4">
-            <Input
-              label="Limite Mensal (R$)"
-              value={newGlobalLimit}
-              onChange={(e) => {
-                const cents = parseCurrencyInput(e.target.value);
-                setNewGlobalLimit(formatCurrencyInputValue(cents));
-              }}
-              placeholder="Ex: 5000,00"
-              type="text"
-            />
-            <p className="text-xs text-white/25">
-              Este limite será usado para o resumo geral de todos os seus cartões.
-            </p>
-            <div className="flex justify-end gap-2 pt-2">
-              <Button variant="ghost" onClick={() => setIsConfiguringBudget(false)}>
-                Cancelar
-              </Button>
-              <Button variant="primary" onClick={handleSaveBudget}>
-                Salvar
-              </Button>
-            </div>
-          </div>
-        </Modal>
+
       </div>
     </div>
   );

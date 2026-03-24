@@ -9,49 +9,53 @@ type Transaction = Database['public']['Tables']['transactions']['Row'];
 interface EvolutionChartProps {
     transactions: Transaction[];
     minimal?: boolean;
+    selectedMonth?: Date;
 }
 
-export function EvolutionChart({ transactions, minimal = false }: EvolutionChartProps) {
-    // Preparar dados dos últimos 30 dias
+export function EvolutionChart({ transactions, minimal = false, selectedMonth }: EvolutionChartProps) {
+    // Preparar dados do mês selecionado
     const prepareChartData = () => {
-        const today = new Date();
-        const thirtyDaysAgo = new Date(today);
-        thirtyDaysAgo.setDate(today.getDate() - 30);
+        const now = new Date();
+        const target = selectedMonth || now;
+        const targetMonth = target.getMonth();
+        const targetYear = target.getFullYear();
+        const daysInMonth = new Date(targetYear, targetMonth + 1, 0).getDate();
 
-        // Filtrar transações dos últimos 30 dias
-        const recentTransactions = transactions
-            .filter(t => parseLocalDate(t.posted_at) >= thirtyDaysAgo)
+        // Determine last day to show data for
+        const isCurrentMonth = now.getMonth() === targetMonth && now.getFullYear() === targetYear;
+        const isPastMonth = targetYear < now.getFullYear() || (targetYear === now.getFullYear() && targetMonth < now.getMonth());
+        const lastDay = isCurrentMonth ? now.getDate() : isPastMonth ? daysInMonth : 0;
+
+        // Filtrar transações do mês selecionado
+        const monthTransactions = transactions
+            .filter(t => {
+                const d = parseLocalDate(t.posted_at);
+                return d.getMonth() === targetMonth && d.getFullYear() === targetYear;
+            })
             .sort((a, b) => parseLocalDate(a.posted_at).getTime() - parseLocalDate(b.posted_at).getTime());
 
         // Agrupar por dia e calcular cumulativo
-        const dayMap = new Map<string, number>();
+        const dayMap = new Map<number, number>();
         let cumulative = 0;
 
-        recentTransactions.forEach(t => {
-            const date = t.posted_at;
+        monthTransactions.forEach(t => {
+            const day = parseLocalDate(t.posted_at).getDate();
             cumulative += t.amount_cents;
-            dayMap.set(date, cumulative);
+            dayMap.set(day, cumulative);
         });
 
-        // Criar array com todos os dias (incluindo dias sem transações)
+        // Criar array com todos os dias do mês
         const chartData = [];
-        for (let i = 30; i >= 0; i--) {
-            const date = new Date(today);
-            date.setDate(today.getDate() - i);
-            const dateStr = date.toISOString().split('T')[0];
-            const day = date.getDate();
-
-            // Encontrar valor cumulativo até esse dia
-            let value = 0;
-            for (const [d, v] of dayMap.entries()) {
-                if (d <= dateStr) {
-                    value = v;
-                }
+        let runningValue = 0;
+        for (let day = 1; day <= lastDay; day++) {
+            if (dayMap.has(day)) {
+                runningValue = dayMap.get(day)!;
             }
 
+            const date = new Date(targetYear, targetMonth, day);
             chartData.push({
                 day: day.toString(),
-                value: value / 100,
+                value: runningValue / 100,
                 fullDate: date.toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' })
             });
         }
